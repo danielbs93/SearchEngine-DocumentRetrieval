@@ -21,45 +21,60 @@ public class NumParser extends Anumbers {
     @Override
     public LinkedList<Token> Parse() {
         Token token;
-        double num;
+        double num ;
         if (tokenList.size() == 1){
-            token = tokenList.getFirst();
-            if (!token.isNumeric()) // need to check? who will call this fun
-                return null;
-            num = new Double(token.getName());
-            if (num < 1000)
-                return tokenList;
-            else if (num < 1000000){
-                num = num/1000;
-                tokenList.getFirst().setName(String.valueOf(num) + "K");
-            }
-            else if (num < 1000000000){
-                num = num/1000000;
-                tokenList.getFirst().setName(String.valueOf(num) + "M");
-            }
-            else if ( num >= 1000000000){
-                num = num/1000000000;
-                tokenList.getFirst().setName(String.valueOf(num) + "B");
-            }
-            else
-                return null;
+            num = Double.parseDouble(tokenList.getFirst().getName());
+            token = getValue(num);
+            tokenList.clear();
+            tokenList.addFirst(token);
             return tokenList;
         }
         else if (tokenList.size() == 2){
-            token = tokenList.get(2);
-            if (!token.isNumeric()){
-                if (token.getName() == "Thousand" || token.getName() == "thousand" ){
-                    Token number = tokenList.getFirst();
+            Token value = tokenList.get(1);
+            if (!value.isNumeric()){
+                num = Double.parseDouble(tokenList.getFirst().getName());
+                if (value.getName().equals("Thousand") || value.getName().equals("thousand"))
+                    num = (Double.parseDouble(tokenList.getFirst().getName()))*1000.0;
 
-                }
-                if (token.getName() == "Million" || token.getName() == "million" ){
+                else if (value.getName().equals("Million") || value.getName().equals("million"))
+                    num = (Double.parseDouble(tokenList.getFirst().getName()))*1000000.0;
 
-                }
-                if (token.getName() == "Billion" || token.getName() == "billion" ){
-
-                }
+                else if (value.getName().equals("Billion") || value.getName().equals("billion"))
+                    num = (Double.parseDouble(tokenList.getFirst().getName()))*1000000000.0;
+                token = getValue(num);
+                tokenList.clear();
+                tokenList.addFirst(token);
+                if (value.isFraction())
+                    tokenList.add(value);
+                return tokenList;
             }
         }
         return null;
+    }
+
+    /**
+     *
+     * @param num to limited
+     * @return a limited value according to the rules
+     */
+    private Token getValue (double num){
+        Token token = new Token();
+        if (num < 1000)
+            token.setName(String.valueOf(num));
+        else if (num < 1000000.0){
+            num = num/1000.0;
+            token.setName(num + "K");
+        }
+        else if (num < 1000000000.0){
+            num = num/1000000;
+            token.setName(num + "M");
+        }
+        else if ( num < 1000000000000.0){
+            num = num/1000000000;
+            token.setName(num + "B");
+        }
+        else
+            return null;
+        return token;
     }
 }

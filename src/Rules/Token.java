@@ -36,6 +36,30 @@ public class Token {
         }
     }
 
+    /**
+     *
+     * @return true if the token is legal fraction
+     */
+    public boolean isFraction(){
+        if (this.getName().contains("/")){
+            int index = this.getName().indexOf("/");
+            String num1 = this.getName().substring(0,index);
+            String num2 = this.getName().substring(index+1);
+            try {
+                Double.parseDouble(num1);
+            } catch(NumberFormatException e){
+                return false;
+            }
+            try {
+                Double.parseDouble(num2);
+            } catch(NumberFormatException e){
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     public boolean isEmpty(){
         return (m_Name == null || m_Name.isEmpty());
     }
