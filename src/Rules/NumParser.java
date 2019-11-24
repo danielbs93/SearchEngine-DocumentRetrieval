@@ -1,11 +1,14 @@
 package Rules;
 
+import java.text.DecimalFormat;
 import java.util.LinkedList;
 
 /**
  * Created by: Daniel Ben-Simon & Eran Toutian
  */
 public class NumParser extends Anumbers {
+    private static DecimalFormat df3 = new DecimalFormat("#.###");
+
     public NumParser() {
         super();
     }
@@ -63,15 +66,15 @@ public class NumParser extends Anumbers {
             token.setName(String.valueOf(num));
         else if (num < 1000000.0){
             num = num/1000.0;
-            token.setName(num + "K");
+            token.setName(df3.format(num)+ "K");
         }
         else if (num < 1000000000.0){
             num = num/1000000;
-            token.setName(num + "M");
+            token.setName(df3.format(num) + "M");
         }
         else if ( num < 1000000000000.0){
             num = num/1000000000;
-            token.setName(num + "B");
+            token.setName(df3.format(num) + "B");
         }
         else
             return null;
