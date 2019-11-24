@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * Created by: Daniel Ben-Simon & Eran Toutian
  */
 public class NumParser extends Anumbers {
-    private static DecimalFormat df3 = new DecimalFormat("#.###");
+    private DecimalFormat df3 = new DecimalFormat("#.###");
 
     public NumParser() {
         super();
