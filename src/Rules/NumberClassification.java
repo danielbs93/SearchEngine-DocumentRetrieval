@@ -13,7 +13,7 @@ public class NumberClassification {
 
     public static LinkedList<Token> NumberClassification(LinkedList<Token> tokenList) {
         /**
-         * token 1.if -> number rule || ranges(num) rule (first token always be a number or range)
+         * token 1.if -> number rule || ranges(num) rule || price rule (first token always be a number, range or price)
          * token 2.if -> nums rule || percents rule || prices rule || dates rule
          * token 3.if -> prices rule
          * token 4.if -> prices rule

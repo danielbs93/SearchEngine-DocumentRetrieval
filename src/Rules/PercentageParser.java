@@ -27,11 +27,11 @@ public class PercentageParser extends Anumbers {
         if (tokenList.size() == 1) {
             Token original = tokenList.remove();
             //taking the number part
-            num = new Token(original.getName().substring(0,original.getName().indexOf("%")));
+            num = new Token(original.getName().substring(0,original.getName().indexOf('%')));
             p = new NumParser(num);
             tokenList = p.Parse();
             //adding "%" to the token after we parsed it
-            tokenList.getFirst().setName(tokenList.getFirst().getName() + "%");
+            tokenList.getFirst().setName(tokenList.getFirst().getName() + '%');
             return tokenList;
         }
         //The form is "X percent/percentage" -> saving as "X%"
@@ -39,7 +39,7 @@ public class PercentageParser extends Anumbers {
             num = new Token(tokenList.removeFirst().getName());
             p = new NumParser(num);
             tokenList = p.Parse();
-            tokenList.getFirst().setName(tokenList.getFirst().getName() + "%");
+            tokenList.getFirst().setName(tokenList.getFirst().getName() + '%');
             return tokenList;
         }
         else
