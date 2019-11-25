@@ -34,10 +34,8 @@ public class RangedParser extends Anumbers {
                 if (word.isNumeric()) {
                     NumParser p = new NumParser(word);
                     list = p.Parse();
-                    while (!list.isEmpty()) {
-                        String current = list.remove().getName();
-                        result.setName(current);
-                    }
+                    String current = list.remove().getName();
+                    result.setName(current);
                 }
                 else {
                     String current = result.getName();
