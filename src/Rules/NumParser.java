@@ -63,7 +63,7 @@ public class NumParser extends Anumbers {
     private Token getValue (double num){
         Token token = new Token();
         if (num < 1000)
-            token.setName(String.valueOf(num));
+            token.setName(df3.format(num));
         else if (num < 1000000.0){
             num = num/1000.0;
             token.setName(df3.format(num)+ "K");

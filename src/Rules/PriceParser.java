@@ -26,11 +26,12 @@ public class PriceParser extends Anumbers {
     public LinkedList<Token> Parse() {
         //case 1: $X
         if (tokenList.size() == 1) {
-            String price = tokenList.getFirst().getName().substring(1, tokenList.getFirst().getName().length() - 1);
-            Token number = new Token(price);
-            tokenList = ParseMyPrice(number);
-            Token dollars = new Token("Dollars");
-            tokenList.add(dollars);
+            int length = tokenList.getFirst().getName().length() ;
+            String price = tokenList.getFirst().getName().substring(1, length);
+//            Token number = new Token(price);
+            tokenList = ParseMyPrice(new Token(price));
+//            Token dollars = new Token("Dollars");
+            tokenList.addLast(new Token("Dollars"));
             return tokenList;
         }
         //cases: X dollars,Xbn/m dollars, $X million/billion
