@@ -18,17 +18,17 @@ public class DatesParser extends Anumbers {
 
     @Override
     public LinkedList<Token> Parse() {
-        double num1=0,num2=0;
+        int num1=0,num2=0;
         String month = "";
         Token token = new Token();
         if (tokenList.size() == 2){
             if (tokenList.get(0).isNumeric() && !tokenList.get(1).isNumeric()) { // 04 Jan
                 month = whichMonth(tokenList.get(1).getName());
-                num1 = Double.parseDouble(tokenList.get(0).getName());
+                num1 = Integer.parseInt(tokenList.get(0).getName());
             }
             else if (tokenList.get(1).isNumeric() && !tokenList.get(0).isNumeric()) { // Jan 04
                 month = whichMonth(tokenList.get(0).getName());
-                num1 = Double.parseDouble(tokenList.get(1).getName());
+                num1 = Integer.parseInt(tokenList.get(1).getName());
             }
             if (month.length() > 0) {
                 if (num1 < 10)
@@ -49,31 +49,31 @@ public class DatesParser extends Anumbers {
         if (tokenList.size() == 3){
             if (tokenList.get(0).isNumeric() && !tokenList.get(1).isNumeric() && tokenList.get(2).isNumeric()) { // 28 Feb 1995
                 month = whichMonth((tokenList.get(1).getName()));
-                num1 = Double.parseDouble(tokenList.get(0).getName());
-                num2 = Double.parseDouble(tokenList.get(2).getName());
+                num1 = Integer.parseInt(tokenList.get(0).getName());
+                num2 = Integer.parseInt(tokenList.get(2).getName());
             }
             else if (tokenList.get(1).isNumeric() && !tokenList.get(0).isNumeric() && tokenList.get(2).isNumeric()) { // Feb 28 1995
                 month = whichMonth((tokenList.get(0).getName()));
-                num1 = Double.parseDouble(tokenList.get(1).getName());
-                num2 = Double.parseDouble(tokenList.get(2).getName());
+                num1 = Integer.parseInt(tokenList.get(1).getName());
+                num2 = Integer.parseInt(tokenList.get(2).getName());
             }
             else if (tokenList.get(1).isNumeric() && !tokenList.get(2).isNumeric() && tokenList.get(0).isNumeric()) { //  28 1995 Feb
                 month = whichMonth((tokenList.get(2).getName()));
-                num1 = Double.parseDouble(tokenList.get(1).getName());
-                num2 = Double.parseDouble(tokenList.get(0).getName());
+                num1 = Integer.parseInt(tokenList.get(1).getName());
+                num2 = Integer.parseInt(tokenList.get(0).getName());
             }
             if (month.length() > 0){
                 if (num1 < num2){
                     if (num1 < 10)
-                        token.setName(month + "-0" + num1 + num2);
+                        token.setName(month + "-0" + num1 + "-"  + num2);
                     else if (num1 < 32)
-                        token.setName(month + "-" + num1 + num2);
+                        token.setName(month + "-" + num1 + "-" + num2);
                 }
                 else {
                     if (num2 < 10)
-                        token.setName(month + "-0" + num2 + num1);
+                        token.setName(month + "-0" + num2 + "-" + num1);
                     else if (num1 < 32)
-                        token.setName(month + "-" + num1 + num2);
+                        token.setName(month + "-" + num1 + "-" + num2);
                 }
             }
             else
