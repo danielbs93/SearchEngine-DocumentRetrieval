@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * Created by: Daniel Ben-Simon & Eran Toutian
  * this class provides the instances of number appearance cases as tokens
  */
-public class NumberClassification {
+public class RulesClassification {
     private Anumbers NumToken;
     private LinkedList<Token> TokenList;
 
