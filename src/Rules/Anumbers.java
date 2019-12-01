@@ -31,6 +31,15 @@ public abstract class Anumbers implements IParser{
         df3.setRoundingMode(RoundingMode.DOWN);
     }
 
+    public Anumbers(String[] s_array) {
+        Result = new Token();
+        tokenList = new LinkedList<>();
+        df3.setRoundingMode(RoundingMode.DOWN);
+        for (String s: s_array) {
+            tokenList.add(new Token(s));
+        }
+    }
+
     /**
      * After taking the token list from functions above as a parameter, unite them into 1 token
      * @param withSpace

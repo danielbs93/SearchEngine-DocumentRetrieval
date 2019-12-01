@@ -414,6 +414,66 @@ public class RulesTests {
         assertEqual(expected,check,"Wrong UpperLower");
     }
 
+    @Test
+    public void QuoteParserTest() {
+        String sentence = "\" a b c d \" sad asd \" e f g \" asdasdasd";
+        QuotesParser q = new QuotesParser(sentence);
+        LinkedList<Token> check = q.Parse();
+        LinkedList<Token> excpect = new LinkedList<>();
+        String s = "\"";
+        excpect.add(new Token(s+"abcd"+s));
+        excpect.add(new Token(s+"efg"+s));
+
+        assertEqual(excpect,check,"Wrong in QuoteParser");
+    }
+
+    @Test
+    public void WeightsParserTest() {
+        String[] arr1 = {"1538124","gr"};
+        String[] arr2 = {"19482","kg"};
+        String[] arr3 = {"10","ton"};
+        String[] arr4 = {"153","Kilogram"};
+        String[] arr5 = {"948","gram"};
+        String[] arr6 = {"148235","gr"};
+        String[] arr7 = {"2.456","kilogram"};
+
+        WeightsParser wp = new WeightsParser(arr1);
+        Token ch1 = wp.Parse();
+        Token expected = new Token("1.538 Ton");
+        assertEqual(expected,ch1,"Weight should be 1.538 Ton");
+
+        wp = new WeightsParser(arr2);
+        ch1 = wp.Parse();
+        expected = new Token("19.482 Ton");
+        assertEqual(expected,ch1,"Weight should be 1.948 Ton");
+
+        wp = new WeightsParser(arr3);
+        ch1 = wp.Parse();
+        expected = new Token("10 Ton");
+        assertEqual(expected,ch1,"Weight should be 10 Ton");
+
+        wp = new WeightsParser(arr4);
+        ch1 = wp.Parse();
+        expected = new Token("153 Kg");
+        assertEqual(expected,ch1,"Weight should be 153 Kg");
+
+        wp = new WeightsParser(arr5);
+        ch1 = wp.Parse();
+        expected = new Token("948 gr");
+        assertEqual(expected,ch1,"Weight should be 948 gr");
+
+        wp = new WeightsParser(arr6);
+        ch1 = wp.Parse();
+        expected = new Token("148.235 Kg");
+        assertEqual(expected,ch1,"Weight should be 148.235 Kg");
+
+        wp = new WeightsParser(arr7);
+        ch1 = wp.Parse();
+        expected = new Token("2.456 Kg");
+        assertEqual(expected,ch1,"Weight should be 2.456 Kg");
+
+    }
+
     private void assertEqual(LinkedList<Token> excpect,LinkedList<Token> check, String msg){
         LinkedList<String> ex = new LinkedList<>();
         LinkedList<String> ch = new LinkedList<>();
