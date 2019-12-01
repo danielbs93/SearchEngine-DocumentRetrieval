@@ -15,6 +15,8 @@ public class Token {
         this.m_Name = m_Name;
     }
 
+    public Token(Token t) {this.m_Name = t.getName();}
+
     public String getName() {
         return m_Name;
     }

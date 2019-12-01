@@ -3,21 +3,45 @@ package Rules;
  * Created by: Daniel Ben-Simon & Eran Toutian
  */
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.LinkedList;
 
 public abstract class Anumbers implements IParser{
     protected LinkedList<Token> tokenList;
+    protected Token Result;
+    protected DecimalFormat df3 = new DecimalFormat("#.###");
+
 
     public Anumbers() {
+        Result = new Token();
         tokenList = new LinkedList<>();
+        df3.setRoundingMode(RoundingMode.DOWN);
     }
     public Anumbers(LinkedList<Token> tokenList) {
+        Result = new Token();
         this.tokenList = tokenList;
+        df3.setRoundingMode(RoundingMode.DOWN);
     }
 
     public  Anumbers(Token token) {
+        Result = new Token(token.getName());
         tokenList = new LinkedList<>();
         tokenList.add(token);
+        df3.setRoundingMode(RoundingMode.DOWN);
+    }
+
+    /**
+     * After taking the token list from functions above as a parameter, unite them into 1 token
+     * @param withSpace
+     */
+    protected void Unite( boolean withSpace) {
+        for (Token t: tokenList) {
+            if (withSpace)
+                Result.setName(Result.getName() + " " + t.getName());
+            else
+                Result.setName(Result.getName() + t.getName());
+        }
     }
 
     //COMPLETE -> FACTORY PATTERN

@@ -8,19 +8,16 @@ import java.util.LinkedList;
  */
 public class EntitiesParser extends Atext {
 
+    public  EntitiesParser() {
+        super();
+    }
     public EntitiesParser(String[] s_Array) {
         super(s_Array);
-        for (String s: s_Array) {
-            Document = Document + s + " ";
-        }
-        Document = Document.substring(0,Document.length() - 1);
     }
 
     public EntitiesParser(String doc) {
         super(doc);
-        s_Array = doc.split(" ");
     }
-
     @Override
     public LinkedList<Token> Parse() {
         MaxentTagger maxentTagger = new MaxentTagger("Resources/english-left3words-distsim.tagger");

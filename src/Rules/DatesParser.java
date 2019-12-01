@@ -17,7 +17,7 @@ public class DatesParser extends Anumbers {
     }
 
     @Override
-    public LinkedList<Token> Parse() {
+    public Token Parse() {
         int num1=0,num2=0;
         String month = "";
         Token token = new Token();
@@ -43,8 +43,9 @@ public class DatesParser extends Anumbers {
             if (token.getName().length()==0)
                 return null;
             tokenList.clear();
-            tokenList.add(token);
-            return tokenList;
+            //tokenList.add(token);
+            this.Result = new Token(token);
+            return Result;
         }
         if (tokenList.size() == 3){
             if (tokenList.get(0).isNumeric() && !tokenList.get(1).isNumeric() && tokenList.get(2).isNumeric()) { // 28 Feb 1995
@@ -81,8 +82,9 @@ public class DatesParser extends Anumbers {
             if (token.getName().length()==0)
                 return null;
             tokenList.clear();
-            tokenList.add(token);
-            return tokenList;
+            //tokenList.add(token);
+            Result = new Token(token);
+            return Result;
 
         }
         return null;

@@ -20,7 +20,7 @@ public class PercentageParser extends Anumbers {
     }
 
     @Override
-    public LinkedList<Token> Parse() {
+    public Token Parse() {
         NumParser p;
         Token num;
         //The form is X% , example: "5.123465%" than we need to separate and NumParser 5.123465
@@ -29,18 +29,18 @@ public class PercentageParser extends Anumbers {
             //taking the number part
             num = new Token(original.getName().substring(0,original.getName().indexOf('%')));
             p = new NumParser(num);
-            tokenList = p.Parse();
+            Result = p.Parse();
             //adding "%" to the token after we parsed it
-            tokenList.getFirst().setName(tokenList.getFirst().getName() + '%');
-            return tokenList;
+            Result.setName(Result.getName() + "%");
+            return Result;
         }
         //The form is "X percent/percentage" -> saving as "X%"
         else if (tokenList.size() == 2) {
             num = new Token(tokenList.removeFirst().getName());
             p = new NumParser(num);
-            tokenList = p.Parse();
-            tokenList.getFirst().setName(tokenList.getFirst().getName() + '%');
-            return tokenList;
+            Result = p.Parse();
+            Result.setName(Result.getName() + "%");
+            return Result;
         }
         else
             return null;
