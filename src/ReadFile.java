@@ -8,7 +8,6 @@ public class ReadFile {
     private File[] AllFiles;
     private int FilePointer;
     private int DocPointer;
-    private File CurrentFolder;
 
     public ReadFile(String path) {
         CorpusFolder = new File(path);
@@ -16,7 +15,6 @@ public class ReadFile {
         FilePointer = 0;
         DocPointer = 0;
         AllFiles = CorpusFolder.listFiles();
-        CurrentFolder = getNextFile();
 
     }
 
@@ -25,7 +23,7 @@ public class ReadFile {
      * that contains list of documents.
      * @return next file in the next directory
      */
-    private File getNextFile() {
+    private void getNextFile() {
         File nextFolder = AllFiles[FilePointer];
         FilePointer++;
         File[] files = nextFolder.listFiles();
@@ -37,7 +35,6 @@ public class ReadFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return nextFolder;
     }
 
     /**
