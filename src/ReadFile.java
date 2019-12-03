@@ -7,22 +7,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReadFile {
     private BufferedReader Bfr;
-    private File CorpusFolder;
     private LinkedList<StringBuilder> Documents;
-    private File[] AllFiles;
-    private int FilePointer;
     private int DocPointer;
-    private String nextPath;
-    private ThreadPoolExecutor threadPoolExecutor;
-    private AtomicInteger ThreadCounter;
+    private File curFile;
+//    private File CorpusFolder;
+//    private File[] AllFiles;
+//    private int FilePointer;
+//    private String nextPath;
 
     public ReadFile(String path) {
-        CorpusFolder = new File(path);
+        curFile = new File(path);
         Documents = new LinkedList<>();
-        FilePointer = 0;
         DocPointer = 0;
-        AllFiles = CorpusFolder.listFiles();
-        nextPath = path;
+        try {
+            CreateDocumentsFiles();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        FilePointer = 0;
+//        AllFiles = CorpusFolder.listFiles();
+//        nextPath = path;
 
     }
 
@@ -31,23 +35,23 @@ public class ReadFile {
      * that contains list of documents.
      * @return next file in the next directory
      */
-    private void getNextFile() {
-        int i = 0;
-        while (i < 10000) {
-
-        }
-        File nextFolder = AllFiles[FilePointer];
-        FilePointer++;
-        File[] files = nextFolder.listFiles();
-        try {
-            Bfr = new BufferedReader(new FileReader(files[0]));
-            CreateDocumentsFiles();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void getNextFile() {
+//        int i = 0;
+//        while (i < 10000) {
+//
+//        }
+//        File nextFolder = AllFiles[FilePointer];
+//        FilePointer++;
+//        File[] files = nextFolder.listFiles();
+//        try {
+//            Bfr = new BufferedReader(new FileReader(files[0]));
+//            CreateDocumentsFiles();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Creating the Documents list in the current directory
@@ -73,8 +77,8 @@ public class ReadFile {
      * @return
      */
     public String getNextDoc() {
-        if (Documents.isEmpty())
-            getNextFile();
+//        if (Documents.isEmpty())
+//            getNextFile();
         StringBuilder document = Documents.remove(DocPointer);
         DocPointer++;
         return document.toString();
