@@ -1,13 +1,20 @@
+import sun.nio.ch.ThreadPool;
+
 import java.io.*;
 import java.util.LinkedList;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReadFile {
     private BufferedReader Bfr;
     private File CorpusFolder;
-    private LinkedList<String> Documents;
+    private LinkedList<StringBuilder> Documents;
     private File[] AllFiles;
     private int FilePointer;
     private int DocPointer;
+    private String nextPath;
+    private ThreadPoolExecutor threadPoolExecutor;
+    private AtomicInteger ThreadCounter;
 
     public ReadFile(String path) {
         CorpusFolder = new File(path);
@@ -15,6 +22,7 @@ public class ReadFile {
         FilePointer = 0;
         DocPointer = 0;
         AllFiles = CorpusFolder.listFiles();
+        nextPath = path;
 
     }
 
@@ -24,6 +32,10 @@ public class ReadFile {
      * @return next file in the next directory
      */
     private void getNextFile() {
+        int i = 0;
+        while (i < 10000) {
+
+        }
         File nextFolder = AllFiles[FilePointer];
         FilePointer++;
         File[] files = nextFolder.listFiles();
@@ -42,15 +54,15 @@ public class ReadFile {
      * @throws IOException
      */
     private void CreateDocumentsFiles() throws IOException {
-        String line, doc;
+        String line;
         while ((line = Bfr.readLine()) != null ) {
+            StringBuilder doc = new StringBuilder();
             if (line.equals("<DOC>")) {
-                doc = line;
+                doc.append(line);
                 while (!(line = Bfr.readLine()).equals("</DOC>"))
-                    doc = doc + " " + line;
-                doc = doc + " </DOC>";
+                    doc.append(" " + line);
+                doc.append(" </DOC>");
                 Documents.add(doc);
-                doc = "";
             }
         }
     }
@@ -63,9 +75,9 @@ public class ReadFile {
     public String getNextDoc() {
         if (Documents.isEmpty())
             getNextFile();
-        String document = Documents.remove(DocPointer);
+        StringBuilder document = Documents.remove(DocPointer);
         DocPointer++;
-        return document;
+        return document.toString();
     }
 
 

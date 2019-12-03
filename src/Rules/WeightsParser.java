@@ -24,19 +24,15 @@ public class WeightsParser extends Anumbers {
     public Token Parse() {
         Token first = tokenList.remove();
         Token second = tokenList.remove();
-        if (second.getName().equals("Kilogram") || second.getName().equals("Kg")
-                || second.getName().equals("kilogram") || second.getName().equals("kg")) {
+        if (isKg(second.getName())) {
             String number = ParseKg(first);
             Result.setName(number);
         }
-        else if (second.getName().equals("gram") || second.getName().equals("gr")
-                || second.getName().equals("Gram") || second.getName().equals("Gr")
-                || second.getName().equals("g") || second.getName().equals("G")) {
+        else if (isGr(second.getName())) {
             String number = ParseGr(first);
             Result.setName(number);
         }
-        else if (second.getName().equals("Ton") || second.getName().equals("ton")
-                || second.getName().equals("Ton") || second.getName().equals("t")) {
+        else if (isTon(second.getName())) {
             Result.setName(first.getName() + " Ton");
         }
 
@@ -72,5 +68,34 @@ public class WeightsParser extends Anumbers {
             return (df3.format(weight/1000) + " Kg");
         else
             return (df3.format(weight/1000000) + " Ton");
+    }
+
+    public static boolean isWeightUnit(String unit) {
+        if (isKg(unit) || isGr(unit) || isTon(unit))
+            return true;
+        return false;
+    }
+
+    private static boolean isGr(String unit) {
+        if (unit.equals("gram") || unit.equals("gr")
+                || unit.equals("Gram") || unit.equals("Gr")
+                || unit.equals("g") || unit.equals("G"))
+            return true;
+        return false;
+    }
+
+    private static boolean isTon(String unit) {
+        if (unit.equals("Ton") || unit.equals("ton")
+                || unit.equals("T") || unit.equals("t"))
+                return true;
+        return false;
+    }
+
+    private static boolean isKg(String unit) {
+        if (unit.equals("Kilogram") || unit.equals("Kg")
+                || unit.equals("kilogram") || unit.equals("kg")
+                || unit.equals("KG"))
+            return true;
+        return true;
     }
 }
