@@ -6,13 +6,27 @@ package Rules;
  */
 public class Token {
     private String m_Name;
+    private int position;
 
     public Token() {
         m_Name = "";
     }
 
+    public Token(String m_Name, int position) {
+        this.m_Name = m_Name;
+        this.position = position;
+    }
+
     public Token(String m_Name) {
         this.m_Name = m_Name;
+        this.position=-1;
+    }
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public Token(Token t) {this.m_Name = t.getName();}

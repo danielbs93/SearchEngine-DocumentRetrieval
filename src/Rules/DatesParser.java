@@ -95,7 +95,7 @@ public class DatesParser extends Anumbers {
      * @param str describe month
      * @return the number of the month or zero if its illegal string
      */
-    private String whichMonth (String str){
+    private static String whichMonth (String str){
         if (str.equals("January")||str.equals("JANUARY")||str.equals("Jan")||str.equals("JAN"))
             return "01";
         else if (str.equals("February")||str.equals("FEBRUARY")||str.equals("Feb")||str.equals("FEB"))
@@ -121,5 +121,11 @@ public class DatesParser extends Anumbers {
         else if (str.equals("December")||str.equals("DECEMBER")||str.equals("Dec")||str.equals("DEC"))
             return "12";
         return "";
+    }
+
+    public static boolean isDate (String month){
+        if (whichMonth(month).length()>0)
+            return true;
+        return false;
     }
 }

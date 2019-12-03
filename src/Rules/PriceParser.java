@@ -1,6 +1,5 @@
 package Rules;
 
-import java.text.DecimalFormat;
 import java.util.LinkedList;
 
 /**
@@ -208,4 +207,5 @@ public class PriceParser extends Anumbers {
         num *= 1000000;
         return new Token(df3.format(num));
     }
+
 }

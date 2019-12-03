@@ -45,4 +45,11 @@ public class PercentageParser extends Anumbers {
         else
             return null;
     }
+
+    public static boolean isPercentage(String word){
+        if (word.equals("percentage")|| word.equals("percentages")||word.equals("Percentage")
+        ||word.equals("Percentages")||word.equals("percent")||word.equals("Percent")||word.equals("%"))
+            return true;
+        return false;
+    }
 }
