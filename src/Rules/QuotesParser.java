@@ -15,7 +15,7 @@ public class QuotesParser extends Atext {
         super(document);
     }
 
-    public QuotesParser(String[] s_Array) {
+    public QuotesParser(LinkedList<Token> s_Array) {
         super(s_Array);
     }
 
@@ -24,22 +24,12 @@ public class QuotesParser extends Atext {
      * @return list of token while each token is a complete quote
      */
     public LinkedList<Token> Parse() {
-        String quote;
-        for (int i = 0; i < s_Array.length; i++) {
-            if (s_Array[i].equals("\"")) {
-                quote = s_Array[i];
-                i++;
-                while (!s_Array[i].equals("\"")) {
-                    quote = quote + s_Array[i];
-                    i++;
-                }
-                quote = quote + "\"";
-                tokenList.add(new Token(quote));
-                i++;
-                quote = "";
-            }
-
-        }
-        return tokenList;
+        LinkedList<Token> Result = new LinkedList<>();
+        StringBuilder quote = new StringBuilder();
+        for (int i = 0; i < tokenList.size(); i++)
+            quote.append(tokenList.get(i).getName()+ " ");
+        Result.get(0).setName(quote.substring(0,quote.length()));
+        Result.get(0).setPosition(tokenList.getFirst().getPosition());
+        return Result;
     }
 }

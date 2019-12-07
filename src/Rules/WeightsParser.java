@@ -22,6 +22,7 @@ public class WeightsParser extends Anumbers {
 
     @Override
     public Token Parse() {
+        int position = tokenList.getFirst().getPosition();
         Token first = tokenList.remove();
         Token second = tokenList.remove();
         if (isKg(second.getName())) {
@@ -35,7 +36,7 @@ public class WeightsParser extends Anumbers {
         else if (isTon(second.getName())) {
             Result.setName(first.getName() + " Ton");
         }
-
+        Result.setPosition(position);
         return Result;
     }
 

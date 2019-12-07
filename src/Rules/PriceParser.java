@@ -24,12 +24,14 @@ public class PriceParser extends Anumbers {
     @Override
     public Token Parse() {
         //case 1: $X
+        int position = tokenList.getFirst().getPosition();
         if (tokenList.size() == 1) {
             String price = tokenList.getFirst().getName().substring(1);
 //            Token number = new Token(price);
             Result = ParseMyPrice(new Token(price));
 //            Token dollars = new Token("Dollars");
 //            tokenList.addLast(new Token("Dollars"));
+            Result.setPosition(position);
             return Result;
         }
         //cases: X dollars,Xbn/m dollars, $X million/billion
@@ -41,6 +43,7 @@ public class PriceParser extends Anumbers {
             if (first.isNumeric() && isDollar(second)) {// X dollars
                 Result = ParseMyPrice(first);
 //                tokenList.add(new Token("Dollars"));
+                Result.setPosition(position);
                 return Result;
             } else if ((first.getName().contains("bn") || first.getName().contains("m")) && isDollar(second)) {// Xbn/m dollars
                 if (first.getName().contains("bn")) {
@@ -53,6 +56,7 @@ public class PriceParser extends Anumbers {
                 }
 //                second.setName("Dollars");
 //                tokenList.add(second);
+                Result.setPosition(position);
                 return Result;
             } else if (first.getName().contains("$")) {// $X billion/million
                 Token t_number = new Token(first.getName().substring(1));
@@ -63,6 +67,7 @@ public class PriceParser extends Anumbers {
                     Result = ParseBillion(t_number);
                 }
 //                tokenList.add(new Token("Dollars"));
+                Result.setPosition(position);
                 return Result;
             }
         }
@@ -87,6 +92,7 @@ public class PriceParser extends Anumbers {
                     Result.setName(Result.getName() + " Dollars");
                 }
 //                tokenList.add(new Token("Dollars"));
+                Result.setPosition(position);
                 return Result;
             }
         }
@@ -116,6 +122,7 @@ public class PriceParser extends Anumbers {
 //                tokenList.add(new Token("Dollars"));
             }
         }
+        Result.setPosition(position);
         return Result;
     }
 

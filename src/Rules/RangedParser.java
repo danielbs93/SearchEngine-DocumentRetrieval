@@ -1,7 +1,5 @@
 package Rules;
 
-import java.awt.*;
-import java.util.Collections;
 import java.util.LinkedList;
 
 /**
@@ -28,6 +26,7 @@ public class RangedParser extends Anumbers {
         //case: word-word-...-word or instead of word there is a number, no space between 'word' to '-'
         Token result = new Token();
         Token num;
+        int position = tokenList.getFirst().getPosition();
         if (tokenList.size() == 1) {
             String current;
             String term = tokenList.remove().getName();
@@ -57,6 +56,7 @@ public class RangedParser extends Anumbers {
             tokenList.clear();
 //            tokenList.add(result);
             Result = new Token(result);
+            Result.setPosition(position);
             return  Result;
         }
         //case: "Between 18 and 24" --> 18-24
@@ -73,6 +73,7 @@ public class RangedParser extends Anumbers {
             tokenList.clear();
 //            tokenList.add(result);
             Result = new Token(result);
+            Result.setPosition(position);
             return Result;
         }
         //case: "w1 - w2 - ... - wn", wi can be word or number, there is space between words and '-' meaning even places in tokenList is '-'
@@ -93,6 +94,7 @@ public class RangedParser extends Anumbers {
             }
             Result = new Token(result);
         }
+        Result.setPosition(position);
         return Result;
     }
 

@@ -20,6 +20,10 @@ public abstract class Atext {
         s_Array = document.split(" ");
     }
 
+    public Atext(LinkedList<Token> tokenList) {
+        this.tokenList = tokenList;
+    }
+
     public Atext(String[] s_Array) {
         this.s_Array = s_Array;
         tokenList = new LinkedList<>();

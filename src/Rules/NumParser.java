@@ -1,7 +1,5 @@
 package Rules;
 
-import java.sql.ResultSet;
-import java.text.DecimalFormat;
 import java.util.LinkedList;
 
 /**
@@ -25,6 +23,7 @@ public class NumParser extends Anumbers {
     @Override
     public Token Parse() {
         Token token;
+        int position = tokenList.getFirst().getPosition();
         double num ;
         if (tokenList.size() == 1){
             num = Double.parseDouble(tokenList.getFirst().getName());
@@ -32,6 +31,7 @@ public class NumParser extends Anumbers {
             tokenList.clear();
             //tokenList.addFirst(token);
             Result = new Token(token);
+            Result.setPosition(position);
             return Result;
         }
         else if (tokenList.size() == 2){
@@ -50,6 +50,7 @@ public class NumParser extends Anumbers {
                 tokenList.clear();
                 //tokenList.addFirst(token);
                 Result = new Token(token);
+                Result.setPosition(position);
                 if (value.isFraction())
                     Result.setName(Result.getName() + " " + value.getName());
                 return Result;

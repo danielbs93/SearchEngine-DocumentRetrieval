@@ -23,6 +23,7 @@ public class PercentageParser extends Anumbers {
     public Token Parse() {
         NumParser p;
         Token num;
+        int position = tokenList.getFirst().getPosition();
         //The form is X% , example: "5.123465%" than we need to separate and NumParser 5.123465
         if (tokenList.size() == 1) {
             Token original = tokenList.remove();
@@ -32,6 +33,7 @@ public class PercentageParser extends Anumbers {
             Result = p.Parse();
             //adding "%" to the token after we parsed it
             Result.setName(Result.getName() + "%");
+            Result.setPosition(position);
             return Result;
         }
         //The form is "X percent/percentage" -> saving as "X%"
@@ -40,6 +42,7 @@ public class PercentageParser extends Anumbers {
             p = new NumParser(num);
             Result = p.Parse();
             Result.setName(Result.getName() + "%");
+            Result.setPosition(position);
             return Result;
         }
         else
