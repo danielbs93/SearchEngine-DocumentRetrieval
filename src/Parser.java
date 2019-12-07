@@ -1,15 +1,17 @@
+import Rules.Anumbers;
+import Rules.PercentageParser;
 import Rules.Token;
 
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
  * Created by Daniel Ben-Simon & Eran Toutian
  */
 public class Parser {
-    private HashMap<String, LinkedList<Integer>> Dictionary;
+//    private HashMap<String, LinkedList<Integer>> Dictionary;
     private String Doc;
-    private LinkedList<String> parserdList;
+    private LinkedList<Token>[] parserdList;
     private LinkedList<Token> tokenList;
     private boolean IsStemmerOn;
 
@@ -17,10 +19,12 @@ public class Parser {
     {
         this.IsStemmerOn = steemer;
         Doc = document;
+        parserdList = new LinkedList[3];
+        tokenList = new LinkedList<>();
     }
 
 
-    public LinkedList<String> Parser() {
+    public LinkedList<Token>[] Parser() {
         tokenList = toTokens(this.Doc);
         parseByRules();
         parseByStopWords();
@@ -61,8 +65,12 @@ public class Parser {
      *
      */
     private void parseByRules() {
-
-
+        Anumbers NumericParser;
+        Iterator<Token> iter = tokenList.iterator();
+        while(iter.hasNext()) {
+            if (((Token)iter).getName().contains("%"))
+                NumericParser = new PercentageParser(((Token)iter));
+        }
     }
 
     /**
