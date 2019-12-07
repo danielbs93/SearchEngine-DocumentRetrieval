@@ -53,9 +53,4 @@ public abstract class Anumbers implements IParser{
         }
     }
 
-    //COMPLETE -> FACTORY PATTERN
-    public static IParser ClassifyRule() {
-
-        return null;
-    }
 }
