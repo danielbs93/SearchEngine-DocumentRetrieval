@@ -19,6 +19,15 @@ public class UpperLowerCaseParser extends Atext {
         super(s_Array);
     }
 
+    public UpperLowerCaseParser(LinkedList<Token> tList) {
+        s_Array = new String[tList.size()];
+        int i = 0;
+        for (Token token: tList) {
+            s_Array[i] = token.getName();
+            i++;
+        }
+    }
+
     @Override
     public LinkedList<Token> Parse() {
         for (String current:s_Array) {

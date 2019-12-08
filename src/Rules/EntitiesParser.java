@@ -31,9 +31,17 @@ public class EntitiesParser extends Atext {
                 tokenList.add(new Token(t));
             }
         }
-
+        StringBuilder afterTagger = new StringBuilder();
         removeDuplicates();
+        for (Token token: tokenList) {
+            afterTagger.append(token.getName() + " ");
+        }
+        Document = afterTagger.toString();
         return tokenList;
+    }
+
+    public String getDocAsString() {
+        return Document;
     }
 
 }

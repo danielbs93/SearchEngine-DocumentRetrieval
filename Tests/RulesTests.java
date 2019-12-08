@@ -1,5 +1,6 @@
 import Rules.*;
 import org.junit.jupiter.api.Test;
+import sun.awt.image.ImageWatched;
 
 import java.util.LinkedList;
 
@@ -416,13 +417,16 @@ public class RulesTests {
 
     @Test
     public void QuoteParserTest() {
-        String sentence = "\" a b c d \" sad asd \" e f g \" asdasdasd";
-        QuotesParser q = new QuotesParser(sentence);
-        LinkedList<Token> check = q.Parse();
-        LinkedList<Token> excpect = new LinkedList<>();
+        String sentence = "\" a b c d \"";
+        String[] sent = sentence.split(" ");
+        LinkedList<Token> sen = new LinkedList<>();
+        for (String s:sent) {
+            sen.add(new Token(s));
+        }
+        QuotesParser q = new QuotesParser(sen);
+        Token check = q.Parse();
         String s = "\"";
-        excpect.add(new Token(s+"abcd"+s));
-        excpect.add(new Token(s+"efg"+s));
+        Token excpect = new Token(s+"abcd"+s);
 
         assertEqual(excpect,check,"Wrong in QuoteParser");
     }
