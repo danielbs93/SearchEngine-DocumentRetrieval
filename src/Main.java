@@ -16,7 +16,7 @@ public class Main {
 //            System.out.println(t.getName());
 //        }
 //        Stemmer s = new Stemmer();
-//        s.add("first");
+//        s.add("Citizens");
 //        System.out.println(s.stem());
 //        s.clear();
 //        s.add("First");
@@ -48,16 +48,16 @@ public class Main {
         Parser p = new Parser(doc,true);
         LinkedList<Token>[] parsed = p.Parse();
         int s1 = Math.max(parsed[0].size(),parsed[1].size());
-        s1 = Math.max(s1,parsed[2].size());
-        System.out.println("term     | Entity    |UpperLower ");
+//        s1 = Math.max(s1,parsed[2].size());
+        System.out.println("term     | Entity + UpperLower ");
         System.out.println("-------------------------------------");
         for (int i = 0; i < s1; i++) {
             if (i <parsed[0].size())
                 System.out.print(parsed[0].get(i).getName() + "         ");
             if (i <parsed[1].size())
                 System.out.print(parsed[1].get(i).getName() + "         ");
-            if (i <parsed[2].size())
-                System.out.print(parsed[2].get(i).getName() + "         ");
+//            if (i <parsed[2].size())
+//                System.out.print(parsed[2].get(i).getName() + "         ");
             System.out.println();
         }
     }

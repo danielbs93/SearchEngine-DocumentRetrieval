@@ -41,7 +41,7 @@ public class UpperLowerCaseParser extends Atext {
                 tokenList.addLast(new Token(current));
             }
         }
-        removeDuplicates();
+//        removeDuplicates();
         return tokenList;
     }
 

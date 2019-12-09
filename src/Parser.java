@@ -17,8 +17,8 @@ public class Parser {
     public Parser(String document, boolean steemer) {
         this.IsStemmerOn = steemer;
         Doc = document;
-        parserdList = new LinkedList[3];
-        for (int i = 0; i < 3; i++) {
+        parserdList = new LinkedList[2];
+        for (int i = 0; i < 2; i++) {
             parserdList[i] = new LinkedList<>();
         }
         tokenList = new LinkedList<>();
@@ -29,8 +29,8 @@ public class Parser {
         tokenList = toTokens(this.Doc);
         parseByRules();
         parseByStopWords();
-        parseByEntities();
         parseByStemmer();
+        parseByEntities();
         parseByUpperLower();
         return parserdList;
     }
@@ -40,8 +40,8 @@ public class Parser {
      */
     private void parseByUpperLower() {
         Atext UpperLower = new UpperLowerCaseParser(tokenList);
-        parserdList[2] = UpperLower.Parse();
-        tokenList.removeAll(parserdList[2]);
+        parserdList[1].addAll(UpperLower.Parse());
+        tokenList.removeAll(parserdList[1]);
         parserdList[0].addAll(tokenList);
     }
 
@@ -52,13 +52,14 @@ public class Parser {
         if (!isStemmerOn())
             return;
         Stemmer stemmer = new Stemmer();
+         StringBuilder newDoc = new StringBuilder();
         for (Token token : tokenList) {
             stemmer.add(token.getName());
             token.setName(stemmer.stem());
+            newDoc.append(token.getName() + " ");
             stemmer.clear();
         }
-
-
+        Doc = newDoc.toString();
     }
 
     /**
@@ -87,8 +88,14 @@ public class Parser {
                 StopWords.add(current);
             }
             LinkedList<Token> afterStopWords = new LinkedList<>();
+            String stopWordUpperCase = "";
             for (Token token : tokenList) {
-                if (!StopWords.contains(token.getName())) {
+                if (token.getName().charAt(0) >= 'A' || token.getName().charAt(0) <= 'Z') {
+                    stopWordUpperCase = token.getName().toLowerCase();
+                }else
+                    stopWordUpperCase = token.getName();
+
+                if (!StopWords.contains(stopWordUpperCase)) {
                     afterStopWords.add(token);
                     Doc += token.getName() + " ";
                 }

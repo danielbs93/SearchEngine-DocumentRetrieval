@@ -24,4 +24,6 @@ public class Indexer {
         isStemmer = stemmer;
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
     }
+
+    private void WriteToPostingFile(){}
 }
