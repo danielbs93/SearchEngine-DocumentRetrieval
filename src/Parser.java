@@ -158,7 +158,14 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         i++;
                     }
-                    SendingToken.add(tokenList.get(i));
+                    int length = tokenList.get(i).getName().length();
+                    if(tokenList.get(i).getName().charAt(length) == '.'){
+                        tokenList.get(i).setName(tokenList.get(i).getName().substring(0,length-2));
+                        SendingToken.add(tokenList.get(i));
+                    }
+                    else
+                        SendingToken.add(tokenList.get(i));
+
                 }
                 NumericParser = new QuotesParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
