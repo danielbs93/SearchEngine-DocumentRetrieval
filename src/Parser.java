@@ -1,4 +1,5 @@
 import Rules.*;
+
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
@@ -17,11 +18,14 @@ public class Parser {
         this.IsStemmerOn = steemer;
         Doc = document;
         parserdList = new LinkedList[3];
+        for (int i = 0; i < 3; i++) {
+            parserdList[i] = new LinkedList<>();
+        }
         tokenList = new LinkedList<>();
     }
 
 
-    public LinkedList<Token>[] Parser() {
+    public LinkedList<Token>[] Parse() {
         tokenList = toTokens(this.Doc);
         parseByRules();
         parseByStopWords();
@@ -48,7 +52,7 @@ public class Parser {
         if (!isStemmerOn())
             return;
         Stemmer stemmer = new Stemmer();
-        for (Token token: tokenList) {
+        for (Token token : tokenList) {
             stemmer.add(token.getName());
             token.setName(stemmer.stem());
             stemmer.clear();
@@ -61,7 +65,8 @@ public class Parser {
      *
      */
     private void parseByEntities() {
-        String[] tokenlist = (String[]) tokenList.toArray();
+//        String[] tokenlist = (String[]) tokenList.toArray();
+        String[] tokenlist = Doc.split(" ");
         Atext es = new EntitiesParser(tokenlist);
         parserdList[1] = es.Parse();
         tokenList.removeAll(parserdList[1]);
@@ -73,15 +78,16 @@ public class Parser {
      */
     private void parseByStopWords() {
         try {
-            FileReader file = new FileReader(new File(getClass().getResource("StopWords.txt").toURI()));
-            BufferedReader bf = new BufferedReader(file);
+            File file = new File(getClass().getResource("StopWords.txt").toURI());
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bf = new BufferedReader(fileReader);
             LinkedList<String> StopWords = new LinkedList<>();
             String current = "";
-            while((current = bf.readLine()) != null) {
+            while ((current = bf.readLine()) != null) {
                 StopWords.add(current);
             }
             LinkedList<Token> afterStopWords = new LinkedList<>();
-            for (Token token:tokenList) {
+            for (Token token : tokenList) {
                 if (!StopWords.contains(token.getName())) {
                     afterStopWords.add(token);
                     Doc += token.getName() + " ";
@@ -89,11 +95,11 @@ public class Parser {
             }
             tokenList = afterStopWords;
 
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -170,40 +176,40 @@ public class Parser {
                         parserdList[0].add(NumericParser.Parse());
                     }
                     //2. Month
-                    else if (DatesParser.isDate(tokenList.get(i+1).getName())) {
+                    else if (DatesParser.isDate(tokenList.get(i + 1).getName())) {
                         SendingToken.add(tokenList.get(i++));
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new DatesParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
                     }
                     //2. WeightUnit
-                    else if (WeightsParser.isWeightUnit(tokenList.get(i+1).getName())) {
+                    else if (WeightsParser.isWeightUnit(tokenList.get(i + 1).getName())) {
                         SendingToken.add(tokenList.get(i++));
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new WeightsParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
                     }
                     //2. Quantity unit
-                    else if (isQuantityUnit(tokenList.get(i+1))) {
+                    else if (isQuantityUnit(tokenList.get(i + 1))) {
                         boolean numberRule = true;
-                        if (isNextIndexAvailable(i+1)) {
+                        if (isNextIndexAvailable(i + 1)) {
                             boolean priceRule = false;
                             //3. D/dollars
-                            if (isCoin(tokenList.get(i+2))) {
+                            if (isCoin(tokenList.get(i + 2))) {
                                 SendingToken.add(tokenList.get(i));
-                                SendingToken.add(tokenList.get(i+1));
-                                SendingToken.add(tokenList.get(i+2));
+                                SendingToken.add(tokenList.get(i + 1));
+                                SendingToken.add(tokenList.get(i + 2));
                                 i += 2;
                                 priceRule = true;
                             }
                             //3. U.S/. 4. D/dollars
-                            else if (isNextIndexAvailable(i+2)
-                                    && (tokenList.get(i+2).getName().equals("U.S.") || tokenList.get(i+2).getName().equals("U.S"))
-                                    && isCoin(tokenList.get(i+3))) {
+                            else if (isNextIndexAvailable(i + 2)
+                                    && (tokenList.get(i + 2).getName().equals("U.S.") || tokenList.get(i + 2).getName().equals("U.S"))
+                                    && isCoin(tokenList.get(i + 3))) {
                                 SendingToken.add(tokenList.get(i));
-                                SendingToken.add(tokenList.get(i+1));
-                                SendingToken.add(tokenList.get(i+2));
-                                SendingToken.add(tokenList.get(i+3));
+                                SendingToken.add(tokenList.get(i + 1));
+                                SendingToken.add(tokenList.get(i + 2));
+                                SendingToken.add(tokenList.get(i + 3));
                                 i += 3;
                                 priceRule = true;
                             }
@@ -213,7 +219,7 @@ public class Parser {
                                 parserdList[0].add(NumericParser.Parse());
                             }
                         }// even if a doc is ending with a number rule and there is no continue of words after it.
-                        if (numberRule){
+                        if (numberRule) {
                             SendingToken.add(tokenList.get(i++));
                             SendingToken.add(tokenList.get(i));
                             NumericParser = new NumParser(SendingToken);
@@ -221,30 +227,29 @@ public class Parser {
                         }
                     }
                     //2. fraction
-                    else if (tokenList.get(i+1).isFraction()) {
+                    else if (tokenList.get(i + 1).isFraction()) {
                         boolean priceRule = false;
-                        if (isNextIndexAvailable(i+1)) {
+                        if (isNextIndexAvailable(i + 1)) {
                             //3. D/dollars
-                            if (isCoin(tokenList.get(i+2))) {
-                                SendingToken = AddToSendingToken(i,i+2);
+                            if (isCoin(tokenList.get(i + 2))) {
+                                SendingToken = AddToSendingToken(i, i + 2);
                                 priceRule = true;
                                 NumericParser = new PriceParser(SendingToken);
                                 parserdList[0].add(NumericParser.Parse());
                             }
                         }
-                        if (!priceRule){
-                            SendingToken = AddToSendingToken(i,i+1);
+                        if (!priceRule) {
+                            SendingToken = AddToSendingToken(i, i + 1);
                             NumericParser = new NumParser(SendingToken);
                             parserdList[0].add(NumericParser.Parse());
                         }
                     }
                     //2.D/dollars
-                    else if (isCoin(tokenList.get(i+1))){
-                        SendingToken = AddToSendingToken(i,i+1);
+                    else if (isCoin(tokenList.get(i + 1))) {
+                        SendingToken = AddToSendingToken(i, i + 1);
                         NumericParser = new PriceParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
-                    }
-                    else
+                    } else
                         parserdList[0].add((new NumParser(tokenList.get(i))).Parse());
                 }
                 //Its just a number to parse
@@ -254,12 +259,12 @@ public class Parser {
                 }
             }
             //Rule of "w1 - w2 - ... - wn" (with spaces)
-            else if (isNextIndexAvailable(i) && tokenList.get(i+1).getName().equals("-")) {
+            else if (isNextIndexAvailable(i) && tokenList.get(i + 1).getName().equals("-")) {
                 boolean isEnd = false;
                 SendingToken.add(tokenList.get(i));
                 boolean isHyphen = true;
                 i++;
-                while(!isEnd) {
+                while (!isEnd) {
                     if (isNextIndexAvailable(i)) {
                         if (!isHyphen && !tokenList.get(i + 1).equals("-"))
                             isEnd = true;
@@ -270,7 +275,7 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         if (!isEnd)
                             i++;
-                    }else {
+                    } else {
                         SendingToken.add(tokenList.get(i));
                         isEnd = true;
                     }
@@ -339,14 +344,62 @@ public class Parser {
     private LinkedList<Token> toTokens(String doc) {
         LinkedList<Token> tDoc = new LinkedList<>();
         int posision = 0;
-        String text = doc.substring(doc.indexOf("<TEXT>") + 1, doc.indexOf("</Text"));
+        int textFinalIndex = doc.length() - 7;
+        String text = doc.substring(6, textFinalIndex);//Cutting of TEXT labels
         String[] words = text.split(" ");
         for (String word : words) {
-            if (word.lastIndexOf(".") == word.length()-1 || word.lastIndexOf(",") == word.length() - 1)
-                word = word.substring(0,word.length() - 1);
-            tDoc.add(new Token(word, posision++));
+            if (word != null && !word.isEmpty()) {
+                Token token = new Token();
+                StringBuilder tokenName = new StringBuilder();
+                if (!isPanctuationMark(word)) {
+                    if (FirstCharPanctuationMark(word))
+                        tokenName.append(word.substring(1));
+                    else
+                    tokenName.append(word);
+//                        tDoc.add(new Token(word.substring(0, word.length() - 1), posision++));
+                    int length = tokenName.length();
+                    if (LastCharPanctuationMark(word))
+                        tokenName.deleteCharAt(length-1);
+                    if (LastCharPanctuationMark(tokenName.toString()))
+                        tokenName.deleteCharAt(length-2);
+//                        tDoc.add(new Token(word.substring(0, word.length() - 1), posision++));
+                    tDoc.add(new Token(tokenName.toString(), posision++));
+                }
+            }
         }
         return tDoc;
+    }
+
+    /**
+     *
+     * @param word
+     * @return
+     */
+    private boolean LastCharPanctuationMark(String word) {
+        if (word.lastIndexOf(".") == word.length() - 1 || word.lastIndexOf(",") == word.length() - 1
+            || word.lastIndexOf(")") == word.length() - 1 || word.lastIndexOf("}") == word.length() - 1
+            || word.lastIndexOf("'") == word.length() - 1 || word.lastIndexOf("]") == word.length() - 1)
+            return true;
+        return false;
+    }
+    private boolean FirstCharPanctuationMark(String word) {
+        if (word.indexOf("(") == 0 || word.indexOf("{") == 0 || word.indexOf("[") == 0
+                || word.indexOf("'") == 0)
+            return true;
+        return false;
+    }
+
+    /**
+     *
+     * @param word
+     * @return
+     */
+    private boolean isPanctuationMark(String word) {
+        if (word.equals(".") || word.equals(",") || word.equals("(") || word.equals(" ")
+                || word.equals("}") || word.equals("{") || word.equals(")")
+                || word.equals("[") || word.equals("]") || word.equals("'"))
+            return true;
+        return false;
     }
 
     public boolean isStemmerOn() {
