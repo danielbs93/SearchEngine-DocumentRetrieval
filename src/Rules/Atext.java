@@ -38,12 +38,12 @@ public abstract class Atext {
     }
 
 
-    protected void removeDuplicates() {
-        for (int i = 0; i < tokenList.size(); i++) {
-            for (int j = i + 1; j < tokenList.size(); j++) {
-                if (tokenList.get(i).equals(tokenList.get(j)))
-                    tokenList.remove(j);
-            }
-        }
-    }
 }
+//    Protected void removeDuplicates() {
+//        for (int i = 0; i < tokenList.size(); i++) {
+//            for (int j = i + 1; j < tokenList.size(); j++) {
+//                if (tokenList.get(i).equals(tokenList.get(j)))
+//                    tokenList.remove(j);
+//            }
+//        }
+//    }

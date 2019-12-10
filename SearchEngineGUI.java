@@ -79,11 +79,13 @@ public class SearchEngineGUI<Private> {
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Search-Engine By Eran and Daniel");
+        JFrame frame = new JFrame("Search-Engine By Daniel and Eran");
         frame.setContentPane(new SearchEngineGUI().panel1);
         frame.setBackground(Color.white);
         frame.getContentPane().setBackground(Color.white);
-//        frame.setSize(400,400);
+        JButton chooseFile = new JButton();
+//        chooseFile.setPreferredSize(new Dimension(3,2));
+//        frame.add(chooseFile);
         frame.setPreferredSize(new Dimension(700,500));
         frame.setLocationRelativeTo(null);
         JCheckBox checkBox1 = new JCheckBox();
