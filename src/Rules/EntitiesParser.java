@@ -9,9 +9,10 @@ import java.util.LinkedList;
  * Created by: Daniel Ben-Simon & Eran Toutian
  */
 public class EntitiesParser extends Atext {
-
-    public  EntitiesParser() {
+    private MaxentTagger maxentTagger;
+    public  EntitiesParser(String[] tokenlist, MaxentTagger maxentTagger) {
         super();
+        this.maxentTagger = maxentTagger;
     }
     public EntitiesParser(String[] s_Array) {
         super(s_Array);
@@ -22,8 +23,8 @@ public class EntitiesParser extends Atext {
     }
     @Override
     public LinkedList<Token> Parse() {
-        String modelFile = "Resources/english-left3words-distsim.tagger";
-        MaxentTagger maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}),false);
+//        String modelFile = "Resources/english-left3words-distsim.tagger";
+//        MaxentTagger maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}),false);
         String tag = maxentTagger.tagString(this.Document);
         String[] ar_tag = tag.split(" ");
         for (String t: ar_tag) {

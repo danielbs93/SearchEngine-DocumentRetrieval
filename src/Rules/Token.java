@@ -5,8 +5,12 @@ package Rules;
  * the basic form of a string represented in a document.
  */
 public class Token {
+
     private String m_Name;
     private int position;
+    private int tf;
+    private StringBuilder positions;
+
 
     public Token() {
         m_Name = "";
@@ -15,6 +19,8 @@ public class Token {
     public Token(String m_Name, int position) {
         this.m_Name = m_Name;
         this.position = position;
+        tf = 1;
+        positions.append(position);
     }
 
     public Token(String m_Name) {
@@ -38,6 +44,24 @@ public class Token {
     public void setName(String m_Name) {
         this.m_Name = m_Name;
     }
+
+    public int getTf() {
+        return tf;
+    }
+
+    public void increaseTF() {
+        tf++;
+    }
+
+    public void setTf(int tf) {
+        this.tf = tf;
+    }
+
+    public void addPosition(int position){
+        int gap = position - this.position;
+        positions.append("," + gap);
+    }
+
 
     /**
      *
@@ -82,6 +106,6 @@ public class Token {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Token) && (m_Name.equals(((Token)obj).getName()));
+        return (obj instanceof Token) && (m_Name.equals(((Token)obj).getName()) && this.position == ((Token)obj).position);
     }
 }

@@ -1,15 +1,16 @@
-import sun.nio.ch.ThreadPool;
 
 import java.io.*;
 import java.util.LinkedList;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Created by Daniel Ben Simon & Eran Toutian
+ */
 public class ReadFile {
     private BufferedReader Bfr;
     private LinkedList<StringBuilder> Documents;
     private int DocPointer;
     private File curFile;
+    private String DOCNO;
 //    private File CorpusFolder;
 //    private File[] AllFiles;
 //    private int FilePointer;
@@ -80,8 +81,29 @@ public class ReadFile {
 //        if (Documents.isEmpty())
 //            getNextFile();
         StringBuilder document = Documents.remove(DocPointer);
-        DocPointer++;
+//        DocPointer++;
+        DOCNO = buildDocNO(document.toString());
         return document.toString();
+    }
+
+    public String getFileNO() {
+        return curFile.getName();
+    }
+
+    public String getDocNO() {
+        return DOCNO;
+    }
+
+    private String buildDocNO(String document) {
+        int start = document.indexOf("<DOCNO>") + 7;
+        int end = document.indexOf("</DOCNO>");
+        String docNO = document.substring(start,end);
+        docNO.replace(" ","");
+        return docNO;
+    }
+
+    public boolean isEmpty() {
+        return this.Documents.isEmpty();
     }
 
 

@@ -1,4 +1,5 @@
 import Rules.*;
+import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -25,15 +26,16 @@ public class Parser {
     }
 
 
-    public LinkedList<Token>[] Parse() {
+    public LinkedList<Token>[] Parse(MaxentTagger maxentTagger) {
         tokenList = toTokens(this.Doc);
         parseByRules();
         parseByStopWords();
         parseByStemmer();
-        parseByEntities();
+        parseByEntities(maxentTagger);
         parseByUpperLower();
         return parserdList;
     }
+
 
     /**
      *
@@ -65,10 +67,10 @@ public class Parser {
     /**
      *
      */
-    private void parseByEntities() {
+    private void parseByEntities(MaxentTagger maxentTagger) {
 //        String[] tokenlist = (String[]) tokenList.toArray();
         String[] tokenlist = Doc.split(" ");
-        Atext es = new EntitiesParser(tokenlist);
+        Atext es = new EntitiesParser(tokenlist,maxentTagger);
         parserdList[1] = es.Parse();
         tokenList.removeAll(parserdList[1]);
         Doc = ((EntitiesParser) es).getDocAsString();
@@ -158,14 +160,12 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         i++;
                     }
-                    int length = tokenList.get(i).getName().length();
-                    if(tokenList.get(i).getName().charAt(length) == '.'){
-                        tokenList.get(i).setName(tokenList.get(i).getName().substring(0,length-2));
-                        SendingToken.add(tokenList.get(i));
-                    }
-                    else
-                        SendingToken.add(tokenList.get(i));
-
+                    int length = tokenList.get(i).getName().length() - 2;
+                    if (tokenList.get(i).getName().charAt(length) == '.')
+                        tokenList.get(i).setName(tokenList.get(i).getName().substring(0,length) + "\"");
+                    if (tokenList.get(i).getName().charAt(length) == ',')
+                        tokenList.get(i).setName(tokenList.get(i).getName().substring(0,length) + "\"");
+                    SendingToken.add(tokenList.get(i));
                 }
                 NumericParser = new QuotesParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
@@ -294,12 +294,16 @@ public class Parser {
                         isEnd = true;
                     }
                 }
+                NumericParser = new RangedParser(SendingToken);
+                parserdList[0].add(NumericParser.Parse());
             }
             //Token is a word
             else {
                 afterThisRules.add(tokenList.get(i));
                 Doc += tokenList.get(i).getName() + " ";
             }
+
+
 
             if (!SendingToken.isEmpty())
                 SendingToken.clear();

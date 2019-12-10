@@ -2,6 +2,8 @@ import Rules.EntitiesParser;
 import Rules.Stemmer;
 import Rules.Token;
 import Rules.UpperLowerCaseParser;
+import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import edu.stanford.nlp.util.StringUtils;
 
 import java.util.LinkedList;
 
@@ -46,7 +48,12 @@ public class Main {
                 "\"impatient,\" and are waiting for the government to take control of " +
                 "the situation. </TEXT>";
         Parser p = new Parser(doc,true);
-        LinkedList<Token>[] parsed = p.Parse();
+        LinkedList<Token>[] parsed = new LinkedList[2];
+        parsed[0] = p.Parse();
+        MaxentTagger mt = new MaxentTagger();
+        String modelFile = "Resources/english-left3words-distsim.tagger";
+        MaxentTagger maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}),false);
+        parsed[1] = p.EntitiesParse(maxentTagger);
         int s1 = Math.max(parsed[0].size(),parsed[1].size());
 //        s1 = Math.max(s1,parsed[2].size());
         System.out.println("term     | Entity + UpperLower ");
