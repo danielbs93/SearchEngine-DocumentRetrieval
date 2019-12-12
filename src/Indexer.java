@@ -55,14 +55,14 @@ public class Indexer {
                     String Text = ExtractText(Doc);
                     Parser parser = new Parser(Text,isStemmer);
                     LinkedList<Token>[] tokenList = parser.Parse(maxentTagger);
-                    Mutex[] mutex = new Mutex[3];
-                    for (Mutex m: mutex)
-                        m = new Mutex();
+                    Mutex[] mutex = new Mutex[2];
+                    mutex[0] = new Mutex();
+                    mutex[1] = new Mutex();
                     int[] maxTFandUniqueTerms = new int[2];
                     maxTFandUniqueTerms[0] = 0;
                     maxTFandUniqueTerms[1] = 0;
+                    mutex[0].lock();
                     for (Token term: tokenList[0]) {
-                        mutex[0].lock();
 //                        mutex[1].lock();//locking if 1 thread is updating entities files before thread2 updating term info
                         if (!Dictionary.containsKey(term)) {
                             UpdateTermInfo(tokenList[0], term,true);//including mapping termID
@@ -78,17 +78,17 @@ public class Indexer {
                     String DocNo = fileReader.getDocNO();
                     String FileNo = fileReader.getFileNO();
 
-                    mutex[2].lock();
+                    mutex[1].lock();
                     WriteToFileIDLexicon(FileNo);
                     WriteToDocumentIDLexicon(DocNo,FileID.get(),maxTFandUniqueTerms[0],maxTFandUniqueTerms[1]);
-                    mutex[2].unlock();
+                    mutex[1].unlock();
                     DocID.incrementAndGet();
                 }
             });
             FileID.incrementAndGet();
-            //sort dictionary before writing it to the disk//
-
         }
+        this.threadPoolExecutor.shutdown();
+        //sort dictionary before writing it to the disk//
     }
 
     /**
@@ -146,7 +146,8 @@ public class Indexer {
         CountAndRemove(tokens,term);
         //checking if term is already exist in entities dictionary//
         boolean entityExist = false;
-        if (isNew) {
+        if (isNew && !term.getName().isEmpty() && ((term.getName().charAt(0) >= 'a' && term.getName().charAt(0) <= 'z')
+                    || (term.getName().charAt(0) >= 'A' && term.getName().charAt(0) <='Z'))) {
             char upper = Character.toUpperCase(term.getName().charAt(0));
             Token token = new Token(term);
             token.setName(upper + term.getName().substring(1));
@@ -190,16 +191,20 @@ public class Indexer {
      * @param term
      */
     private void CountAndRemove(LinkedList<Token> tokens, Token term) {
+        LinkedList<Integer> toDelete = new LinkedList<>();
         int i = 0;
         for (Token token:tokens) {
             if (!term.isEqual(token)) {
                 if (term.getName().equals(token.getName())) {
                     term.increaseTF();
                     term.addPosition(token.getPosition());
-                    tokens.remove(i);
+                    toDelete.add(i);
                 }
             }
             i++;
+        }
+        for (Integer delete:toDelete) {
+            tokens.remove(delete);
         }
     }
 
@@ -282,7 +287,7 @@ public class Indexer {
         }
         try {
             FileWriter fileWriter = new FileWriter(file,true);
-            fileWriter.write(docID+";"+tf+";"+positions+ ">\n");
+            fileWriter.write(docID+";"+tf+";"+positions+ "\n");
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

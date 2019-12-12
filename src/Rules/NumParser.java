@@ -22,7 +22,7 @@ public class NumParser extends Anumbers {
 
     @Override
     public Token Parse() {
-        Token token;
+        Token token = new Token();
         int position = tokenList.getFirst().getPosition();
         double num ;
         if (tokenList.size() == 1){

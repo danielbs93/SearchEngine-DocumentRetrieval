@@ -21,6 +21,8 @@ public class ReadFile {
         Documents = new LinkedList<>();
         DocPointer = 0;
         try {
+            FileReader fileReader = new FileReader(curFile);
+            Bfr = new BufferedReader(fileReader);
             CreateDocumentsFiles();
         } catch (IOException e) {
             e.printStackTrace();

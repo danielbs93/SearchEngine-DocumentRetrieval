@@ -8,29 +8,35 @@ import java.util.LinkedList;
 public abstract class Atext {
     protected String[] s_Array;
     protected LinkedList<Token> tokenList;
-    protected String Document;
+    protected StringBuilder Document;
 
     public Atext() {
         tokenList = new LinkedList<>();
+        Document = new StringBuilder();
     }
 
     public Atext(String document) {
-        Document = document;
+        Document = new StringBuilder();
+        Document.append(document);
         tokenList = new LinkedList<>();
         s_Array = document.split(" ");
     }
 
     public Atext(LinkedList<Token> tokenList) {
         this.tokenList = tokenList;
+        Document = new StringBuilder();
+        for (Token token:tokenList) {
+            Document.append(token.getName() + " ");
+        }
     }
 
     public Atext(String[] s_Array) {
+        Document = new StringBuilder();
         this.s_Array = s_Array;
         tokenList = new LinkedList<>();
         for (String s : s_Array) {
-            Document = Document + s + " ";
+            Document.append(s + " ");
         }
-        Document = Document.substring(0, Document.length() - 1);
     }
 
     public LinkedList<Token> Parse() {

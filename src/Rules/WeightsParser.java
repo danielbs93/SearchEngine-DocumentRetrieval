@@ -72,8 +72,9 @@ public class WeightsParser extends Anumbers {
     }
 
     public static boolean isWeightUnit(String unit) {
-        if (isKg(unit) || isGr(unit) || isTon(unit))
-            return true;
+        if (unit != null)
+            if (isKg(unit) || isGr(unit) || isTon(unit))
+                return true;
         return false;
     }
 
@@ -97,6 +98,6 @@ public class WeightsParser extends Anumbers {
                 || unit.equals("kilogram") || unit.equals("kg")
                 || unit.equals("KG"))
             return true;
-        return true;
+        return false;
     }
 }

@@ -47,25 +47,30 @@ public class Main {
                 "the Tuaregs have responded to his appeal, but that they are " +
                 "\"impatient,\" and are waiting for the government to take control of " +
                 "the situation. </TEXT>";
-        Parser p = new Parser(doc,true);
-        LinkedList<Token>[] parsed = new LinkedList[2];
-        parsed[0] = p.Parse();
-        MaxentTagger mt = new MaxentTagger();
-        String modelFile = "Resources/english-left3words-distsim.tagger";
-        MaxentTagger maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}),false);
-        parsed[1] = p.EntitiesParse(maxentTagger);
-        int s1 = Math.max(parsed[0].size(),parsed[1].size());
-//        s1 = Math.max(s1,parsed[2].size());
-        System.out.println("term     | Entity + UpperLower ");
-        System.out.println("-------------------------------------");
-        for (int i = 0; i < s1; i++) {
-            if (i <parsed[0].size())
-                System.out.print(parsed[0].get(i).getName() + "         ");
-            if (i <parsed[1].size())
-                System.out.print(parsed[1].get(i).getName() + "         ");
-//            if (i <parsed[2].size())
-//                System.out.print(parsed[2].get(i).getName() + "         ");
-            System.out.println();
-        }
+//        Parser p = new Parser(doc,true);
+//        LinkedList<Token>[] parsed = new LinkedList[2];
+//        parsed[0] = p.Parse();
+//        MaxentTagger mt = new MaxentTagger();
+//        String modelFile = "Resources/english-left3words-distsim.tagger";
+//        MaxentTagger maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}),false);
+//        parsed[1] = p.EntitiesParse(maxentTagger);
+//        int s1 = Math.max(parsed[0].size(),parsed[1].size());
+////        s1 = Math.max(s1,parsed[2].size());
+//        System.out.println("term     | Entity + UpperLower ");
+//        System.out.println("-------------------------------------");
+//        for (int i = 0; i < s1; i++) {
+//            if (i <parsed[0].size())
+//                System.out.print(parsed[0].get(i).getName() + "         ");
+//            if (i <parsed[1].size())
+//                System.out.print(parsed[1].get(i).getName() + "         ");
+////            if (i <parsed[2].size())
+////                System.out.print(parsed[2].get(i).getName() + "         ");
+//            System.out.println();
+//        }
+
+        String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\Corpus";
+        String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\postingFiles";
+        Indexer indexer = new Indexer(CorpusPath,savingPath,true);
+        indexer.Index();
     }
 }

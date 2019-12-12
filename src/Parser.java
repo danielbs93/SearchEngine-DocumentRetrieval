@@ -152,7 +152,7 @@ public class Parser {
                 i = i + 3;
             }
             //Quotes
-            else if (tokenList.get(i).getName().contains("\"")) {
+            else if (tokenList.get(i).getName().charAt(0) == '"') {
                 SendingToken.add(tokenList.get(i));
                 if (isQuoteRule(i) && isNextIndexAvailable(i)) {
                     i++;
@@ -361,7 +361,7 @@ public class Parser {
      */
     private LinkedList<Token> toTokens(String doc) {
         LinkedList<Token> tDoc = new LinkedList<>();
-        int posision = 0;
+        int position = 0;
         int textFinalIndex = doc.length() - 7;
         String text = doc.substring(6, textFinalIndex);//Cutting of TEXT labels
         String[] words = text.split(" ");
@@ -381,7 +381,7 @@ public class Parser {
                     if (LastCharPanctuationMark(tokenName.toString()))
                         tokenName.deleteCharAt(length-2);
 //                        tDoc.add(new Token(word.substring(0, word.length() - 1), posision++));
-                    tDoc.add(new Token(tokenName.toString(), posision++));
+                    tDoc.add(new Token(tokenName.toString(), position++));
                 }
             }
         }
@@ -396,13 +396,14 @@ public class Parser {
     private boolean LastCharPanctuationMark(String word) {
         if (word.lastIndexOf(".") == word.length() - 1 || word.lastIndexOf(",") == word.length() - 1
             || word.lastIndexOf(")") == word.length() - 1 || word.lastIndexOf("}") == word.length() - 1
-            || word.lastIndexOf("'") == word.length() - 1 || word.lastIndexOf("]") == word.length() - 1)
+            || word.lastIndexOf("'") == word.length() - 1 || word.lastIndexOf("]") == word.length() - 1
+            || word.lastIndexOf("*") == word.length() - 1)
             return true;
         return false;
     }
     private boolean FirstCharPanctuationMark(String word) {
         if (word.indexOf("(") == 0 || word.indexOf("{") == 0 || word.indexOf("[") == 0
-                || word.indexOf("'") == 0)
+                || word.indexOf("'") == 0 || word.indexOf(".") == 0 || word.indexOf("*") == 0)
             return true;
         return false;
     }

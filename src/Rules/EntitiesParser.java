@@ -11,7 +11,7 @@ import java.util.LinkedList;
 public class EntitiesParser extends Atext {
     private MaxentTagger maxentTagger;
     public  EntitiesParser(String[] tokenlist, MaxentTagger maxentTagger) {
-        super();
+        super(tokenlist);
         this.maxentTagger = maxentTagger;
     }
     public EntitiesParser(String[] s_Array) {
@@ -25,7 +25,7 @@ public class EntitiesParser extends Atext {
     public LinkedList<Token> Parse() {
 //        String modelFile = "Resources/english-left3words-distsim.tagger";
 //        MaxentTagger maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}),false);
-        String tag = maxentTagger.tagString(this.Document);
+        String tag = maxentTagger.tagString(this.Document.toString());
         String[] ar_tag = tag.split(" ");
         for (String t: ar_tag) {
             if (t.contains("NNP")) {
@@ -39,12 +39,12 @@ public class EntitiesParser extends Atext {
         for (Token token: tokenList) {
             afterTagger.append(token.getName() + " ");
         }
-        Document = afterTagger.toString();
+        Document = new StringBuilder(afterTagger.toString());
         return tokenList;
     }
 
     public String getDocAsString() {
-        return Document;
+        return Document.toString();
     }
 
 }

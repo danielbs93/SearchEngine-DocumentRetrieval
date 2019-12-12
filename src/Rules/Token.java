@@ -14,18 +14,31 @@ public class Token {
 
     public Token() {
         m_Name = "";
+        position = -1;
+        tf = 1;
+        positions = new StringBuilder();
     }
 
     public Token(String m_Name, int position) {
         this.m_Name = m_Name;
         this.position = position;
         tf = 1;
+        positions = new StringBuilder();
         positions.append(position);
     }
 
     public Token(String m_Name) {
         this.m_Name = m_Name;
+        tf = 1;
         this.position=-1;
+        positions = new StringBuilder();
+    }
+
+    public Token(Token t) {
+        tf = t.tf;
+        this.m_Name = t.getName();
+        this.position = t.position;
+        this.positions = new StringBuilder(t.positions);
     }
     public int getPosition() {
         return position;
@@ -33,9 +46,9 @@ public class Token {
 
     public void setPosition(int position) {
         this.position = position;
+        this.positions.append(position);
     }
 
-    public Token(Token t) {this.m_Name = t.getName();}
 
     public String getName() {
         return m_Name;
