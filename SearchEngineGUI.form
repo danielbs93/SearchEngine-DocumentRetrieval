@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="8" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="-2" y="5" width="757" height="455"/>
+      <xy x="-2" y="5" width="811" height="455"/>
     </constraints>
     <properties>
       <enabled value="true"/>
@@ -51,7 +51,9 @@
       </vspacer>
       <hspacer id="cfbe6">
         <constraints>
-          <grid row="3" column="6" row-span="3" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="6" row-span="2" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="1" height="-1"/>
+          </grid>
         </constraints>
       </hspacer>
       <hspacer id="cb80f">
@@ -114,14 +116,14 @@
       </component>
       <component id="58dd9" class="javax.swing.JCheckBox" binding="checkBox1" default-binding="true">
         <constraints>
-          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="421" height="18"/>
           </grid>
         </constraints>
         <properties>
           <background color="-1"/>
           <foreground color="-14875902"/>
-          <text value="CheckBox"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="81adc" class="javax.swing.JTextField" binding="textField2" default-binding="true">
@@ -144,21 +146,31 @@
       </component>
       <component id="d3286" class="javax.swing.JButton" binding="chooseFile">
         <constraints>
-          <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="40" height="20"/>
+            <preferred-size width="20" height="5"/>
+          </grid>
         </constraints>
         <properties>
           <background color="-1"/>
           <enabled value="true"/>
-          <icon value="Resources/openFileIcon.png"/>
+          <foreground color="-1"/>
+          <hideActionText value="false"/>
+          <horizontalAlignment value="0"/>
+          <icon value="FileIcon.png"/>
           <text value=""/>
         </properties>
       </component>
       <component id="c4439" class="javax.swing.JButton" binding="chooseFileButton1" default-binding="true">
         <constraints>
-          <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="40" height="20"/>
+            <preferred-size width="20" height="5"/>
+          </grid>
         </constraints>
         <properties>
-          <text value="Browse"/>
+          <icon value="FileIcon.png"/>
+          <text value=""/>
         </properties>
       </component>
     </children>

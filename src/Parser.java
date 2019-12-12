@@ -280,7 +280,7 @@ public class Parser {
                 i++;
                 while (!isEnd) {
                     if (isNextIndexAvailable(i)) {
-                        if (!isHyphen && !tokenList.get(i + 1).equals("-"))
+                        if (!isHyphen && !tokenList.get(i + 1).getName().equals("-"))
                             isEnd = true;
                         else if (isHyphen)
                             isHyphen = false;
