@@ -57,9 +57,14 @@ public class Token {
         this.tf = tf;
     }
 
+    public String getPositions() {
+        return this.positions.toString();
+    }
+
     public void addPosition(int position){
-        int gap = position - this.position;
+        int gap = Math.abs(position - this.position);
         positions.append("," + gap);
+        this.position = gap;
     }
 
 
@@ -104,8 +109,17 @@ public class Token {
         return (m_Name == null || m_Name.isEmpty());
     }
 
+    public boolean isEqual(Token token) {
+        return m_Name.equals(token.getName()) && this.position == token.position;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Token) && (m_Name.equals(((Token)obj).getName()) && this.position == ((Token)obj).position);
+        return (obj instanceof Token) && (m_Name.equals(((Token)obj).getName()));
+    }
+
+    @Override
+    public int hashCode() {
+        return m_Name.hashCode();
     }
 }

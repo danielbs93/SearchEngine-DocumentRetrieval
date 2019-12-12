@@ -35,5 +35,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="stanford-postagger-3.9.2" level="project" />
+    <orderEntry type="library" name="commons-lang3-3.0.1" level="project" />
   </component>
 </module>
