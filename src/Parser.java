@@ -153,22 +153,34 @@ public class Parser {
             }
             //Quotes
             else if (tokenList.get(i).getName().charAt(0) == '"') {
+                int ifItJustQuotationMark = i;//if its start with quotation mark and does not end with one
+                boolean QuotationMarkOnlyInStart = false;
                 SendingToken.add(tokenList.get(i));
                 if (isQuoteRule(i) && isNextIndexAvailable(i)) {
                     i++;
-                    while (!tokenList.get(i).getName().contains("\"")) {
+                    while (i < tokenList.size() && !tokenList.get(i).getName().contains("\"")) {
                         SendingToken.add(tokenList.get(i));
                         i++;
                     }
-                    int length = tokenList.get(i).getName().length() - 2;
-                    if (tokenList.get(i).getName().charAt(length) == '.')
-                        tokenList.get(i).setName(tokenList.get(i).getName().substring(0,length) + "\"");
-                    if (tokenList.get(i).getName().charAt(length) == ',')
-                        tokenList.get(i).setName(tokenList.get(i).getName().substring(0,length) + "\"");
-                    SendingToken.add(tokenList.get(i));
+                    if (i == tokenList.size() && !tokenList.get(i-1).getName().contains("\""))
+                        QuotationMarkOnlyInStart = true;
+                    else {
+                        int length = tokenList.get(i).getName().length() - 2;
+                        if (tokenList.get(i).getName().length() > 1 && tokenList.get(i).getName().charAt(length) == '.')
+                            tokenList.get(i).setName(tokenList.get(i).getName().substring(0, length) + "\"");
+                        if (tokenList.get(i).getName().length() > 1 && tokenList.get(i).getName().charAt(length) == ',')
+                            tokenList.get(i).setName(tokenList.get(i).getName().substring(0, length) + "\"");
+                        SendingToken.add(tokenList.get(i));
+                    }
                 }
-                NumericParser = new QuotesParser(SendingToken);
-                parserdList[0].add(NumericParser.Parse());
+                if (QuotationMarkOnlyInStart) {
+                    i = ifItJustQuotationMark-1;
+                    String word = tokenList.get(ifItJustQuotationMark).getName().substring(1);
+                    tokenList.get(ifItJustQuotationMark).setName(word);//without quotation mark
+                }else {
+                    NumericParser = new QuotesParser(SendingToken);
+                    parserdList[0].add(NumericParser.Parse());
+                }
             }
             // 1.Xunit 2.D/dollars
             else if (tokenList.get(i).getName().contains("bn") || tokenList.get(i).getName().contains("m")) {
@@ -302,9 +314,6 @@ public class Parser {
                 afterThisRules.add(tokenList.get(i));
                 Doc += tokenList.get(i).getName() + " ";
             }
-
-
-
             if (!SendingToken.isEmpty())
                 SendingToken.clear();
         }
@@ -376,12 +385,13 @@ public class Parser {
                     tokenName.append(word);
 //                        tDoc.add(new Token(word.substring(0, word.length() - 1), posision++));
                     int length = tokenName.length();
-                    if (LastCharPanctuationMark(word))
+                    if (tokenName.length() != 0 && LastCharPanctuationMark(word))
                         tokenName.deleteCharAt(length-1);
-                    if (LastCharPanctuationMark(tokenName.toString()))
+                    if (tokenName.length() != 0 && LastCharPanctuationMark(tokenName.toString()))
                         tokenName.deleteCharAt(length-2);
 //                        tDoc.add(new Token(word.substring(0, word.length() - 1), posision++));
-                    tDoc.add(new Token(tokenName.toString(), position++));
+                    if (tokenName.length() != 0)
+                        tDoc.add(new Token(tokenName.toString(), position++));
                 }
             }
         }
@@ -397,7 +407,8 @@ public class Parser {
         if (word.lastIndexOf(".") == word.length() - 1 || word.lastIndexOf(",") == word.length() - 1
             || word.lastIndexOf(")") == word.length() - 1 || word.lastIndexOf("}") == word.length() - 1
             || word.lastIndexOf("'") == word.length() - 1 || word.lastIndexOf("]") == word.length() - 1
-            || word.lastIndexOf("*") == word.length() - 1)
+            || word.lastIndexOf("*") == word.length() - 1 || word.lastIndexOf(":") == word.length() - 1
+            || word.lastIndexOf(";") == word.length() - 1)
             return true;
         return false;
     }
@@ -416,7 +427,8 @@ public class Parser {
     private boolean isPanctuationMark(String word) {
         if (word.equals(".") || word.equals(",") || word.equals("(") || word.equals(" ")
                 || word.equals("}") || word.equals("{") || word.equals(")")
-                || word.equals("[") || word.equals("]") || word.equals("'"))
+                || word.equals("[") || word.equals("]") || word.equals("'")
+                || word.equals(":") || word.equals(";") || word.equals("%"))
             return true;
         return false;
     }

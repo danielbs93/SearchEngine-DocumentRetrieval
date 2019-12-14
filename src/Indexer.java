@@ -75,16 +75,14 @@ public class Indexer {
                     }
                     UpdateEntitiesInfo(tokenList[1],maxTFandUniqueTerms);
                     mutex[0].unlock();
-                    String DocNo = fileReader.getDocNO();
-                    String FileNo = fileReader.getFileNO();
-
                     mutex[1].lock();
-                    WriteToFileIDLexicon(FileNo);
+                    String DocNo = fileReader.getDocNO();
                     WriteToDocumentIDLexicon(DocNo,FileID.get(),maxTFandUniqueTerms[0],maxTFandUniqueTerms[1]);
                     mutex[1].unlock();
                     DocID.incrementAndGet();
                 }
             });
+            WriteToFileIDLexicon(fileReader.getFileNO());
             FileID.incrementAndGet();
         }
         this.threadPoolExecutor.shutdown();

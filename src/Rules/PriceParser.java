@@ -51,6 +51,8 @@ public class PriceParser extends Anumbers {
                     Result = ParseBillion(t_number);
                 } else {
                     Token number = new Token(first.getName().substring(0, first.getName().indexOf('m')));
+                    if (number.getName().length() == 0)// just "million D/dollar"
+                        number.setName("1");
                     number = makeMillion(number);
                     Result = ParseMyPrice(number);
                 }
