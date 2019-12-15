@@ -25,6 +25,13 @@ public class PriceParser extends Anumbers {
     public Token Parse() {
         //case 1: $X
         int position = tokenList.getFirst().getPosition();
+        // $x-unit
+        if (tokenList.size() == 1 && tokenList.getFirst().getName().contains("-")) {
+            Token token = tokenList.removeFirst();
+            int hyphen = token.getName().indexOf("-");
+            tokenList.add(new Token(token.getName().substring(0,hyphen)));
+            tokenList.add(new Token(token.getName().substring(hyphen+1)));
+        }
         if (tokenList.size() == 1) {
             String price = tokenList.getFirst().getName().substring(1);
 //            Token number = new Token(price);

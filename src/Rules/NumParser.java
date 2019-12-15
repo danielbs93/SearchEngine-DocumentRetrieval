@@ -36,6 +36,7 @@ public class NumParser extends Anumbers {
         }
         else if (tokenList.size() == 2){
             Token value = tokenList.get(1);
+            boolean moreThanThousandBillion = false;
             if (!value.isNumeric()){
                 num = Double.parseDouble(tokenList.getFirst().getName());
                 if (value.getName().equals("Thousand") || value.getName().equals("thousand"))
@@ -44,9 +45,16 @@ public class NumParser extends Anumbers {
                 else if (value.getName().equals("Million") || value.getName().equals("million"))
                     num = (Double.parseDouble(tokenList.getFirst().getName()))*1000000.0;
 
-                else if (value.getName().equals("Billion") || value.getName().equals("billion"))
-                    num = (Double.parseDouble(tokenList.getFirst().getName()))*1000000000.0;
-                token = getValue(num);
+                else if (value.getName().equals("Billion") || value.getName().equals("billion")) {
+                    if (num < 1000)
+                        num = (Double.parseDouble(tokenList.getFirst().getName())) * 1000000000.0;
+                    else
+                        moreThanThousandBillion = true;
+                }
+                if (moreThanThousandBillion)
+                    token = new Token(num+ "B");
+                else
+                    token = getValue(num);
                 tokenList.clear();
                 //tokenList.addFirst(token);
                 Result = new Token(token);

@@ -1,8 +1,10 @@
 import Rules.*;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import edu.stanford.nlp.util.StringUtils;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -12,7 +14,8 @@ public class Parser {
     //    private HashMap<String, LinkedList<Integer>> Dictionary;
     private String Doc;
     private LinkedList<Token>[] parserdList;
-    private LinkedList<Token> tokenList;
+    private ArrayList<Token> tokenList;
+//    private LinkedList<Token> tokenList;
     private boolean IsStemmerOn;
 
     public Parser(String document, boolean steemer) {
@@ -22,7 +25,7 @@ public class Parser {
         for (int i = 0; i < 2; i++) {
             parserdList[i] = new LinkedList<>();
         }
-        tokenList = new LinkedList<>();
+        tokenList = new ArrayList<>();
     }
 
 
@@ -54,7 +57,7 @@ public class Parser {
         if (!isStemmerOn())
             return;
         Stemmer stemmer = new Stemmer();
-         StringBuilder newDoc = new StringBuilder();
+        StringBuilder newDoc = new StringBuilder();
         for (Token token : tokenList) {
             stemmer.add(token.getName());
             token.setName(stemmer.stem());
@@ -70,7 +73,7 @@ public class Parser {
     private void parseByEntities(MaxentTagger maxentTagger) {
 //        String[] tokenlist = (String[]) tokenList.toArray();
         String[] tokenlist = Doc.split(" ");
-        Atext es = new EntitiesParser(tokenlist,maxentTagger);
+        Atext es = new EntitiesParser(tokenlist, maxentTagger);
         parserdList[1] = es.Parse();
         tokenList.removeAll(parserdList[1]);
         Doc = ((EntitiesParser) es).getDocAsString();
@@ -89,12 +92,12 @@ public class Parser {
             while ((current = bf.readLine()) != null) {
                 StopWords.add(current);
             }
-            LinkedList<Token> afterStopWords = new LinkedList<>();
+            ArrayList<Token> afterStopWords = new ArrayList<>();
             String stopWordUpperCase = "";
             for (Token token : tokenList) {
                 if (token.getName().charAt(0) >= 'A' || token.getName().charAt(0) <= 'Z') {
                     stopWordUpperCase = token.getName().toLowerCase();
-                }else
+                } else
                     stopWordUpperCase = token.getName();
 
                 if (!StopWords.contains(stopWordUpperCase)) {
@@ -118,7 +121,7 @@ public class Parser {
      */
     private void parseByRules() {
         Doc = "";
-        LinkedList<Token> afterThisRules = new LinkedList<>();
+        ArrayList<Token> afterThisRules = new ArrayList<>();
         LinkedList<Token> SendingToken = new LinkedList<>();
         IParser NumericParser;
         for (int i = 0; i < tokenList.size(); i++) {
@@ -133,7 +136,7 @@ public class Parser {
                 parserdList[0].add(NumericParser.Parse());
             }
             // 1. Month 2.Day/Year
-            else if (DatesParser.isDate(tokenList.get(i).getName()) && isNextIndexAvailable(i)) {
+            else if (DatesParser.isDate(tokenList.get(i).getName()) && isNextIndexAvailable(i) && isInt(tokenList.get(i+1).getName())) {
                 Token DayOrYear = tokenList.get(i + 1);
                 if (DayOrYear.isNumeric()) {
                     SendingToken.add(tokenList.get(i));
@@ -162,7 +165,7 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         i++;
                     }
-                    if (i == tokenList.size() && !tokenList.get(i-1).getName().contains("\""))
+                    if (i == tokenList.size() && !tokenList.get(i - 1).getName().contains("\""))
                         QuotationMarkOnlyInStart = true;
                     else {
                         int length = tokenList.get(i).getName().length() - 2;
@@ -174,22 +177,28 @@ public class Parser {
                     }
                 }
                 if (QuotationMarkOnlyInStart) {
-                    i = ifItJustQuotationMark-1;
+                    i = ifItJustQuotationMark - 1;
                     String word = tokenList.get(ifItJustQuotationMark).getName().substring(1);
                     tokenList.get(ifItJustQuotationMark).setName(word);//without quotation mark
-                }else {
+                } else {
                     NumericParser = new QuotesParser(SendingToken);
                     parserdList[0].add(NumericParser.Parse());
                 }
             }
             // 1.Xunit 2.D/dollars
             else if (tokenList.get(i).getName().contains("bn") || tokenList.get(i).getName().contains("m")) {
-                if (isNextIndexAvailable(i) && isCoin(tokenList.get(i + 1))) {
-                    SendingToken.add(tokenList.get(i++));
-                    SendingToken.add(tokenList.get(i));
-                    NumericParser = new PriceParser(SendingToken);
-                    parserdList[0].add(NumericParser.Parse());
-                }
+                String num = tokenList.get(i).getName();
+                if (num.contains("bn"))
+                    num = num.substring(0, num.indexOf("bn"));
+                else if (num.contains("m"))
+                    num = num.substring(0, num.indexOf("m"));
+                if (StringUtils.isNumeric(num))
+                    if (isNextIndexAvailable(i) && isCoin(tokenList.get(i + 1))) {
+                        SendingToken.add(tokenList.get(i++));
+                        SendingToken.add(tokenList.get(i));
+                        NumericParser = new PriceParser(SendingToken);
+                        parserdList[0].add(NumericParser.Parse());
+                    }
             }
             //1.X
             else if (tokenList.get(i).isNumeric()) {
@@ -202,7 +211,7 @@ public class Parser {
                         parserdList[0].add(NumericParser.Parse());
                     }
                     //2. Month
-                    else if (DatesParser.isDate(tokenList.get(i + 1).getName())) {
+                    else if (isInt(tokenList.get(i).getName()) && DatesParser.isDate(tokenList.get(i + 1).getName())) {
                         SendingToken.add(tokenList.get(i++));
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new DatesParser(SendingToken);
@@ -283,6 +292,19 @@ public class Parser {
                     NumericParser = new NumParser(tokenList.get(i));
                     parserdList[0].add(NumericParser.Parse());
                 }
+            }
+            //1. $x
+            else if (tokenList.get(i).getName().contains("$")){
+                if (tokenList.get(i).getName().contains("U.S."))
+                    tokenList.get(i).setName(tokenList.get(i).getName().substring(tokenList.get(i).getName().indexOf("$")));
+                SendingToken.add(tokenList.get(i));
+                //2. quantity unit
+                if (isNextIndexAvailable(i+1) && isQuantityUnit(tokenList.get(i+1))){
+                    SendingToken.add(tokenList.get(i+1));
+                    i++;
+                }
+                NumericParser = new PriceParser(SendingToken);
+                parserdList[0].add(NumericParser.Parse());
             }
             //Rule of "w1 - w2 - ... - wn" (with spaces)
             else if (isNextIndexAvailable(i) && tokenList.get(i + 1).getName().equals("-")) {
@@ -368,8 +390,8 @@ public class Parser {
      * @param doc
      * @return list of token from the text of the doc while removing spaces, dots and commas from the end of a word
      */
-    private LinkedList<Token> toTokens(String doc) {
-        LinkedList<Token> tDoc = new LinkedList<>();
+    private ArrayList<Token> toTokens(String doc) {
+        ArrayList<Token> tDoc = new ArrayList<>();
         int position = 0;
         int textFinalIndex = doc.length() - 7;
         String text = doc.substring(6, textFinalIndex);//Cutting of TEXT labels
@@ -379,17 +401,14 @@ public class Parser {
                 Token token = new Token();
                 StringBuilder tokenName = new StringBuilder();
                 if (!isPanctuationMark(word)) {
-                    if (FirstCharPanctuationMark(word))
-                        tokenName.append(word.substring(1));
-                    else
                     tokenName.append(word);
-//                        tDoc.add(new Token(word.substring(0, word.length() - 1), posision++));
-                    int length = tokenName.length();
-                    if (tokenName.length() != 0 && LastCharPanctuationMark(word))
-                        tokenName.deleteCharAt(length-1);
-                    if (tokenName.length() != 0 && LastCharPanctuationMark(tokenName.toString()))
-                        tokenName.deleteCharAt(length-2);
-//                        tDoc.add(new Token(word.substring(0, word.length() - 1), posision++));
+                    while (FirstCharPanctuationMark(word)) {
+                        tokenName.deleteCharAt(0);
+                    }
+                    while (tokenName.length() != 0 && LastCharPanctuationMark(word)) {
+                        int length = tokenName.length()-1;
+                        tokenName.deleteCharAt(length);
+                    }
                     if (tokenName.length() != 0)
                         tDoc.add(new Token(tokenName.toString(), position++));
                 }
@@ -399,28 +418,27 @@ public class Parser {
     }
 
     /**
-     *
      * @param word
      * @return
      */
     private boolean LastCharPanctuationMark(String word) {
         if (word.lastIndexOf(".") == word.length() - 1 || word.lastIndexOf(",") == word.length() - 1
-            || word.lastIndexOf(")") == word.length() - 1 || word.lastIndexOf("}") == word.length() - 1
-            || word.lastIndexOf("'") == word.length() - 1 || word.lastIndexOf("]") == word.length() - 1
-            || word.lastIndexOf("*") == word.length() - 1 || word.lastIndexOf(":") == word.length() - 1
-            || word.lastIndexOf(";") == word.length() - 1)
+                || word.lastIndexOf(")") == word.length() - 1 || word.lastIndexOf("}") == word.length() - 1
+                || word.lastIndexOf("'") == word.length() - 1 || word.lastIndexOf("]") == word.length() - 1
+                || word.lastIndexOf("*") == word.length() - 1 || word.lastIndexOf(":") == word.length() - 1
+                || word.lastIndexOf(";") == word.length() - 1 || word.lastIndexOf("|") == word.length() - 1)
             return true;
         return false;
     }
+
     private boolean FirstCharPanctuationMark(String word) {
         if (word.indexOf("(") == 0 || word.indexOf("{") == 0 || word.indexOf("[") == 0
-                || word.indexOf("'") == 0 || word.indexOf(".") == 0 || word.indexOf("*") == 0)
+                || word.indexOf("'") == 0 || word.indexOf(".") == 0 || word.indexOf("*") == 0 || word.indexOf("|") == 0)
             return true;
         return false;
     }
 
     /**
-     *
      * @param word
      * @return
      */
@@ -457,5 +475,14 @@ public class Parser {
                 || sCoin.equals("dollars"))
             return true;
         return false;
+    }
+
+    private boolean isInt(String s)
+    {
+        try
+        { int i = Integer.parseInt(s); return true; }
+
+        catch(NumberFormatException er)
+        { return false; }
     }
 }

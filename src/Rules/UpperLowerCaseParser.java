@@ -1,5 +1,6 @@
 package Rules;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -19,7 +20,7 @@ public class UpperLowerCaseParser extends Atext {
         super(s_Array);
     }
 
-    public UpperLowerCaseParser(LinkedList<Token> tList) {
+    public UpperLowerCaseParser(ArrayList<Token> tList) {
         s_Array = new String[tList.size()];
         int i = 0;
         for (Token token: tList) {
