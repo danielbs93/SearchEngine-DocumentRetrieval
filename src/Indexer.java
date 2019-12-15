@@ -1,11 +1,10 @@
 import Rules.Token;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.util.StringUtils;
-import javafx.util.Pair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import sun.awt.Mutex;
 import java.io.*;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.Executors;
@@ -54,7 +53,7 @@ public class Indexer {
                     String Doc = fileReader.getNextDoc();
                     String Text = ExtractText(Doc);
                     Parser parser = new Parser(Text,isStemmer);
-                    LinkedList<Token>[] tokenList = parser.Parse(maxentTagger);
+                    ArrayList<Token>[] tokenList = parser.Parse(maxentTagger);
                     Mutex[] mutex = new Mutex[2];
                     mutex[0] = new Mutex();
                     mutex[1] = new Mutex();
@@ -100,7 +99,7 @@ public class Indexer {
      * @param tokens
      * @param maxTFandUniqueTerms
      */
-    private void UpdateEntitiesInfo(LinkedList<Token> tokens, int[] maxTFandUniqueTerms) {
+    private void UpdateEntitiesInfo(ArrayList<Token> tokens, int[] maxTFandUniqueTerms) {
         for (Token token: tokens) {
             CountAndRemove(tokens,token);
             Token inDictionary = new Token(token);
@@ -140,7 +139,7 @@ public class Indexer {
      * @param isNew - if its a new term to be inserted to the dictionary
      *
      */
-    private void UpdateTermInfo(LinkedList<Token> tokens, Token term, boolean isNew) {
+    private void UpdateTermInfo(ArrayList<Token> tokens, Token term, boolean isNew) {
         CountAndRemove(tokens,term);
         //checking if term is already exist in entities dictionary//
         boolean entityExist = false;
@@ -188,7 +187,7 @@ public class Indexer {
      * @param tokens
      * @param term
      */
-    private void CountAndRemove(LinkedList<Token> tokens, Token term) {
+    private void CountAndRemove(ArrayList<Token> tokens, Token term) {
         LinkedList<Integer> toDelete = new LinkedList<>();
         int i = 0;
         for (Token token:tokens) {
@@ -202,7 +201,7 @@ public class Indexer {
             i++;
         }
         for (Integer delete:toDelete) {
-            tokens.get(delete.intValue());
+            tokens.set(delete.intValue(),null);
         }
     }
 
