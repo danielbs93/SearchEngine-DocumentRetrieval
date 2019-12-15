@@ -1,6 +1,6 @@
 package Rules;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Created by: Daniel Ben-Simon & Eran Toutian
@@ -13,7 +13,7 @@ public class PriceParser extends Anumbers {
         super();
     }
 
-    public PriceParser(LinkedList<Token> tokenList) {
+    public PriceParser(ArrayList<Token> tokenList) {
         super(tokenList);
     }
 
@@ -23,19 +23,20 @@ public class PriceParser extends Anumbers {
 
     @Override
     public Token Parse() {
+
         //case 1: $X
-        int position = tokenList.getFirst().getPosition();
-        tokenList.getFirst().setName(tokenList.getFirst().getName().replaceAll("O","0"));
-        tokenList.getFirst().setName(tokenList.getFirst().getName().replaceAll("o","0"));
+        int position = tokenList.get(0).getPosition();
+        tokenList.get(0).setName(tokenList.get(0).getName().replaceAll("O","0"));
+        tokenList.get(0).setName(tokenList.get(0).getName().replaceAll("o","0"));
         // $x-unit
-        if (tokenList.size() == 1 && tokenList.getFirst().getName().contains("-")) {
-            Token token = tokenList.removeFirst();
+        if (tokenList.size() == 1 && tokenList.get(0).getName().contains("-")) {
+            Token token = tokenList.remove(0);
             int hyphen = token.getName().indexOf("-");
             tokenList.add(new Token(token.getName().substring(0,hyphen)));
             tokenList.add(new Token(token.getName().substring(hyphen+1)));
         }
         if (tokenList.size() == 1) {
-            String price = tokenList.getFirst().getName().substring(1);
+            String price = tokenList.get(0).getName().substring(1);
 //            Token number = new Token(price);
             Result = ParseMyPrice(new Token(price));
 //            Token dollars = new Token("Dollars");
@@ -45,8 +46,8 @@ public class PriceParser extends Anumbers {
         }
         //cases: X dollars,Xbn/m dollars, $X million/billion
         else if (tokenList.size() == 2) {
-            Token first = tokenList.remove();
-            Token second = tokenList.remove();
+            Token first = tokenList.remove(0);
+            Token second = tokenList.remove(1);
             if (first.getName().contains(","))
                 first.setName(first.getName().replaceAll(",",""));
             if (first.isNumeric() && isDollar(second)) {// X dollars
@@ -84,9 +85,9 @@ public class PriceParser extends Anumbers {
         }
         // cases: X fraction dollars, X bn/m/million/billion dollars
         else if (tokenList.size() == 3) {
-            Token first = tokenList.remove();
-            Token second = tokenList.remove();
-            Token third = tokenList.remove();
+            Token first = tokenList.remove(0);
+            Token second = tokenList.remove(1);
+            Token third = tokenList.remove(2);
             if (isDollar(third)) {
                 //X bn/m/million/billion
                 if (second.getName().equals("bn") || isBillion(second)) {
@@ -109,10 +110,10 @@ public class PriceParser extends Anumbers {
         }
         //cases: X billion/million/trillion U.S. Dollars
         else {// token size is 4
-            Token first = tokenList.remove();
-            Token second = tokenList.remove();
-            Token third = tokenList.remove();
-            Token fourth = tokenList.remove();
+            Token first = tokenList.remove(0);
+            Token second = tokenList.remove(1);
+            Token third = tokenList.remove(2);
+            Token fourth = tokenList.remove(3);
             if (isDollar(fourth)) {
                 if (isMillion(second)) {
                     first = makeMillion(first);

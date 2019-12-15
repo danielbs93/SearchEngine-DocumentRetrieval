@@ -1,6 +1,6 @@
 package Rules;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Created by: Daniel Ben-Simon & Eran Toutian
@@ -11,7 +11,7 @@ public class PercentageParser extends Anumbers {
         super();
     }
 
-    public PercentageParser(LinkedList<Token> tokenList) {
+    public PercentageParser(ArrayList<Token> tokenList) {
         super(tokenList);
     }
 
@@ -23,10 +23,10 @@ public class PercentageParser extends Anumbers {
     public Token Parse() {
         NumParser p;
         Token num;
-        int position = tokenList.getFirst().getPosition();
+        int position = tokenList.get(0).getPosition();
         //The form is X% , example: "5.123465%" than we need to separate and NumParser 5.123465
         if (tokenList.size() == 1) {
-            Token original = tokenList.remove();
+            Token original = tokenList.remove(0);
             //taking the number part
             num = new Token(original.getName().substring(0,original.getName().indexOf('%')));
             if (!num.isNumeric())
@@ -40,7 +40,7 @@ public class PercentageParser extends Anumbers {
         }
         //The form is "X percent/percentage" -> saving as "X%"
         else if (tokenList.size() == 2) {
-            num = new Token(tokenList.removeFirst().getName());
+            num = new Token(tokenList.remove(0).getName());
             p = new NumParser(num);
             Result = p.Parse();
             Result.setName(Result.getName() + "%");

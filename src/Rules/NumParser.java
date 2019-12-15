@@ -1,6 +1,6 @@
 package Rules;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Created by: Daniel Ben-Simon & Eran Toutian
@@ -12,7 +12,7 @@ public class NumParser extends Anumbers {
         super();
     }
 
-    public NumParser(LinkedList<Token> tokenList) {
+    public NumParser(ArrayList<Token> tokenList) {
         super(tokenList);
     }
 
@@ -23,10 +23,10 @@ public class NumParser extends Anumbers {
     @Override
     public Token Parse() {
         Token token = new Token();
-        int position = tokenList.getFirst().getPosition();
+        int position = tokenList.get(0).getPosition();
         double num ;
         if (tokenList.size() == 1){
-            num = Double.parseDouble(tokenList.getFirst().getName());
+            num = Double.parseDouble(tokenList.get(0).getName());
             token = getValue(num);
             tokenList.clear();
             //tokenList.addFirst(token);
@@ -38,16 +38,16 @@ public class NumParser extends Anumbers {
             Token value = tokenList.get(1);
             boolean moreThanThousandBillion = false;
             if (!value.isNumeric()){
-                num = Double.parseDouble(tokenList.getFirst().getName());
+                num = Double.parseDouble(tokenList.get(0).getName());
                 if (value.getName().equals("Thousand") || value.getName().equals("thousand"))
-                    num = (Double.parseDouble(tokenList.getFirst().getName()))*1000.0;
+                    num = (Double.parseDouble(tokenList.get(0).getName()))*1000.0;
 
                 else if (value.getName().equals("Million") || value.getName().equals("million"))
-                    num = (Double.parseDouble(tokenList.getFirst().getName()))*1000000.0;
+                    num = (Double.parseDouble(tokenList.get(0).getName()))*1000000.0;
 
                 else if (value.getName().equals("Billion") || value.getName().equals("billion")) {
                     if (num < 1000)
-                        num = (Double.parseDouble(tokenList.getFirst().getName())) * 1000000000.0;
+                        num = (Double.parseDouble(tokenList.get(0).getName())) * 1000000000.0;
                     else
                         moreThanThousandBillion = true;
                 }

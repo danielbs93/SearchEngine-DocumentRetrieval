@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class SearchEngineGUI<Private> {
 
@@ -17,6 +18,7 @@ public class SearchEngineGUI<Private> {
     private String CorpusPath;
     private String PostingPath;
     private boolean Stemmer;
+    private String DefaultPostingPath = "C:\\Users\\erant\\Desktop\\project\\postingFiles";
 
 
 
@@ -35,6 +37,11 @@ public class SearchEngineGUI<Private> {
                     CorpusPath = textField1.getText();
                     PostingPath = textField2.getText();
                     Stemmer = checkBox1.isSelected();
+                    Indexer indexer = new Indexer(CorpusPath,PostingPath,Stemmer);
+                    indexer.Index();
+//                    JProgressBar jpb = new JProgressBar(0,100);
+//                    jpb.setValue(0);
+//                    jpb.setStringPainted(true);
                 }
             }
         });
@@ -45,7 +52,7 @@ public class SearchEngineGUI<Private> {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc1 = new JFileChooser();
-                fc1.setCurrentDirectory(new java.io.File("C:/"));
+                fc1.setCurrentDirectory(new java.io.File("C:\\Users\\erant\\Desktop"));
                 fc1.setDialogTitle("Choose Directory");
                 fc1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int returnValue = fc1.showOpenDialog(null);
@@ -59,21 +66,30 @@ public class SearchEngineGUI<Private> {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc1 = new JFileChooser();
-                fc1.setCurrentDirectory(new java.io.File("C:/"));
+                fc1.setCurrentDirectory(new java.io.File("C:\\Users\\erant\\Desktop"));
                 fc1.setDialogTitle("Choose Directory");
                 fc1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int returnValue = fc1.showOpenDialog(null);
                 textField2.setText(fc1.getSelectedFile().getAbsolutePath());
             }
         });
+        /**
+         * Delete Posting File Directory
+         */
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int dialogResult = JOptionPane.showConfirmDialog (null,"Are you sure yo want to reset");
                 if(dialogResult == JOptionPane.YES_OPTION){
-
-                    JOptionPane.showMessageDialog(null,PostingPath);
+                    if(textField2.getText().length() != 0)
+                        PostingPath = textField2.getText();
+                    else
+                        PostingPath = DefaultPostingPath;
+                    File[] files = (new File(PostingPath)).listFiles();
+                    for (File file: files
+                         ) { file.delete(); }
                 }
+                JOptionPane.showMessageDialog(null,"Directory:  " + PostingPath + "\n deleted!", "Delete Directory",2);
             }
         });
     }
@@ -96,5 +112,8 @@ public class SearchEngineGUI<Private> {
         frame.setState(Frame.NORMAL);
         frame.pack();
         frame.setVisible(true);
+        String s = "5,35";
+        String [] ss= s.split(",");
+        System.out.println(ss[ss.length]);
     }
 }

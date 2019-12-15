@@ -1,12 +1,3 @@
-import Rules.EntitiesParser;
-import Rules.Stemmer;
-import Rules.Token;
-import Rules.UpperLowerCaseParser;
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import edu.stanford.nlp.util.StringUtils;
-
-import java.util.LinkedList;
-
 public class Main {
     public static void main(String[] args) {
 //        String sentence = "Alexandria Ocasio-Cortez was walking along Mike and Maria. There was nothing to do unless John gave the order to Eran to call them.";
@@ -68,8 +59,8 @@ public class Main {
 //            System.out.println();
 //        }
 
-        String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\Corpus";
-        String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\postingFiles";
+        String CorpusPath = "C:\\Users\\erant\\Desktop\\corpus";
+        String savingPath = "C:\\Users\\erant\\Desktop\\project\\postingFiles";
         Indexer indexer = new Indexer(CorpusPath,savingPath,true);
         indexer.Index();
     }

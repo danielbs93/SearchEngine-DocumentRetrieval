@@ -1,6 +1,6 @@
 package Rules;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class WeightsParser extends Anumbers {
 
@@ -8,7 +8,7 @@ public class WeightsParser extends Anumbers {
         super();
     }
 
-    public WeightsParser(LinkedList<Token> tokenList) {
+    public WeightsParser(ArrayList<Token> tokenList) {
         super(tokenList);
     }
 
@@ -22,9 +22,9 @@ public class WeightsParser extends Anumbers {
 
     @Override
     public Token Parse() {
-        int position = tokenList.getFirst().getPosition();
-        Token first = tokenList.remove();
-        Token second = tokenList.remove();
+        int position = tokenList.get(0).getPosition();
+        Token first = tokenList.remove(0);
+        Token second = tokenList.remove(1);
         if (isKg(second.getName())) {
             String number = ParseKg(first);
             Result.setName(number);

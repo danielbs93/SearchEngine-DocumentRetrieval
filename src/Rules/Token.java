@@ -94,6 +94,7 @@ public class Token {
         }
     }
 
+
     /**
      *
      * @return true if the token is legal fraction

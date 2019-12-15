@@ -1,20 +1,20 @@
 package Rules;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Created by: Daniel Ben-Simon & Eran Toutian
  * Parse every quote to 1 token
  */
 public class QuotesParser implements IParser {
-    private LinkedList<Token> tokenList;
+    private ArrayList<Token> tokenList;
 
     public QuotesParser() {
-        tokenList = new LinkedList<>();
+        tokenList = new ArrayList<>();
     }
 
 
-    public QuotesParser(LinkedList<Token> s_Array) {
+    public QuotesParser(ArrayList<Token> s_Array) {
 
         tokenList = s_Array;
     }
@@ -29,7 +29,7 @@ public class QuotesParser implements IParser {
         for (int i = 0; i < tokenList.size(); i++)
             quote.append(tokenList.get(i).getName()+ " ");
         Result.setName(quote.substring(0,quote.length()));
-        Result.setPosition(tokenList.getFirst().getPosition());
+        Result.setPosition(tokenList.get(0).getPosition());
         return Result;
     }
 }

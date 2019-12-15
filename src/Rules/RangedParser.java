@@ -1,5 +1,6 @@
 package Rules;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -13,7 +14,7 @@ public class RangedParser extends Anumbers {
         super();
     }
 
-    public RangedParser(LinkedList<Token> tokenList) {
+    public RangedParser(ArrayList<Token> tokenList) {
         super(tokenList);
     }
 
@@ -26,10 +27,10 @@ public class RangedParser extends Anumbers {
         //case: word-word-...-word or instead of word there is a number, no space between 'word' to '-'
         Token result = new Token();
         Token num;
-        int position = tokenList.getFirst().getPosition();
+        int position = tokenList.get(0).getPosition();
         if (tokenList.size() == 1) {
             String current;
-            String term = tokenList.remove().getName();
+            String term = tokenList.remove(0).getName();
             String[] arrOfStrings = term.split("-");
             for (int i = 0; i < arrOfStrings.length; i++) {
                 Token word = new Token(arrOfStrings[i]);

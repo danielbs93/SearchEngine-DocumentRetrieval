@@ -1,9 +1,8 @@
 package Rules;
 
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import edu.stanford.nlp.util.StringUtils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Created by: Daniel Ben-Simon & Eran Toutian
@@ -22,7 +21,7 @@ public class EntitiesParser extends Atext {
         super(doc);
     }
     @Override
-    public LinkedList<Token> Parse() {
+    public ArrayList<Token> Parse() {
 //        String modelFile = "Resources/english-left3words-distsim.tagger";
 //        MaxentTagger maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}),false);
         String tag = maxentTagger.tagString(this.Document.toString());

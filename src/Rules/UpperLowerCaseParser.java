@@ -1,7 +1,6 @@
 package Rules;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * Created by: Daniel Ben-Simon & Eran Toutian
@@ -30,7 +29,7 @@ public class UpperLowerCaseParser extends Atext {
     }
 
     @Override
-    public LinkedList<Token> Parse() {
+    public ArrayList<Token> Parse() {
         for (String current:s_Array) {
             if (!current.isEmpty() && FirstCharIsUpper(current)) {
                 if (current.contains(","))
@@ -39,7 +38,7 @@ public class UpperLowerCaseParser extends Atext {
                     current = current.substring(0,current.length() - 1);
                 if (current.contains("'s"))
                     current = current.replaceAll("'s","");
-                tokenList.addLast(new Token(current));
+                tokenList.add(new Token(current));
             }
         }
 //        removeDuplicates();

@@ -1,6 +1,6 @@
 package Rules;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Created by: Daniel Ben-Simon & Eran Toutian
@@ -9,7 +9,7 @@ import java.util.LinkedList;
 public class DatesParser extends Anumbers {
     public DatesParser() {
     }
-    public DatesParser(LinkedList<Token> tokenList) {
+    public DatesParser(ArrayList<Token> tokenList) {
         super(tokenList);
     }
     public DatesParser(Token token) {
@@ -21,7 +21,7 @@ public class DatesParser extends Anumbers {
         int num1=0,num2=0;
         String month = "";
         Token token = new Token();
-        token.setPosition(tokenList.getFirst().getPosition());
+        token.setPosition(tokenList.get(0).getPosition());
         if (tokenList.size() == 2){
             if (tokenList.get(0).isNumeric() && !tokenList.get(1).isNumeric()) { // 04 Jan
                 month = whichMonth(tokenList.get(1).getName());

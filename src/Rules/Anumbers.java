@@ -5,20 +5,20 @@ package Rules;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public abstract class Anumbers implements IParser{
-    protected LinkedList<Token> tokenList;
+    protected ArrayList<Token> tokenList;
     protected Token Result;
     protected DecimalFormat df3 = new DecimalFormat("#.###");
 
 
     public Anumbers() {
         Result = new Token();
-        tokenList = new LinkedList<>();
+        tokenList = new ArrayList<>();
         df3.setRoundingMode(RoundingMode.DOWN);
     }
-    public Anumbers(LinkedList<Token> tokenList) {
+    public Anumbers(ArrayList<Token> tokenList) {
         Result = new Token();
         this.tokenList = tokenList;
         df3.setRoundingMode(RoundingMode.DOWN);
@@ -26,14 +26,14 @@ public abstract class Anumbers implements IParser{
 
     public  Anumbers(Token token) {
         Result = new Token(token.getName());
-        tokenList = new LinkedList<>();
+        tokenList = new ArrayList<>();
         tokenList.add(token);
         df3.setRoundingMode(RoundingMode.DOWN);
     }
 
     public Anumbers(String[] s_array) {
         Result = new Token();
-        tokenList = new LinkedList<>();
+        tokenList = new ArrayList<>();
         df3.setRoundingMode(RoundingMode.DOWN);
         for (String s: s_array) {
             tokenList.add(new Token(s));

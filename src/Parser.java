@@ -122,7 +122,7 @@ public class Parser {
     private void parseByRules() {
         Doc = "";
         ArrayList<Token> afterThisRules = new ArrayList<>();
-        LinkedList<Token> SendingToken = new LinkedList<>();
+        ArrayList<Token> SendingToken = new ArrayList<>();
         IParser NumericParser;
         for (int i = 0; i < tokenList.size(); i++) {
             //all rules that have to parse only 1 token
@@ -347,8 +347,8 @@ public class Parser {
         tokenList = afterThisRules;
     }
 
-    private LinkedList<Token> AddToSendingToken(int start, int end) {
-        LinkedList<Token> result = new LinkedList<>();
+    private ArrayList<Token> AddToSendingToken(int start, int end) {
+        ArrayList<Token> result = new ArrayList<>();
         for (int i = start; i < end + 1; i++)
             result.add(tokenList.get(i));
         return result;
