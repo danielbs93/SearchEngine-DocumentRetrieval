@@ -23,7 +23,7 @@ public class UpperLowerCaseParser extends Atext {
         s_Array = new String[tList.size()];
         int i = 0;
         for (Token token: tList) {
-            s_Array[i] = token.getName();
+            s_Array[i] = token.getName() + "#" + token.getPosition();
             i++;
         }
     }
@@ -38,7 +38,8 @@ public class UpperLowerCaseParser extends Atext {
                     current = current.substring(0,current.length() - 1);
                 if (current.contains("'s"))
                     current = current.replaceAll("'s","");
-                tokenList.add(new Token(current));
+                int position = Integer.parseInt(current.substring(current.indexOf("#") + 1));
+                tokenList.add(new Token(current.substring(0,current.indexOf("#")),position));
             }
         }
 //        removeDuplicates();

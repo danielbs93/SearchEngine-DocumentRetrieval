@@ -47,7 +47,7 @@ public class PriceParser extends Anumbers {
         //cases: X dollars,Xbn/m dollars, $X million/billion
         else if (tokenList.size() == 2) {
             Token first = tokenList.remove(0);
-            Token second = tokenList.remove(1);
+            Token second = tokenList.remove(0);
             if (first.getName().contains(","))
                 first.setName(first.getName().replaceAll(",",""));
             if (first.isNumeric() && isDollar(second)) {// X dollars
@@ -86,8 +86,8 @@ public class PriceParser extends Anumbers {
         // cases: X fraction dollars, X bn/m/million/billion dollars
         else if (tokenList.size() == 3) {
             Token first = tokenList.remove(0);
-            Token second = tokenList.remove(1);
-            Token third = tokenList.remove(2);
+            Token second = tokenList.remove(0);
+            Token third = tokenList.remove(0);
             if (isDollar(third)) {
                 //X bn/m/million/billion
                 if (second.getName().equals("bn") || isBillion(second)) {
@@ -111,9 +111,9 @@ public class PriceParser extends Anumbers {
         //cases: X billion/million/trillion U.S. Dollars
         else {// token size is 4
             Token first = tokenList.remove(0);
-            Token second = tokenList.remove(1);
-            Token third = tokenList.remove(2);
-            Token fourth = tokenList.remove(3);
+            Token second = tokenList.remove(0);
+            Token third = tokenList.remove(0);
+            Token fourth = tokenList.remove(0);
             if (isDollar(fourth)) {
                 if (isMillion(second)) {
                     first = makeMillion(first);

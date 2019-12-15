@@ -24,7 +24,7 @@ public class WeightsParser extends Anumbers {
     public Token Parse() {
         int position = tokenList.get(0).getPosition();
         Token first = tokenList.remove(0);
-        Token second = tokenList.remove(1);
+        Token second = tokenList.remove(0);
         if (isKg(second.getName())) {
             String number = ParseKg(first);
             Result.setName(number);

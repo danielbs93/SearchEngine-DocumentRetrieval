@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class EntitiesParser extends Atext {
     private MaxentTagger maxentTagger;
-    public  EntitiesParser(String[] tokenlist, MaxentTagger maxentTagger) {
+    public  EntitiesParser(ArrayList<Token> tokenlist, MaxentTagger maxentTagger) {
         super(tokenlist);
         this.maxentTagger = maxentTagger;
     }
@@ -22,8 +22,7 @@ public class EntitiesParser extends Atext {
     }
     @Override
     public ArrayList<Token> Parse() {
-//        String modelFile = "Resources/english-left3words-distsim.tagger";
-//        MaxentTagger maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}),false);
+        ArrayList<Token> Result = new ArrayList<>();
         String tag = maxentTagger.tagString(this.Document.toString());
         String[] ar_tag = tag.split(" ");
         for (String t: ar_tag) {
@@ -31,15 +30,15 @@ public class EntitiesParser extends Atext {
                 t = t.substring(0,t.indexOf('_'));
                 if (t.contains("."))
                     t = t.substring(0,t.indexOf('.'));
-                tokenList.add(new Token(t));
+                Result.add(new Token(t));
             }
         }
         StringBuilder afterTagger = new StringBuilder();
-        for (Token token: tokenList) {
+        for (Token token: Result) {
             afterTagger.append(token.getName() + " ");
         }
         Document = new StringBuilder(afterTagger.toString());
-        return tokenList;
+        return Result;
     }
 
     public String getDocAsString() {

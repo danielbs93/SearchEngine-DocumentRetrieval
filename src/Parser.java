@@ -71,9 +71,8 @@ public class Parser {
      *
      */
     private void parseByEntities(MaxentTagger maxentTagger) {
-//        String[] tokenlist = (String[]) tokenList.toArray();
         String[] tokenlist = Doc.split(" ");
-        Atext es = new EntitiesParser(tokenlist, maxentTagger);
+        Atext es = new EntitiesParser(tokenList, maxentTagger);
         parserdList[1] = es.Parse();
         tokenList.removeAll(parserdList[1]);
         Doc = ((EntitiesParser) es).getDocAsString();

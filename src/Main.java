@@ -59,8 +59,8 @@ public class Main {
 //            System.out.println();
 //        }
 
-        String CorpusPath = "C:\\Users\\erant\\Desktop\\corpus";
-        String savingPath = "C:\\Users\\erant\\Desktop\\project\\postingFiles";
+        String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\Corpus";
+        String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\postingFiles";
         Indexer indexer = new Indexer(CorpusPath,savingPath,true);
         indexer.Index();
     }
