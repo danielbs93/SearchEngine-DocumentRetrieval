@@ -79,7 +79,7 @@ public class WeightsParser extends Anumbers {
     }
 
     private static boolean isGr(String unit) {
-        if (unit.equals("gram") || unit.equals("gr")
+        if (unit.equals("gram") || unit.equals("gr") || unit.equals("Grams") || unit.equals("grams")
                 || unit.equals("Gram") || unit.equals("Gr")
                 || unit.equals("g") || unit.equals("G"))
             return true;
@@ -87,7 +87,7 @@ public class WeightsParser extends Anumbers {
     }
 
     private static boolean isTon(String unit) {
-        if (unit.equals("Ton") || unit.equals("ton")
+        if (unit.equals("Ton") || unit.equals("ton") || unit.equals("tons") || unit.equals("Tons")
                 || unit.equals("T") || unit.equals("t"))
                 return true;
         return false;

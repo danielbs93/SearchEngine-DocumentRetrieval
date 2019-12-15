@@ -29,6 +29,8 @@ public class PercentageParser extends Anumbers {
             Token original = tokenList.remove();
             //taking the number part
             num = new Token(original.getName().substring(0,original.getName().indexOf('%')));
+            if (!num.isNumeric())
+                return num;
             p = new NumParser(num);
             Result = p.Parse();
             //adding "%" to the token after we parsed it

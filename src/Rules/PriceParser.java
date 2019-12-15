@@ -25,6 +25,8 @@ public class PriceParser extends Anumbers {
     public Token Parse() {
         //case 1: $X
         int position = tokenList.getFirst().getPosition();
+        tokenList.getFirst().setName(tokenList.getFirst().getName().replaceAll("O","0"));
+        tokenList.getFirst().setName(tokenList.getFirst().getName().replaceAll("o","0"));
         // $x-unit
         if (tokenList.size() == 1 && tokenList.getFirst().getName().contains("-")) {
             Token token = tokenList.removeFirst();
@@ -143,6 +145,8 @@ public class PriceParser extends Anumbers {
         Token result = new Token();
         String price = t.getName();
         price = price.replaceAll(",","");
+        price = price.replaceAll("O","0");
+        price = price.replaceAll("o","0");
         Double num = new Double(price);
         if (num < 1000000) {
             //case: 1.7254632

@@ -13,7 +13,7 @@ import java.util.LinkedList;
 public class Parser {
     //    private HashMap<String, LinkedList<Integer>> Dictionary;
     private String Doc;
-    private LinkedList<Token>[] parserdList;
+    private ArrayList<Token>[] parserdList;
     private ArrayList<Token> tokenList;
 //    private LinkedList<Token> tokenList;
     private boolean IsStemmerOn;
@@ -21,15 +21,15 @@ public class Parser {
     public Parser(String document, boolean steemer) {
         this.IsStemmerOn = steemer;
         Doc = document;
-        parserdList = new LinkedList[2];
+        parserdList = new ArrayList[2];
         for (int i = 0; i < 2; i++) {
-            parserdList[i] = new LinkedList<>();
+            parserdList[i] = new ArrayList<>();
         }
         tokenList = new ArrayList<>();
     }
 
 
-    public LinkedList<Token>[] Parse(MaxentTagger maxentTagger) {
+    public ArrayList<Token>[] Parse(MaxentTagger maxentTagger) {
         tokenList = toTokens(this.Doc);
         parseByRules();
         parseByStopWords();
@@ -295,9 +295,14 @@ public class Parser {
             }
             //1. $x
             else if (tokenList.get(i).getName().contains("$")){
-                if (tokenList.get(i).getName().contains("U.S."))
+                if (tokenList.get(i).getName().charAt(0) != '$')
                     tokenList.get(i).setName(tokenList.get(i).getName().substring(tokenList.get(i).getName().indexOf("$")));
-                SendingToken.add(tokenList.get(i));
+                if (isNextIndexAvailable(i) && tokenList.get(i+1).isNumeric()) {
+                    tokenList.get(i).setName(tokenList.get(i).getName() + tokenList.get(i+1).getName());
+                    SendingToken.add(tokenList.get(i++));
+                }
+                else
+                    SendingToken.add(tokenList.get(i));
                 //2. quantity unit
                 if (isNextIndexAvailable(i+1) && isQuantityUnit(tokenList.get(i+1))){
                     SendingToken.add(tokenList.get(i+1));
@@ -402,7 +407,7 @@ public class Parser {
                 StringBuilder tokenName = new StringBuilder();
                 if (!isPanctuationMark(word)) {
                     tokenName.append(word);
-                    while (FirstCharPanctuationMark(word)) {
+                    while (tokenName.length() > 0 && FirstCharPanctuationMark(word)) {
                         tokenName.deleteCharAt(0);
                     }
                     while (tokenName.length() != 0 && LastCharPanctuationMark(word)) {

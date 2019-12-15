@@ -202,7 +202,7 @@ public class Indexer {
             i++;
         }
         for (Integer delete:toDelete) {
-            tokens.remove(delete);
+            tokens.get(delete.intValue());
         }
     }
 
