@@ -37,10 +37,9 @@ public class PriceParser extends Anumbers {
         }
         if (tokenList.size() == 1) {
             String price = tokenList.get(0).getName().substring(1);
-//            Token number = new Token(price);
+            if (!tokenList.get(0).isNumeric())
+                return tokenList.get(0);
             Result = ParseMyPrice(new Token(price));
-//            Token dollars = new Token("Dollars");
-//            tokenList.addLast(new Token("Dollars"));
             Result.setPosition(position);
             return Result;
         }

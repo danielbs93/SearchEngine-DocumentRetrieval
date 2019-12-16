@@ -33,10 +33,18 @@ public class EntitiesParser extends Atext {
                 Result.add(new Token(t));
             }
         }
+
         StringBuilder afterTagger = new StringBuilder();
         for (Token token: Result) {
             afterTagger.append(token.getName() + " ");
+            for (Token forPosition:tokenList) {
+                if (token.equals(forPosition)) {
+                    token.addPosition(forPosition.getPosition());
+                    token.increaseTF();
+                }
+            }
         }
+        removeDuplicates(Result);
         Document = new StringBuilder(afterTagger.toString());
         return Result;
     }

@@ -30,7 +30,7 @@ public class Token {
     public Token(String m_Name) {
         this.m_Name = m_Name;
         tf = 1;
-        this.position=-1;
+        this.position=0;
         positions = new StringBuilder();
     }
 
@@ -75,8 +75,13 @@ public class Token {
     }
 
     public void addPosition(int position){
+        if (this.position < 0)
+            this.position = 0;
         int gap = Math.abs(position - this.position);
-        positions.append("," + gap);
+        if (positions == null || positions.length() == 0)
+            positions.append(gap);
+        else
+            positions.append("," + gap);
         this.position = gap;
     }
 

@@ -43,13 +43,13 @@ public abstract class Atext {
         return null;
     }
 
-
+    protected void removeDuplicates(ArrayList<Token> tokenlist) {
+        for (int i = 0; i < tokenlist.size(); i++) {
+            for (int j = i + 1; j < tokenlist.size(); j++) {
+                if (tokenlist.get(i).equals(tokenlist.get(j)))
+                    tokenlist.remove(j);
+            }
+        }
+    }
 }
-//    Protected void removeDuplicates() {
-//        for (int i = 0; i < tokenList.size(); i++) {
-//            for (int j = i + 1; j < tokenList.size(); j++) {
-//                if (tokenList.get(i).equals(tokenList.get(j)))
-//                    tokenList.remove(j);
-//            }
-//        }
-//    }
+
