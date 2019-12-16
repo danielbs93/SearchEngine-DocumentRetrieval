@@ -39,7 +39,7 @@ public class Indexer {
         isStemmer = stemmer;
         Dictionary = new ConcurrentHashMap<>();
         EntitiesDictionary = new ConcurrentHashMap<>();
-        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
         String modelFile = "Resources/english-left3words-distsim.tagger";
         maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}), false);
         TermID = new AtomicInteger(0);
@@ -89,6 +89,7 @@ public class Indexer {
         }
         this.threadPoolExecutor.shutdown();
         //sort dictionary before writing it to the disk//
+
     }
 
     /**
