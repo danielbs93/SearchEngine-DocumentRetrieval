@@ -20,7 +20,7 @@ public class EntitiesParser extends Atext {
     public EntitiesParser(String doc) {
         super(doc);
     }
-    @Override
+
     public ArrayList<Token> Parse() {
         ArrayList<Token> Result = new ArrayList<>();
         String tag = maxentTagger.tagString(this.Document.toString());

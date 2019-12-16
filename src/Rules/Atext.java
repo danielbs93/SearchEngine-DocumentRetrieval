@@ -39,10 +39,6 @@ public abstract class Atext {
         }
     }
 
-    public ArrayList<Token> Parse() {
-        return null;
-    }
-
     protected void removeDuplicates(ArrayList<Token> tokenlist) {
         for (int i = 0; i < tokenlist.size(); i++) {
             for (int j = i + 1; j < tokenlist.size(); j++) {

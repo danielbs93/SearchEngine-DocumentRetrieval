@@ -44,7 +44,7 @@ public class Parser {
      *
      */
     private void parseByUpperLower() {
-        Atext UpperLower = new UpperLowerCaseParser(tokenList);
+        UpperLowerCaseParser UpperLower = new UpperLowerCaseParser(tokenList);
         parserdList[1].addAll(UpperLower.Parse());
         tokenList.removeAll(parserdList[1]);
         parserdList[0].addAll(tokenList);
@@ -71,11 +71,11 @@ public class Parser {
      *
      */
     private void parseByEntities(MaxentTagger maxentTagger) {
-        String[] tokenlist = Doc.split(" ");
-        Atext es = new EntitiesParser(tokenList, maxentTagger);
+//        String[] tokenlist = Doc.split(" ");
+        EntitiesParser es = new EntitiesParser(tokenList, maxentTagger);
         parserdList[1] = es.Parse();
         tokenList.removeAll(parserdList[1]);
-        Doc = ((EntitiesParser) es).getDocAsString();
+        Doc = es.getDocAsString();
     }
 
     /**

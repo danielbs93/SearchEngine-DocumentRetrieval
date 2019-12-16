@@ -2,12 +2,9 @@ import Rules.Token;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.util.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
-import sun.awt.Mutex;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -39,7 +36,7 @@ public class Indexer {
         isStemmer = stemmer;
         Dictionary = new ConcurrentHashMap<>();
         EntitiesDictionary = new ConcurrentHashMap<>();
-        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
         String modelFile = "Resources/english-left3words-distsim.tagger";
         maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}), false);
         TermID = new AtomicInteger(0);
@@ -52,6 +49,12 @@ public class Indexer {
         for (File file : files) {
             File[] currentDirectory = file.listFiles();
             ReadFile fileReader = new ReadFile(currentDirectory[0].getAbsolutePath());
+//            Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {
+//                @Override
+//                public void uncaughtException(Thread t, Throwable e) {
+//
+//                }
+//            };
             threadPoolExecutor.execute(() -> {
                 while (!fileReader.isEmpty()) {
                     String Doc = fileReader.getNextDoc();
@@ -116,7 +119,7 @@ public class Indexer {
                 if (Dictionary.containsKey(inDictionary)) {//word is already exist in the dictionary
                     MutablePair<Integer, Integer> dfAndTermID = Dictionary.get(inDictionary);
                     dfAndTermID.setLeft(dfAndTermID.getLeft() + 1);
-                    WriteToPostingFile(token, dfAndTermID.getRight(), DocID.get(), token.getTf(), token.getPositions());
+                    WriteToPostingFile(dfAndTermID.getRight(), DocID.get(), token.getTf(), token.getPositions());
                 } else {
                     if (EntitiesDictionary.containsKey(token)) {
                         ArrayList<Integer> dfTermIDandDocID = EntitiesDictionary.get(token);
@@ -128,9 +131,9 @@ public class Indexer {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                            WriteToPostingFile(firstOccurrence, dfTermIDandDocID.get(1), dfTermIDandDocID.get(2), firstOccurrence.getTf(), firstOccurrence.getPositions());
+                            WriteToPostingFile(dfTermIDandDocID.get(1), dfTermIDandDocID.get(2), firstOccurrence.getTf(), firstOccurrence.getPositions());
                         }
-                        WriteToPostingFile(token, dfTermIDandDocID.get(1), DocID.get(), token.getTf(), token.getPositions());
+                        WriteToPostingFile(dfTermIDandDocID.get(1), DocID.get(), token.getTf(), token.getPositions());
                         dfTermIDandDocID.set(0, dfTermIDandDocID.get(0) + 1);
                     } else {
                         ArrayList<Integer> arr = new ArrayList<>(3);
@@ -168,7 +171,7 @@ public class Indexer {
                 entityExist = true;
                 ArrayList<Integer> dfTermIDandDocID = EntitiesDictionary.get(token);
                 if (dfTermIDandDocID.get(0) > 1) {//we met only this term with upper char until now, df > 1
-                    WriteToPostingFile(term, dfTermIDandDocID.get(1), DocID.get(), term.getTf(), term.getPositions());
+                    WriteToPostingFile(dfTermIDandDocID.get(1), DocID.get(), term.getTf(), term.getPositions());
                     dfTermIDandDocID.set(0, dfTermIDandDocID.get(0) + 1);
                     Dictionary.put(term, new MutablePair<>(dfTermIDandDocID.get(0), dfTermIDandDocID.get(1)));
                 }
@@ -181,8 +184,8 @@ public class Indexer {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    WriteToPostingFile(token, dfTermIDandDocID.get(1), dfTermIDandDocID.get(2), token.getTf(), token.getPositions());
-                    WriteToPostingFile(token, dfTermIDandDocID.get(1), DocID.get(), term.getTf(), term.getPositions());
+                    WriteToPostingFile(dfTermIDandDocID.get(1), dfTermIDandDocID.get(2), token.getTf(), token.getPositions());
+                    WriteToPostingFile(dfTermIDandDocID.get(1), DocID.get(), term.getTf(), term.getPositions());
                     Dictionary.put(term, new MutablePair<>(2, dfTermIDandDocID.get(1)));
                 }
                 EntitiesDictionary.entrySet().remove(token);
@@ -190,13 +193,13 @@ public class Indexer {
         }
         if (!entityExist) {
             if (isNew) {
-                WriteToPostingFile(term, TermID.get(), DocID.get(), term.getTf(), term.getPositions());
+                WriteToPostingFile(TermID.get(), DocID.get(), term.getTf(), term.getPositions());
                 Dictionary.put(term, new MutablePair<>(1, TermID.get()));
             } else {
                 MutablePair<Integer, Integer> dfANDtermID = Dictionary.get(term);
                 int currentDF = dfANDtermID.getLeft() + 1;
                 dfANDtermID.setLeft(currentDF);
-                WriteToPostingFile(term, dfANDtermID.getRight(), DocID.get(), term.getTf(), term.getPositions());
+                WriteToPostingFile(dfANDtermID.getRight(), DocID.get(), term.getTf(), term.getPositions());
             }
         }
     }
@@ -293,14 +296,14 @@ public class Indexer {
     }
 
     /**
-     * @param token
+     *
      * @param termID
      * @param docID
      * @param tf
      * @param positions
      */
     //writing
-    private synchronized void WriteToPostingFile(Token token, int termID, int docID, int tf, String positions) {
+    private synchronized void WriteToPostingFile(int termID, int docID, int tf, String positions) {
         File file = new File(SavingPostingFilePath + "\\" + termID + ".txt");
         try {
             boolean termExistinSameDocID = false;
@@ -311,27 +314,29 @@ public class Indexer {
                 String str;
                 while ((str = bufferReader.readLine()) != null) {
                     String[] docIDTfPositions = str.split(";");
-                    if (docID == Integer.parseInt(docIDTfPositions[1])) {
-                        termExistinSameDocID = true;
-                        docIDTfPositions[2] = String.valueOf(Integer.parseInt(docIDTfPositions[2]) + tf);
-                        String[] TermPosition = docIDTfPositions[3].split(",");
+                    if (docID == Integer.parseInt(docIDTfPositions[0]) && docIDTfPositions.length > 2) {
+                        docIDTfPositions[1] = String.valueOf(Integer.parseInt(docIDTfPositions[2]) + tf);
+                        String[] TermPosition = docIDTfPositions[2].split(",");
                         StringBuilder termPositions = new StringBuilder();
                         String[] arrPositions = positions.split(",");
-                        int i = 0;
-                        int arrPos = Integer.parseInt(arrPositions[0]);
-                        for (int j = 0; j < TermPosition.length; j++) {
-                            int curPosition = Integer.valueOf(TermPosition[j]);
-                            while (i < arrPositions.length && curPosition > arrPos) {
-                                termPositions.append(arrPos + ",");
-                                curPosition -= arrPos;
-                                i++;
-                                if (i < arrPositions.length)
-                                    arrPos = Integer.parseInt(arrPositions[i]);
+                        if (arrPositions.length > 0 && !arrPositions[0].isEmpty()) {
+                            termExistinSameDocID = true;
+                            int i = 0;
+                            int arrPos = Integer.parseInt(arrPositions[0]);
+                            for (int j = 0; j < TermPosition.length; j++) {
+                                int curPosition = Integer.valueOf(TermPosition[j]);
+                                while (i < arrPositions.length && curPosition > arrPos) {
+                                    termPositions.append(arrPos + ",");
+                                    curPosition -= arrPos;
+                                    i++;
+                                    if (i < arrPositions.length)
+                                        arrPos = Integer.parseInt(arrPositions[i]);
+                                }
+                                termPositions.append(curPosition + ",");
+                                arrPos -= curPosition;
                             }
-                            termPositions.append(curPosition + ",");
-                            arrPos -= curPosition;
+                            str = docIDTfPositions[0] + ";" + docIDTfPositions[1] + ";" + termPositions.toString();
                         }
-                        str = docIDTfPositions[0] + ";" + docIDTfPositions[1] + ";" + docIDTfPositions[2] + ";" + termPositions.toString();
                     }
                     termInfo.append(str + "\n");
                     //termInfo.append(System.lineSeparator());
@@ -350,7 +355,7 @@ public class Indexer {
                 fileWriter.write(termInfo.toString());
             } else
                 fileWriter = new FileWriter(file, true);
-            fileWriter.write(token.getName() + ";" + docID + ";" + tf + ";" + positions + "\n");
+            fileWriter.write(docID + ";" + tf + ";" + positions + "\n");
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

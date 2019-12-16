@@ -28,7 +28,7 @@ public class UpperLowerCaseParser extends Atext {
         }
     }
 
-    @Override
+
     public ArrayList<Token> Parse() {
         for (String current:s_Array) {
             if (!current.isEmpty() && FirstCharIsUpper(current)) {
