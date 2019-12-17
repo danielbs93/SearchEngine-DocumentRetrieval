@@ -12,7 +12,7 @@ import java.util.LinkedList;
  */
 public class Parser {
     //    private HashMap<String, LinkedList<Integer>> Dictionary;
-    private String Doc;
+    private StringBuilder Doc;
     private ArrayList<Token>[] parserdList;
     private ArrayList<Token> tokenList;
 //    private LinkedList<Token> tokenList;
@@ -20,7 +20,7 @@ public class Parser {
 
     public Parser(String document, boolean steemer) {
         this.IsStemmerOn = steemer;
-        Doc = document;
+        Doc = new StringBuilder(document);
         parserdList = new ArrayList[2];
         for (int i = 0; i < 2; i++) {
             parserdList[i] = new ArrayList<>();
@@ -30,11 +30,11 @@ public class Parser {
 
 
     public ArrayList<Token>[] Parse(MaxentTagger maxentTagger) {
-        tokenList = toTokens(this.Doc);
+        tokenList = toTokens(this.Doc.toString());
         parseByRules();
         parseByStopWords();
         parseByStemmer();
-        parseByEntities(maxentTagger);
+        //parseByEntities(maxentTagger);
         parseByUpperLower();
         return parserdList;
     }
@@ -64,19 +64,19 @@ public class Parser {
             newDoc.append(token.getName() + " ");
             stemmer.clear();
         }
-        Doc = newDoc.toString();
+        Doc =  newDoc;
     }
 
     /**
      *
-     */
-    private void parseByEntities(MaxentTagger maxentTagger) {
-//        String[] tokenlist = Doc.split(" ");
-        EntitiesParser es = new EntitiesParser(tokenList, maxentTagger);
-        parserdList[1] = es.Parse();
-        tokenList.removeAll(parserdList[1]);
-        Doc = es.getDocAsString();
-    }
+//     */
+//    private void parseByEntities(MaxentTagger maxentTagger) {
+////        String[] tokenlist = Doc.split(" ");
+//        EntitiesParser es = new EntitiesParser(tokenList, maxentTagger);
+//        parserdList[1] = es.Parse();
+//        tokenList.removeAll(parserdList[1]);
+//        Doc = es.getDocAsString();
+//    }
 
     /**
      *
@@ -101,7 +101,7 @@ public class Parser {
 
                 if (!StopWords.contains(stopWordUpperCase)) {
                     afterStopWords.add(token);
-                    Doc += token.getName() + " ";
+                    Doc.append(token.getName() + " ");
                 }
             }
             tokenList = afterStopWords;
@@ -119,7 +119,7 @@ public class Parser {
      *
      */
     private void parseByRules() {
-        Doc = "";
+        Doc = new StringBuilder();
         ArrayList<Token> afterThisRules = new ArrayList<>();
         ArrayList<Token> SendingToken = new ArrayList<>();
         IParser NumericParser;
@@ -338,7 +338,7 @@ public class Parser {
             //Token is a word
             else {
                 afterThisRules.add(tokenList.get(i));
-                Doc += tokenList.get(i).getName() + " ";
+                Doc.append(tokenList.get(i).getName() + " ");
             }
             if (!SendingToken.isEmpty())
                 SendingToken.clear();

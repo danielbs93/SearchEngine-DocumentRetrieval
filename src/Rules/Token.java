@@ -93,6 +93,17 @@ public class Token {
     public boolean isNumeric() {
         try {
             Double.parseDouble(m_Name);
+            int c=0;
+            for (int i = 0; i <m_Name.length() ; i++) {
+                if(m_Name.charAt(i)=='.') {
+                    c++;
+                    if (c > 1)
+                        return false;
+                }
+                if(m_Name.charAt(i)!= '.' || m_Name.charAt(i)> 9 || m_Name.charAt(i)< 0 )
+                    return false;
+
+            }
             return true;
         } catch(NumberFormatException e){
             return false;

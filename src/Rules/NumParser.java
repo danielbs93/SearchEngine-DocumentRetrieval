@@ -25,14 +25,18 @@ public class NumParser extends Anumbers {
         Token token = new Token();
         int position = tokenList.get(0).getPosition();
         double num ;
-        if (tokenList.size() == 1){
-            num = Double.parseDouble(tokenList.get(0).getName());
-            token = getValue(num);
-            tokenList.clear();
-            //tokenList.addFirst(token);
-            Result = new Token(token);
-            Result.setPosition(position);
-            return Result;
+        if (tokenList.size() == 1) {
+            if (!tokenList.get(0).isNumeric())
+                return tokenList.get(0);
+            try {
+                num = Double.parseDouble(tokenList.get(0).getName());
+                token = getValue(num);
+                tokenList.clear();
+                //tokenList.addFirst(token);
+                Result = new Token(token);
+                Result.setPosition(position);
+                return Result;
+            }catch (NumberFormatException e){}
         }
         else if (tokenList.size() == 2){
             Token value = tokenList.get(1);

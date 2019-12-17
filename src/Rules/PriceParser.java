@@ -71,10 +71,10 @@ public class PriceParser extends Anumbers {
                 return Result;
             } else if (first.getName().contains("$")) {// $X billion/million
                 Token t_number = new Token(first.getName().substring(1));
-                if (isMillion(second)) {
+                if (t_number.isNumeric() && isMillion(second)) {
                     t_number = makeMillion(t_number);
                     Result = ParseMyPrice(t_number);
-                } else if (isBillion(second)) {
+                } else if (t_number.isNumeric() && isBillion(second)) {
                     Result = ParseBillion(t_number);
                 }
 //                tokenList.add(new Token("Dollars"));

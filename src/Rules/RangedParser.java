@@ -36,23 +36,24 @@ public class RangedParser extends Anumbers {
                 Token word = new Token(arrOfStrings[i]);
                 if (word.isNumeric()) {
                     NumParser p = new NumParser(word);
-                    num = p.Parse();
-                    current = num.getName();
-                    if (i > 0)
-                        result.setName(result.getName() + current);
-                    else
-                        result.setName(current);
-                }
-                else {
-                    current = result.getName();
-                    if (i > 0)
-                        result.setName(current + word.getName());
-                    else
-                        result.setName(word.getName());
+                    if (p != null) {
+                        num = p.Parse();
+                        current = num.getName();
+                        if (i > 0)
+                            result.setName(result.getName() + current);
+                        else
+                            result.setName(current);
+                    } else {
+                        current = result.getName();
+                        if (i > 0)
+                            result.setName(current + word.getName());
+                        else
+                            result.setName(word.getName());
 
+                    }
+                    if (i < arrOfStrings.length - 1)
+                        result.setName(result.getName() + "-");
                 }
-                if (i < arrOfStrings.length - 1)
-                    result.setName(result.getName() + "-");
             }
             tokenList.clear();
 //            tokenList.add(result);
@@ -66,9 +67,13 @@ public class RangedParser extends Anumbers {
             Token fourth = tokenList.get(3);
             NumParser p = new NumParser(second);
             num = p.Parse();
+            if(!num.isNumeric())
+                return num;
             result = new Token(num.getName());
             p = new NumParser(fourth);
             num = p.Parse();
+            if(!num.isNumeric())
+                return num;
             String current = result.getName();
             result.setName(current + "-" + num.getName());
             tokenList.clear();
