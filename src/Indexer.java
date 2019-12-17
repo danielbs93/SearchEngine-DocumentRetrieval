@@ -1,14 +1,15 @@
+import Rules.EntitiesParser;
 import Rules.Token;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.util.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -91,7 +92,57 @@ public class Indexer {
             FileID.incrementAndGet();
         }
         this.threadPoolExecutor.shutdown();
-        //sort dictionary before writing it to the disk//
+        try {
+            threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //sort dictionary before writing it to the disk after merging dictionary and entities//
+        for (Token entity: EntitiesDictionary.keySet()) {
+            if (entity != null && EntitiesDictionary.get(entity).get(0) > 1) {
+                entity.setName(entity.getName().toUpperCase());
+                Dictionary.put(entity, new MutablePair<>(EntitiesDictionary.get(entity).get(0),EntitiesDictionary.get(entity).get(1)));
+            }
+        }
+        Comparator<Token> comparator = new Comparator<Token>() {
+            @Override
+            public int compare(Token o1, Token o2) {
+                if (o1.getName().compareTo(o2.getName()) > 0)
+                    return 1;
+                else
+                    return -1;
+            }
+        };
+
+        SortedSet<Token> sortedDictionary = new TreeSet<>(comparator);
+        sortedDictionary.addAll(Dictionary.keySet());
+        WriteDictionaryToFile();
+
+    }
+
+    /**
+     * Writing the sorted dictionary into a file
+     */
+    private void WriteDictionaryToFile() {
+        File file = new File(SavingPostingFilePath + "\\Dictionary.txt");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            FileWriter fileWriter = new FileWriter(file,true);
+            for (Token tuple: Dictionary.keySet()) {
+                StringBuilder data = new StringBuilder();
+                MutablePair<Integer,Integer> dfAndTermID = Dictionary.get(tuple);
+                data.append(tuple + ";" + dfAndTermID.getLeft() + ";" + dfAndTermID.getRight());
+                fileWriter.write(data.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -125,12 +176,6 @@ public class Indexer {
                         ArrayList<Integer> dfTermIDandDocID = EntitiesDictionary.get(token);
                         if (dfTermIDandDocID.get(0) == 1) {//df is 1 so we will write it to posting file
                             Token firstOccurrence = getEntity(token);
-                            if (firstOccurrence == null)
-                                try {
-                                    throw new Exception("null entity line 124");
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
                             WriteToPostingFile(dfTermIDandDocID.get(1), dfTermIDandDocID.get(2), firstOccurrence.getTf(), firstOccurrence.getPositions());
                         }
                         WriteToPostingFile(dfTermIDandDocID.get(1), DocID.get(), token.getTf(), token.getPositions());
@@ -178,12 +223,6 @@ public class Indexer {
                 //df = 1 --> concat to posting file the upper term, writing the lower term too and updating df in the dictionary
                 else {
                     token = getEntity(token);
-                    if (token == null)
-                        try {
-                            throw new Exception("token entity is null line 169");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                     WriteToPostingFile(dfTermIDandDocID.get(1), dfTermIDandDocID.get(2), token.getTf(), token.getPositions());
                     WriteToPostingFile(dfTermIDandDocID.get(1), DocID.get(), term.getTf(), term.getPositions());
                     Dictionary.put(term, new MutablePair<>(2, dfTermIDandDocID.get(1)));
@@ -265,7 +304,7 @@ public class Indexer {
         }
         try {
             FileWriter fileWriter = new FileWriter(file, true);
-            fileWriter.write(fileNo + "\n");
+            fileWriter.write(fileNo);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -289,7 +328,7 @@ public class Indexer {
 
         try {
             FileWriter fileWriter = new FileWriter(file, true);
-            fileWriter.write(docName + ";" + fileID + ";" + maxTF + ";" + uniqueWords + "\n");
+            fileWriter.write(docName + ";" + fileID + ";" + maxTF + ";" + uniqueWords);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -315,7 +354,7 @@ public class Indexer {
                 while ((str = bufferReader.readLine()) != null) {
                     String[] docIDTfPositions = str.split(";");
                     if (docID == Integer.parseInt(docIDTfPositions[0]) && docIDTfPositions.length > 2) {
-                        docIDTfPositions[1] = String.valueOf(Integer.parseInt(docIDTfPositions[2]) + tf);
+                        docIDTfPositions[1] = String.valueOf(Integer.parseInt(docIDTfPositions[1]) + tf);
                         String[] TermPosition = docIDTfPositions[2].split(",");
                         StringBuilder termPositions = new StringBuilder();
                         String[] arrPositions = positions.split(",");

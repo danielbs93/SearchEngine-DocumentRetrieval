@@ -23,7 +23,12 @@ public class EntitiesParser extends Atext {
 
     public ArrayList<Token> Parse() {
         ArrayList<Token> Result = new ArrayList<>();
-        String tag = maxentTagger.tagString(this.Document.toString());
+        String tag = "";
+        try {
+            tag = maxentTagger.tagString(this.Document.toString());
+        }catch (Exception e) {
+            //nothing
+        }
         String[] ar_tag = tag.split(" ");
         for (String t: ar_tag) {
             if (t.contains("NNP")) {
