@@ -4,11 +4,10 @@ import edu.stanford.nlp.util.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -19,7 +18,7 @@ public class Indexer {
     private String CorpusPath;
     private String SavingPostingFilePath;
     private boolean isStemmer;
-    private ThreadPoolExecutor threadPoolExecutor;
+//    private ThreadPoolExecutor threadPoolExecutor;
     private ConcurrentHashMap<Token, MutablePair<Integer, Integer>> Dictionary;//term-#doc-termID
     //    private HashMap<Token, MutablePair<Integer, Integer>> EntitiesDictionary;
     private ConcurrentHashMap<Token, ArrayList<Integer>> EntitiesDictionary;
@@ -36,7 +35,7 @@ public class Indexer {
         isStemmer = stemmer;
         Dictionary = new ConcurrentHashMap<>();
         EntitiesDictionary = new ConcurrentHashMap<>();
-        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
+//        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
         String modelFile = "Resources/english-left3words-distsim.tagger";
         maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}), false);
         TermID = new AtomicInteger(0);
@@ -49,7 +48,7 @@ public class Indexer {
         for (File file : files) {
             File[] currentDirectory = file.listFiles();
             ReadFile fileReader = new ReadFile(currentDirectory[0].getAbsolutePath());
-            threadPoolExecutor.execute(() -> {
+//            threadPoolExecutor.execute(() -> {
                 StringBuilder fileData = new StringBuilder();
                 while (!fileReader.isEmpty()) {
                     String Doc = fileReader.getNextDoc();
@@ -83,14 +82,14 @@ public class Indexer {
                 WriteToFileIDLexicon(fileReader.getFileNO());
                 WritePostingFile(fileData, FileID.get());
                 FileID.incrementAndGet();
-            });
+//            });
         }
-        this.threadPoolExecutor.shutdown();
-        try {
-            threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        this.threadPoolExecutor.shutdown();
+//        try {
+//            threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         //sort dictionary before writing it to the disk after merging dictionary and entities//
 //        for (Token entity : EntitiesDictionary.keySet()) {
 //            if (entity != null && EntitiesDictionary.get(entity) != null
@@ -155,7 +154,7 @@ public class Indexer {
      * @param fileData
      * @return true if its a new term
      */
-    private synchronized boolean UpdateEntitiesInfo(ArrayList<Token> tokens, int[] maxTFandUniqueTerms, StringBuilder fileData) {
+    private boolean UpdateEntitiesInfo(ArrayList<Token> tokens, int[] maxTFandUniqueTerms, StringBuilder fileData) {
         for (Token token : tokens) {
             if (token != null) {
                 CountAndRemove(tokens, token);
@@ -203,7 +202,7 @@ public class Indexer {
      * @param isNew    - if its a new term to be inserted to the dictionary
      * @param fileData
      */
-    private synchronized void UpdateTermInfo(ArrayList<Token> tokens, Token term, boolean isNew, StringBuilder fileData) {
+    private void UpdateTermInfo(ArrayList<Token> tokens, Token term, boolean isNew, StringBuilder fileData) {
         CountAndRemove(tokens, term);
         //checking if term is already exist in entities dictionary//
         boolean entityExist = false;
@@ -248,7 +247,7 @@ public class Indexer {
         }
     }
 
-    private synchronized Token getEntity(Token token) {
+    private Token getEntity(Token token) {
         for (Token firstOccurrence : EntitiesDictionary.keySet()) {
             if (token.equals(firstOccurrence))
                 return firstOccurrence;
