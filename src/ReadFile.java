@@ -24,6 +24,8 @@ public class ReadFile {
             FileReader fileReader = new FileReader(curFile);
             Bfr = new BufferedReader(fileReader);
             CreateDocumentsFiles();
+            Bfr.close();
+            fileReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

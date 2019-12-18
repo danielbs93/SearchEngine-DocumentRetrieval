@@ -59,11 +59,11 @@ public class SearchEngineGUI<Private> {
                 AtomicInteger FileID = new AtomicInteger(0);
                 ConcurrentHashMap<Token, MutablePair<Integer, Integer>> Dictionary = new ConcurrentHashMap<>();
                 ConcurrentHashMap<Token, ArrayList<Integer>> EntitiesDictionary = new ConcurrentHashMap<>();
-                Indexer indexer = new Indexer(Dictionary,EntitiesDictionary,CorpusPath,savingPath,true,DocID,TermID,FileID);
+                //Indexer indexer = new Indexer(Dictionary,EntitiesDictionary,CorpusPath,savingPath,true,DocID,TermID,FileID);
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                indexer.Index();
-                Indexer indexer2 = new Indexer(Dictionary,EntitiesDictionary,CorpusPath2,savingPath2,true,DocID,TermID,FileID);
-                indexer2.Index();
+//                indexer.Index();
+//                Indexer indexer2 = new Indexer(Dictionary,EntitiesDictionary,CorpusPath2,savingPath2,true,DocID,TermID,FileID);
+//                indexer2.Index();
                 Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
                 System.out.println(timestamp2.getTime()-timestamp.getTime());
             }
