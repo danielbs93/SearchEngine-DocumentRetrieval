@@ -11,11 +11,11 @@ import java.util.LinkedList;
  * Created by Daniel Ben-Simon & Eran Toutian
  */
 public class Parser {
-    //    private HashMap<String, LinkedList<Integer>> Dictionary;
     private StringBuilder Doc;
     private ArrayList<Token>[] parserdList;
     private ArrayList<Token> tokenList;
-//    private LinkedList<Token> tokenList;
+    private ArrayList<Token> afterThisRules;
+    private ArrayList<Token> SendingToken;
     private boolean IsStemmerOn;
 
     public Parser(String document, boolean steemer) {
@@ -26,6 +26,8 @@ public class Parser {
             parserdList[i] = new ArrayList<>();
         }
         tokenList = new ArrayList<>();
+        afterThisRules = new ArrayList<>();
+        SendingToken = new ArrayList<>();
     }
 
 
@@ -34,7 +36,7 @@ public class Parser {
         parseByRules();
         parseByStopWords();
         parseByStemmer();
-        //parseByEntities(maxentTagger);
+//        parseByEntities(maxentTagger);
         parseByUpperLower();
         return parserdList;
     }
@@ -120,9 +122,9 @@ public class Parser {
      */
     private void parseByRules() {
         Doc = new StringBuilder();
-        ArrayList<Token> afterThisRules = new ArrayList<>();
-        ArrayList<Token> SendingToken = new ArrayList<>();
         IParser NumericParser;
+        afterThisRules.clear();
+        SendingToken.clear();
         for (int i = 0; i < tokenList.size(); i++) {
             //all rules that have to parse only 1 token
             if (tokenList.get(i).getName().contains("%")) {

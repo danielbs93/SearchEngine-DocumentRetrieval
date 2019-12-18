@@ -54,8 +54,8 @@ public class EntitiesParser extends Atext {
         return Result;
     }
 
-    public String getDocAsString() {
-        return Document.toString();
+    public StringBuilder getDocAsString() {
+        return Document;
     }
 
 }

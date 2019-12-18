@@ -1,8 +1,15 @@
+import Rules.Token;
+import org.apache.commons.lang3.tuple.MutablePair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SearchEngineGUI<Private> {
 
@@ -31,18 +38,34 @@ public class SearchEngineGUI<Private> {
         uploadDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (textField1.getText().length() == 0 || textField2.getText().length()==0)
-                    JOptionPane.showMessageDialog(null,"Please enter path");
-                else{
-                    CorpusPath = textField1.getText();
-                    PostingPath = textField2.getText();
-                    Stemmer = checkBox1.isSelected();
-                    Indexer indexer = new Indexer(CorpusPath,PostingPath,Stemmer);
-                    indexer.Index();
-//                    JProgressBar jpb = new JProgressBar(0,100);
-//                    jpb.setValue(0);
-//                    jpb.setStringPainted(true);
-                }
+//                if (textField1.getText().length() == 0 || textField2.getText().length()==0)
+//                    JOptionPane.showMessageDialog(null,"Please enter path");
+//                else{
+//                    CorpusPath = textField1.getText();
+//                    PostingPath = textField2.getText();
+//                    Stemmer = checkBox1.isSelected();
+////                    Indexer indexer = new Indexer(CorpusPath,PostingPath,Stemmer);
+////                    indexer.Index();
+////                    JProgressBar jpb = new JProgressBar(0,100);
+////                    jpb.setValue(0);
+////                    jpb.setStringPainted(true);
+//                }
+                String CorpusPath = "C:\\Users\\erant\\Desktop\\project\\corpus";
+                String CorpusPath2 = "C:\\Users\\erant\\Desktop\\corpus";
+                String savingPath = "C:\\Users\\erant\\Desktop\\project\\postingFiles";
+                String savingPath2 = "C:\\Users\\erant\\Desktop\\project\\postingFiles2";
+                AtomicInteger DocID = new AtomicInteger(0);
+                AtomicInteger TermID = new AtomicInteger(0);
+                AtomicInteger FileID = new AtomicInteger(0);
+                ConcurrentHashMap<Token, MutablePair<Integer, Integer>> Dictionary = new ConcurrentHashMap<>();
+                ConcurrentHashMap<Token, ArrayList<Integer>> EntitiesDictionary = new ConcurrentHashMap<>();
+                Indexer indexer = new Indexer(Dictionary,EntitiesDictionary,CorpusPath,savingPath,true,DocID,TermID,FileID);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                indexer.Index();
+                Indexer indexer2 = new Indexer(Dictionary,EntitiesDictionary,CorpusPath2,savingPath2,true,DocID,TermID,FileID);
+                indexer2.Index();
+                Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
+                System.out.println(timestamp2.getTime()-timestamp.getTime());
             }
         });
         /**
