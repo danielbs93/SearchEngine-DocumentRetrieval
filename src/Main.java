@@ -59,9 +59,13 @@ public class Main {
 //            System.out.println();
 //        }
 
+        long startTime = System.currentTimeMillis();
         String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\corpus";
         String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\postingFiles";
         Manager mng = new Manager(CorpusPath,savingPath,true);
-        mng.run();
+        //mng.run();
+        mng.SortAndCreate();
+        long endTime = System.currentTimeMillis();
+        System.out.println(endTime - startTime);
     }
 }

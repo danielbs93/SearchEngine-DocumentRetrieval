@@ -29,9 +29,11 @@ public class Indexer {
     private AtomicInteger TermID;
     private AtomicInteger DocID;
     private AtomicInteger FileID;
+    private int fromWhereToRead;
+    private Comparator<String[]> myComparator;
 
     public Indexer(String corpusPath, String savingPostingFilePath
-            , boolean stemmer, int poolSize, int numOfFilesToRead
+            , boolean stemmer, int poolSize,int from, int numOfFilesToRead
             , ConcurrentHashMap<Token, MutablePair<Integer, Integer>> dictionary
             , ConcurrentHashMap<Token, ArrayList<Integer>> entitiesDictionary) {
         CorpusPath = corpusPath;
@@ -46,12 +48,20 @@ public class Indexer {
         DocID = new AtomicInteger(0);
         FileID = new AtomicInteger(0);
         NumOfFilesToRead = numOfFilesToRead;
+        fromWhereToRead = from;
+        myComparator = (o1, o2) -> {
+            int termIdComparing = Integer.compare(Integer.valueOf(o1[0]),Integer.valueOf(o2[0]));
+            if (termIdComparing != 0)
+                return termIdComparing;
+            int docIdComparing = Integer.compare(Integer.valueOf(o1[1]),Integer.valueOf(o2[1]));
+            return docIdComparing;
+        };
     }
 
     public void Index() {
         isActive = true;
         File[] files = (new File(CorpusPath)).listFiles();
-        for (int i = 0; i < NumOfFilesToRead; i++) {
+        for (int i = fromWhereToRead; i < NumOfFilesToRead; i++) {
             File[] currentDirectory = files[i].listFiles();
             ReadFile fileReader = new ReadFile(currentDirectory[0].getAbsolutePath());
             threadPoolExecutor.execute(() -> {
@@ -83,7 +93,7 @@ public class Indexer {
                     }
                     if (UpdateEntitiesInfo(tokenList[1], maxTFandUniqueTerms, docData))
                         TermID.incrementAndGet();
-//                    mergeTerms(docData);
+                    mergeTerms(docData);
                     docLexiconData.append(DocNo + ";" + FileID.get() + ";" + maxTFandUniqueTerms[0] + ";" + maxTFandUniqueTerms[1] + "\n");
 //                    WriteToDocumentIDLexicon(DocNo, FileID.get(), maxTFandUniqueTerms[0], maxTFandUniqueTerms[1]);
                     DocID.incrementAndGet();
@@ -107,13 +117,13 @@ public class Indexer {
             e.printStackTrace();
         }
         while (!threadPoolExecutor.isTerminated());
-        for (int i = 0; i < NumOfFilesToRead; i++) {
-            try {
-                FileUtils.deleteDirectory(files[i]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        for (int i = 0; i < NumOfFilesToRead; i++) {
+//            try {
+//                FileUtils.deleteDirectory(files[i]);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
         isActive = false;
         //sort dictionary before writing it to the disk after merging dictionary and entities//
 //        for (Token entity : EntitiesDictionary.keySet()) {
@@ -428,9 +438,23 @@ public class Indexer {
     /**
      * Merging terms and upper lower case
      *
-     * @param data
      */
-    private void mergeTerms(ArrayList<String[]> data) {
+    private void mergeTerms(StringBuilder sb) {
+        ArrayList<String[]> data = new ArrayList<>();
+        String[] string = sb.toString().split("\n");
+        for (String s:string) {
+            int termid = Integer.valueOf(s.indexOf(";"));
+            int docid = Integer.valueOf(s.indexOf(";",termid + 1));
+            int tf = Integer.valueOf(s.indexOf(";",docid + 1));
+            String[] term = new String[4];
+            term[0] = s.substring(0,termid);
+            term[1] = s.substring(termid + 1,docid);
+            term[2] = s.substring(docid+1,tf);
+            term[3] = s.substring(tf+1);
+            data.add(term);
+        }
+
+
         int capacity = data.size();
         for (int i = 0; i < capacity; ) {
             String[] currentTerm = data.get(i);
@@ -462,6 +486,12 @@ public class Indexer {
             }
             i++;
         }
+        Collections.sort(data,myComparator);
+        sb.setLength(0);
+        for (String[] term: data) {
+            sb.append(term[0] + ";" + term[1] + ";" + term[2] + ";" + term[3] + "\n");
+        }
+
     }
 
     private void Write(StringBuilder data, int fileId) {
