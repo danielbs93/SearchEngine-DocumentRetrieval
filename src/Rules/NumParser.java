@@ -6,7 +6,6 @@ import java.util.ArrayList;
  * Created by: Daniel Ben-Simon & Eran Toutian
  */
 public class NumParser extends Anumbers {
-//    private DecimalFormat df3 = new DecimalFormat("#.###");
 
     public NumParser() {
         super();
@@ -88,12 +87,12 @@ public class NumParser extends Anumbers {
             num = num/1000000;
             token.setName(df3.format(num) + "M");
         }
-        else if ( num < 1000000000000.0){
+        else {//if ( num < 1000000000000.0){
             num = num/1000000000;
             token.setName(df3.format(num) + "B");
         }
-        else
-            return null;
+//        else
+//            return null;
         return token;
     }
 }

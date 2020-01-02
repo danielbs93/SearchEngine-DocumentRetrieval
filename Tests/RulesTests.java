@@ -27,7 +27,7 @@ public class RulesTests {
 
         check.clear();
 //        excpect.clear();
-        check.add(new Token("12.12345"));
+        check.add(new Token("12.123456"));
         check.add(new Token("percent"));
         excpect = new Token("12.123%");
         test = new PercentageParser(check);
@@ -414,21 +414,21 @@ public class RulesTests {
         assertEqual(expected,check,"Wrong UpperLower");
     }
 
-    @Test
-    public void QuoteParserTest() {
-        String sentence = "\" a b c d \"";
-        String[] sent = sentence.split(" ");
-        ArrayList<Token> sen = new ArrayList<>();
-        for (String s:sent) {
-            sen.add(new Token(s));
-        }
-        QuotesParser q = new QuotesParser(sen);
-        Token check = q.Parse();
-        String s = "\"";
-        Token excpect = new Token(s+"abcd"+s);
-
-        assertEqual(excpect,check,"Wrong in QuoteParser");
-    }
+//    @Test
+//    public void QuoteParserTest() {
+//        String sentence = "\" a b c d \"";
+//        String[] sent = sentence.split(" ");
+//        ArrayList<Token> sen = new ArrayList<>();
+//        for (String s:sent) {
+//            sen.add(new Token(s));
+//        }
+//        QuotesParser q = new QuotesParser(sen);
+//        Token check = q.Parse();
+//        String s = "\"";
+//        Token excpect = new Token(s+"abcd"+s);
+//
+//        assertEqual(excpect,check,"Wrong in QuoteParser");
+//    }
 
     @Test
     public void WeightsParserTest() {

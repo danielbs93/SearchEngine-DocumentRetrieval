@@ -30,26 +30,36 @@ public class EntitiesParser extends Atext {
             //nothing
         }
         String[] ar_tag = tag.split(" ");
+        StringBuilder name = new StringBuilder();
         for (String t: ar_tag) {
             if (t.contains("NNP")) {
-                t = t.substring(0,t.indexOf('_'));
-                if (t.contains("."))
-                    t = t.substring(0,t.indexOf('.'));
-                Result.add(new Token(t));
+                name.append(t, 0, t.indexOf('_'));
+//                if (t.contains("."))
+//                    t = t.substring(0,t.indexOf('.'));
+                if (name.length() != 0 && name.toString() != "")
+                    Result.add(new Token(name.toString(),true));
             }
+            else {
+                name.append(t,0,t.lastIndexOf('_'));
+                if (name.length() != 0 && name.toString() != "")
+                    Result.add(new Token(name.toString()));
+            }
+            name.setLength(0);
         }
 
         StringBuilder afterTagger = new StringBuilder();
         for (Token token: Result) {
-            afterTagger.append(token.getName() + " ");
-            for (Token forPosition:tokenList) {
-                if (token.equals(forPosition)) {
-                    token.addPosition(forPosition.getPosition());
-                    token.increaseTF();
+            if (token != null) {
+                afterTagger.append(token.getName() + " ");
+                for (Token forPosition : tokenList) {
+                    if (forPosition != null && token.equals(forPosition)) {
+                        token.addPosition(forPosition.getPosition());
+//                    token.increaseTF();
+                    }
                 }
             }
         }
-        removeDuplicates(Result);
+        //removeDuplicates(Result);
         Document = new StringBuilder(afterTagger.toString());
         return Result;
     }

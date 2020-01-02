@@ -1,11 +1,11 @@
 import Rules.*;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import edu.stanford.nlp.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.regex.*;
 
 /**
  * Created by Daniel Ben-Simon & Eran Toutian
@@ -17,8 +17,10 @@ public class Parser {
     private ArrayList<Token> afterThisRules;
     private ArrayList<Token> SendingToken;
     private boolean IsStemmerOn;
+    private String CorpusPath;
+    private static Pattern panctuation = Pattern.compile("[\\p{Punct}&&[^-]&&[^$]&&[^.]]");
 
-    public Parser(String document, boolean steemer) {
+    public Parser(String document, String corpusPath, boolean steemer) {
         this.IsStemmerOn = steemer;
         Doc = new StringBuilder(document);
         parserdList = new ArrayList[2];
@@ -28,6 +30,7 @@ public class Parser {
         tokenList = new ArrayList<>();
         afterThisRules = new ArrayList<>();
         SendingToken = new ArrayList<>();
+        CorpusPath = corpusPath;
     }
 
 
@@ -36,8 +39,8 @@ public class Parser {
         parseByRules();
         parseByStopWords();
         parseByStemmer();
-//        parseByEntities(maxentTagger);
         parseByUpperLower();
+//        parseByEntities(maxentTagger);
         return parserdList;
     }
 
@@ -50,6 +53,9 @@ public class Parser {
         parserdList[1].addAll(UpperLower.Parse());
         tokenList.removeAll(parserdList[1]);
         parserdList[0].addAll(tokenList);
+        for (Token token:parserdList[1]) {
+            token.setName(token.getName().toUpperCase());
+        }
     }
 
     /**
@@ -66,26 +72,26 @@ public class Parser {
             newDoc.append(token.getName() + " ");
             stemmer.clear();
         }
-        Doc =  newDoc;
+        Doc = newDoc;
     }
 
     /**
      *
-//     */
-//    private void parseByEntities(MaxentTagger maxentTagger) {
-////        String[] tokenlist = Doc.split(" ");
-//        EntitiesParser es = new EntitiesParser(tokenList, maxentTagger);
-//        parserdList[1] = es.Parse();
-//        tokenList.removeAll(parserdList[1]);
-//        Doc = es.getDocAsString();
-//    }
+     //     */
+    private void parseByEntities(MaxentTagger maxentTagger) {
+//        String[] tokenlist = Doc.split(" ");
+        EntitiesParser es = new EntitiesParser(parserdList[1], maxentTagger);
+        parserdList[1] = es.Parse();
+        tokenList.removeAll(parserdList[1]);
+        Doc = es.getDocAsString();
+    }
 
     /**
      *
      */
     private void parseByStopWords() {
         try {
-            File file = new File(getClass().getResource("StopWords.txt").toURI());
+            File file = new File(CorpusPath + "\\stop words.txt");
             FileReader fileReader = new FileReader(file);
             BufferedReader bf = new BufferedReader(fileReader);
             LinkedList<String> StopWords = new LinkedList<>();
@@ -96,7 +102,7 @@ public class Parser {
             ArrayList<Token> afterStopWords = new ArrayList<>();
             String stopWordUpperCase = "";
             for (Token token : tokenList) {
-                if (token.getName().charAt(0) >= 'A' || token.getName().charAt(0) <= 'Z') {
+                if (token.getName().charAt(0) >= 'A' && token.getName().charAt(0) <= 'Z') {
                     stopWordUpperCase = token.getName().toLowerCase();
                 } else
                     stopWordUpperCase = token.getName();
@@ -111,8 +117,6 @@ public class Parser {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -137,7 +141,7 @@ public class Parser {
                 parserdList[0].add(NumericParser.Parse());
             }
             // 1. Month 2.Day/Year
-            else if (DatesParser.isDate(tokenList.get(i).getName()) && isNextIndexAvailable(i) && isInt(tokenList.get(i+1).getName())) {
+            else if (DatesParser.isDate(tokenList.get(i).getName()) && isNextIndexAvailable(i) && isInt(tokenList.get(i + 1).getName())) {
                 Token DayOrYear = tokenList.get(i + 1);
                 if (DayOrYear.isNumeric()) {
                     SendingToken.add(tokenList.get(i));
@@ -155,37 +159,37 @@ public class Parser {
                 parserdList[0].add(NumericParser.Parse());
                 i = i + 3;
             }
-            //Quotes
-            else if (tokenList.get(i).getName().charAt(0) == '"') {
-                int ifItJustQuotationMark = i;//if its start with quotation mark and does not end with one
-                boolean QuotationMarkOnlyInStart = false;
-                SendingToken.add(tokenList.get(i));
-                if (isQuoteRule(i) && isNextIndexAvailable(i)) {
-                    i++;
-                    while (i < tokenList.size() && !tokenList.get(i).getName().contains("\"")) {
-                        SendingToken.add(tokenList.get(i));
-                        i++;
-                    }
-                    if (i == tokenList.size() && !tokenList.get(i - 1).getName().contains("\""))
-                        QuotationMarkOnlyInStart = true;
-                    else {
-                        int length = tokenList.get(i).getName().length() - 2;
-                        if (tokenList.get(i).getName().length() > 1 && tokenList.get(i).getName().charAt(length) == '.')
-                            tokenList.get(i).setName(tokenList.get(i).getName().substring(0, length) + "\"");
-                        if (tokenList.get(i).getName().length() > 1 && tokenList.get(i).getName().charAt(length) == ',')
-                            tokenList.get(i).setName(tokenList.get(i).getName().substring(0, length) + "\"");
-                        SendingToken.add(tokenList.get(i));
-                    }
-                }
-                if (QuotationMarkOnlyInStart) {
-                    i = ifItJustQuotationMark - 1;
-                    String word = tokenList.get(ifItJustQuotationMark).getName().substring(1);
-                    tokenList.get(ifItJustQuotationMark).setName(word);//without quotation mark
-                } else {
-                    NumericParser = new QuotesParser(SendingToken);
-                    parserdList[0].add(NumericParser.Parse());
-                }
-            }
+//            //Quotes
+//            else if (tokenList.get(i).getName().charAt(0) == '"') {
+//                int ifItJustQuotationMark = i;//if its start with quotation mark and does not end with one
+//                boolean QuotationMarkOnlyInStart = false;
+//                SendingToken.add(tokenList.get(i));
+//                if (isQuoteRule(i) && isNextIndexAvailable(i)) {
+//                    i++;
+//                    while (i < tokenList.size() && !tokenList.get(i).getName().contains("\"")) {
+//                        SendingToken.add(tokenList.get(i));
+//                        i++;
+//                    }
+//                    if (i == tokenList.size() && !tokenList.get(i - 1).getName().contains("\""))
+//                        QuotationMarkOnlyInStart = true;
+//                    else {
+//                        int length = tokenList.get(i).getName().length() - 2;
+//                        if (tokenList.get(i).getName().length() > 1 && tokenList.get(i).getName().charAt(length) == '.')
+//                            tokenList.get(i).setName(tokenList.get(i).getName().substring(0, length) + "\"");
+//                        if (tokenList.get(i).getName().length() > 1 && tokenList.get(i).getName().charAt(length) == ',')
+//                            tokenList.get(i).setName(tokenList.get(i).getName().substring(0, length) + "\"");
+//                        SendingToken.add(tokenList.get(i));
+//                    }
+//                }
+//                if (QuotationMarkOnlyInStart) {
+//                    i = ifItJustQuotationMark - 1;
+//                    String word = tokenList.get(ifItJustQuotationMark).getName().substring(1);
+//                    tokenList.get(ifItJustQuotationMark).setName(word);//without quotation mark
+//                } else {
+//                    NumericParser = new QuotesParser(SendingToken);
+//                    parserdList[0].add(NumericParser.Parse());
+//                }
+//            }
             // 1.Xunit 2.D/dollars
             else if (tokenList.get(i).getName().contains("bn") || tokenList.get(i).getName().contains("m")) {
                 String num = tokenList.get(i).getName();
@@ -223,6 +227,13 @@ public class Parser {
                         SendingToken.add(tokenList.get(i++));
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new WeightsParser(SendingToken);
+                        parserdList[0].add(NumericParser.Parse());
+                    }
+                    //2. DistanceUnit
+                    else if (DistancesParser.isDistanceUnit(tokenList.get(i + 1).getName())) {
+                        SendingToken.add(tokenList.get(i++));
+                        SendingToken.add(tokenList.get(i));
+                        NumericParser = new DistancesParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
                     }
                     //2. Quantity unit
@@ -295,18 +306,17 @@ public class Parser {
                 }
             }
             //1. $x
-            else if (tokenList.get(i).getName().contains("$")){
+            else if (tokenList.get(i).getName().contains("$")) {
                 if (tokenList.get(i).getName().charAt(0) != '$')
                     tokenList.get(i).setName(tokenList.get(i).getName().substring(tokenList.get(i).getName().indexOf("$")));
-                if (isNextIndexAvailable(i) && tokenList.get(i+1).isNumeric()) {
-                    tokenList.get(i).setName(tokenList.get(i).getName() + tokenList.get(i+1).getName());
+                if (isNextIndexAvailable(i) && tokenList.get(i + 1).isNumeric()) {
+                    tokenList.get(i).setName(tokenList.get(i).getName() + tokenList.get(i + 1).getName());
                     SendingToken.add(tokenList.get(i++));
-                }
-                else
+                } else
                     SendingToken.add(tokenList.get(i));
                 //2. quantity unit
-                if (isNextIndexAvailable(i+1) && isQuantityUnit(tokenList.get(i+1))){
-                    SendingToken.add(tokenList.get(i+1));
+                if (isNextIndexAvailable(i + 1) && isQuantityUnit(tokenList.get(i + 1))) {
+                    SendingToken.add(tokenList.get(i + 1));
                     i++;
                 }
                 NumericParser = new PriceParser(SendingToken);
@@ -355,18 +365,18 @@ public class Parser {
         return result;
     }
 
-    /**
-     * @param i
-     * @return true if it is a quote rule of the form "w1 w2 w3... wn"
-     */
-    private boolean isQuoteRule(int i) {
-        if (tokenList.get(i).getName().contains("\"")) {
-            String word = tokenList.get(i).getName();
-            if (word.lastIndexOf("\"") != word.length() - 1)
-                return true;
-        }
-        return false;
-    }
+//    /**
+//     * @param i
+//     * @return true if it is a quote rule of the form "w1 w2 w3... wn"
+//     */
+//    private boolean isQuoteRule(int i) {
+//        if (tokenList.get(i).getName().contains("\"")) {
+//            String word = tokenList.get(i).getName();
+//            if (word.lastIndexOf("\"") != word.length() - 1)
+//                return true;
+//        }
+//        return false;
+//    }
 
     /**
      * @param i
@@ -407,16 +417,27 @@ public class Parser {
                 Token token = new Token();
                 StringBuilder tokenName = new StringBuilder();
                 if (!isPanctuationMark(word)) {
-                    tokenName.append(word);
-                    while (tokenName.length() > 0 && FirstCharPanctuationMark(word)) {
+                    tokenName.append(word.replaceAll(",", ""));
+//                    tokenName.append(word);
+                    while (tokenName.length() > 0 && FirstCharPanctuationMark(tokenName.toString())) {
                         tokenName.deleteCharAt(0);
                     }
-                    while (tokenName.length() != 0 && LastCharPanctuationMark(word)) {
-                        int length = tokenName.length()-1;
+                    while (tokenName.length() > 0 && LastCharPanctuationMark(tokenName.toString())) {
+                        int length = tokenName.length() - 1;
                         tokenName.deleteCharAt(length);
                     }
-                    if (tokenName.length() != 0)
-                        tDoc.add(new Token(tokenName.toString(), position++));
+
+                    if (tokenName.length() != 0 && !tokenName.equals("")) {
+                        String[] splited = panctuation.split(tokenName.toString());
+                        for (String name:splited) {
+                            if (name.contains(".")) {
+                                name = StringUtils.stripStart(name,".");
+                                name = StringUtils.stripEnd(name,".");
+                            }
+                            if (!isPanctuationMark(name) && name.length() > 0)
+                                tDoc.add(new Token(name, position++));
+                        }
+                    }
                 }
             }
         }
@@ -428,18 +449,13 @@ public class Parser {
      * @return
      */
     private boolean LastCharPanctuationMark(String word) {
-        if (word.lastIndexOf(".") == word.length() - 1 || word.lastIndexOf(",") == word.length() - 1
-                || word.lastIndexOf(")") == word.length() - 1 || word.lastIndexOf("}") == word.length() - 1
-                || word.lastIndexOf("'") == word.length() - 1 || word.lastIndexOf("]") == word.length() - 1
-                || word.lastIndexOf("*") == word.length() - 1 || word.lastIndexOf(":") == word.length() - 1
-                || word.lastIndexOf(";") == word.length() - 1 || word.lastIndexOf("|") == word.length() - 1)
+        if (isPanctuationChar(word.charAt(word.length() - 1)))
             return true;
         return false;
     }
 
     private boolean FirstCharPanctuationMark(String word) {
-        if (word.indexOf("(") == 0 || word.indexOf("{") == 0 || word.indexOf("[") == 0
-                || word.indexOf("'") == 0 || word.indexOf(".") == 0 || word.indexOf("*") == 0 || word.indexOf("|") == 0)
+        if (isPanctuationChar(word.charAt(0)))
             return true;
         return false;
     }
@@ -449,10 +465,16 @@ public class Parser {
      * @return
      */
     private boolean isPanctuationMark(String word) {
-        if (word.equals(".") || word.equals(",") || word.equals("(") || word.equals(" ")
-                || word.equals("}") || word.equals("{") || word.equals(")")
-                || word.equals("[") || word.equals("]") || word.equals("'")
-                || word.equals(":") || word.equals(";") || word.equals("%"))
+        if (word.length() == 1 && (isPanctuationChar(word.charAt(0)) || word.equals("")))
+            return true;
+        return false;
+    }
+
+    private boolean isPanctuationChar(char c) {
+        if (c == '(' || c == '{' || c == '[' || c == ')' || c == '}' || c == ']' || c == '-'
+                || c == '\'' || c == '.' || c == '*' || c == '|' || c == ':' || c == '?' || c == '\"'
+                || c == '<' || c == '>' || c == '!' || c == '`' || c == '/' || c == '~' || c == '+' || c == '#'
+                || c == '\\' || c == ';' || c == ',' || c == '_' || c == '=' || c == ' ')
             return true;
         return false;
     }
@@ -483,12 +505,12 @@ public class Parser {
         return false;
     }
 
-    private boolean isInt(String s)
-    {
-        try
-        { int i = Integer.parseInt(s); return true; }
-
-        catch(NumberFormatException er)
-        { return false; }
+    private boolean isInt(String s) {
+        try {
+            int i = Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException er) {
+            return false;
+        }
     }
 }

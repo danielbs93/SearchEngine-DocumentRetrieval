@@ -81,7 +81,7 @@ public class WeightsParser extends Anumbers {
     private static boolean isGr(String unit) {
         if (unit.equals("gram") || unit.equals("gr") || unit.equals("Grams") || unit.equals("grams")
                 || unit.equals("Gram") || unit.equals("Gr")
-                || unit.equals("g") || unit.equals("G"))
+                || unit.equals("g") || unit.equals("G") || unit.equals("Gs") || unit.equals("gs"))
             return true;
         return false;
     }
@@ -96,7 +96,8 @@ public class WeightsParser extends Anumbers {
     private static boolean isKg(String unit) {
         if (unit.equals("Kilogram") || unit.equals("Kg")
                 || unit.equals("kilogram") || unit.equals("kg")
-                || unit.equals("KG"))
+                || unit.equals("KG") || unit.equals("Kgs") || unit.equals("KGs")
+                || unit.equals("kgs") || unit.equals("kilograms") || unit.equals("Kilograms"))
             return true;
         return false;
     }

@@ -1,5 +1,8 @@
 
+import Rules.Token;
+
 import java.io.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -7,62 +10,45 @@ import java.util.LinkedList;
  */
 public class ReadFile {
     private BufferedReader Bfr;
-    private LinkedList<StringBuilder> Documents;
+    private ArrayList<StringBuilder> Documents;
     private int DocPointer;
     private File curFile;
     private String DOCNO;
-//    private File CorpusFolder;
-//    private File[] AllFiles;
-//    private int FilePointer;
-//    private String nextPath;
+    private FileReader fileReader;
+    private int[] fileIDcounter;
+    private int FilePointer;
 
-    public ReadFile(String path) {
-        curFile = new File(path);
-        Documents = new LinkedList<>();
+
+    public ReadFile(File[] files,int fromWhereToRead, int numOfFilesToRead, int intervals) {
+        Documents = new ArrayList<>();
         DocPointer = 0;
+        FilePointer = 0;
+        fileIDcounter = new int[intervals];
         try {
-            FileReader fileReader = new FileReader(curFile);
-            Bfr = new BufferedReader(fileReader);
-            CreateDocumentsFiles();
-            Bfr.close();
-            fileReader.close();
+            int j = 0;
+            for (int i = fromWhereToRead; i < numOfFilesToRead && i <files.length; i++) {
+                curFile = files[i].listFiles()[0];
+                fileReader = new FileReader(curFile);
+                Bfr = new BufferedReader(fileReader);
+                CreateDocumentsFiles(j);
+                fileReader.close();
+                Bfr.close();
+                j++;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        FilePointer = 0;
-//        AllFiles = CorpusFolder.listFiles();
-//        nextPath = path;
 
     }
 
-    /**
-     * Hierarchy is: Corpus Directory within subfolders which each sub folder holds 1 file
-     * that contains list of documents.
-     * @return next file in the next directory
-     */
-//    private void getNextFile() {
-//        int i = 0;
-//        while (i < 10000) {
-//
-//        }
-//        File nextFolder = AllFiles[FilePointer];
-//        FilePointer++;
-//        File[] files = nextFolder.listFiles();
-//        try {
-//            Bfr = new BufferedReader(new FileReader(files[0]));
-//            CreateDocumentsFiles();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 
     /**
      * Creating the Documents list in the current directory
      * @throws IOException
+     * @param i
      */
-    private void CreateDocumentsFiles() throws IOException {
+    private void CreateDocumentsFiles(int i) throws IOException {
         String line;
         while ((line = Bfr.readLine()) != null ) {
             StringBuilder doc = new StringBuilder();
@@ -72,6 +58,7 @@ public class ReadFile {
                     doc.append(" " + line);
                 doc.append(" </DOC>");
                 Documents.add(doc);
+                fileIDcounter[i]++;
             }
         }
     }
@@ -82,12 +69,23 @@ public class ReadFile {
      * @return
      */
     public String getNextDoc() {
-//        if (Documents.isEmpty())
-//            getNextFile();
         StringBuilder document = Documents.remove(DocPointer);
-//        DocPointer++;
         DOCNO = buildDocNO(document.toString());
         return document.toString();
+    }
+
+    public boolean DecreaseDocCounter() {
+        if (fileIDcounter[FilePointer] == 0) {
+            FilePointer++;
+            fileIDcounter[FilePointer]--;
+            return false;
+        }
+        else {
+            fileIDcounter[FilePointer]--;
+            if (fileIDcounter.length == 1 && fileIDcounter[FilePointer] == 0)
+                return false;
+            return true;
+        }
     }
 
     public String getFileNO() {

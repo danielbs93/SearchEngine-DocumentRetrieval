@@ -26,18 +26,22 @@ public class PriceParser extends Anumbers {
 
         //case 1: $X
         int position = tokenList.get(0).getPosition();
-        tokenList.get(0).setName(tokenList.get(0).getName().replaceAll("O","0"));
-        tokenList.get(0).setName(tokenList.get(0).getName().replaceAll("o","0"));
+        tokenList.get(0).setName(tokenList.get(0).getName().replaceAll("O", "0"));
+        tokenList.get(0).setName(tokenList.get(0).getName().replaceAll("o", "0"));
         // $x-unit
         if (tokenList.size() == 1 && tokenList.get(0).getName().contains("-")) {
             Token token = tokenList.remove(0);
             int hyphen = token.getName().indexOf("-");
-            tokenList.add(new Token(token.getName().substring(0,hyphen)));
-            tokenList.add(new Token(token.getName().substring(hyphen+1)));
+            tokenList.add(new Token(token.getName().substring(0, hyphen)));
+            tokenList.add(new Token(token.getName().substring(hyphen + 1)));
+        } else if (tokenList.size() == 1 && Character.isLetter(tokenList.get(0).getName().charAt(tokenList.get(0).getName().length() - 1))) {
+            int length = tokenList.get(0).getName().length();
+            tokenList.add(1, new Token(tokenList.get(0).getName().substring(length - 1)));
+            tokenList.get(0).setName(tokenList.get(0).getName().substring(0, length - 1));
         }
         if (tokenList.size() == 1) {
             String price = tokenList.get(0).getName().substring(1);
-            if (!tokenList.get(0).isNumeric())
+            if (!(new Token(price)).isNumeric())
                 return tokenList.get(0);
             Result = ParseMyPrice(new Token(price));
             Result.setPosition(position);
@@ -48,14 +52,17 @@ public class PriceParser extends Anumbers {
             Token first = tokenList.remove(0);
             Token second = tokenList.remove(0);
             if (first.getName().contains(","))
-                first.setName(first.getName().replaceAll(",",""));
+                first.setName(first.getName().replaceAll(",", ""));
             if (first.isNumeric() && isDollar(second)) {// X dollars
                 Result = ParseMyPrice(first);
 //                tokenList.add(new Token("Dollars"));
                 Result.setPosition(position);
                 return Result;
-            } else if ((first.getName().contains("bn") || first.getName().contains("m")) && isDollar(second)) {// Xbn/m dollars
-                if (first.getName().contains("bn")) {
+            } else if ((first.getName().contains("bn") || first.getName().contains("m")
+                    || first.getName().contains("b") || first.getName().contains("M")
+                    || first.getName().contains("B") || first.getName().contains("BN")) && isDollar(second)) {// Xbn/m dollars
+                if (first.getName().contains("bn") || first.getName().contains("B")
+                        || first.getName().contains("BN") || first.getName().contains("b")) {
                     Token t_number = new Token(first.getName().substring(0, first.getName().indexOf('b')));
                     Result = ParseBillion(t_number);
                 } else {
@@ -117,11 +124,9 @@ public class PriceParser extends Anumbers {
                 if (isMillion(second)) {
                     first = makeMillion(first);
                     Result = ParseMyPrice(first);
-                }
-                else if (isBillion(second)) {
+                } else if (isBillion(second)) {
                     Result = ParseBillion(first);
-                }
-                else if (isTrillion(second)) {
+                } else if (isTrillion(second)) {
                     Double num = new Double(first.getName());
                     num *= 1000000;
                     first = new Token(df3.format(num));
@@ -144,15 +149,15 @@ public class PriceParser extends Anumbers {
     private Token ParseMyPrice(Token t) {
         Token result = new Token();
         String price = t.getName();
-        price = price.replaceAll(",","");
-        price = price.replaceAll("O","0");
-        price = price.replaceAll("o","0");
-        Double num = new Double(price);
+//        price = price.replaceAll(",","");
+//        price = price.replaceAll("O","0");
+//        price = price.replaceAll("o","0");
+        Double num = Double.parseDouble(price);
         if (num < 1000000) {
             //case: 1.7254632
             if (num.doubleValue() - ((int) num.doubleValue()) != 0)
                 price = df3.format(num);
-                //result.add(new Token(df3.format(num)));
+            //result.add(new Token(df3.format(num)));
             price = addComma(price);
             result.setName(price + " Dollars");
         } else {
@@ -196,23 +201,25 @@ public class PriceParser extends Anumbers {
 
     /**
      * Adding coma to numbers whom less than 1M
+     *
      * @param s_num
      */
     private String addComma(String s_num) {
         if (s_num.contains(".")) {
             String number;
             String dot;
-            number = s_num.substring(0,s_num.indexOf('.'));
+            number = s_num.substring(0, s_num.indexOf('.'));
             double num = Double.parseDouble(number);
             if (num < 1000)
                 return s_num;
             number = innerComma(number);
             dot = s_num.substring(s_num.indexOf('.'), s_num.length());
             return (number + dot);
-        }else
+        } else
             return innerComma(s_num);
     }
-    private String innerComma(String s_num){
+
+    private String innerComma(String s_num) {
         if (s_num.length() == 6)//xxx,xxx
             return s_num.substring(0, 3) + "," + s_num.substring(3, 6);
         else if (s_num.length() == 5)//xx,xxx

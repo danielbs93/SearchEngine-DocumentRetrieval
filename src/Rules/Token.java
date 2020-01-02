@@ -10,6 +10,7 @@ public class Token {
     private int position;
     private int tf;
     private StringBuilder positions;
+    private boolean isEntity;
 
 
     public Token() {
@@ -17,6 +18,7 @@ public class Token {
         position = -1;
         tf = 1;
         positions = new StringBuilder();
+        isEntity = false;
     }
 
     public Token(String m_Name, int position) {
@@ -25,13 +27,15 @@ public class Token {
         tf = 1;
         positions = new StringBuilder();
         positions.append(position);
+        isEntity = false;
     }
 
     public Token(String m_Name) {
         this.m_Name = m_Name;
         tf = 1;
-        this.position=0;
+        this.position = 0;
         positions = new StringBuilder();
+        isEntity = false;
     }
 
     public Token(Token t) {
@@ -39,7 +43,17 @@ public class Token {
         this.m_Name = t.getName();
         this.position = t.position;
         this.positions = new StringBuilder(t.positions);
+        isEntity = t.isEntity;
     }
+
+    public Token(String name, boolean isEntity) {
+        tf = 1;
+        this.m_Name = name;
+        this.position = -1;
+        positions = new StringBuilder();
+        this.isEntity = isEntity;
+    }
+
     public int getPosition() {
         return position;
     }
@@ -49,6 +63,14 @@ public class Token {
         this.positions.append(position);
     }
 
+
+    public boolean isEntity() {
+        return isEntity;
+    }
+
+    public void setEntity(boolean entity) {
+        isEntity = entity;
+    }
 
     public String getName() {
         return m_Name;
@@ -74,7 +96,7 @@ public class Token {
         return this.positions.toString();
     }
 
-    public void addPosition(int position){
+    public void addPosition(int position) {
         if (this.position < 0)
             this.position = 0;
         int gap = Math.abs(position - this.position);
@@ -87,47 +109,47 @@ public class Token {
 
 
     /**
-     *
      * @return true if m_Name is numeric or not
      */
     public boolean isNumeric() {
         try {
-            Double.parseDouble(m_Name);
-            int c=0;
-            for (int i = 0; i <m_Name.length() ; i++) {
-                if(m_Name.charAt(i)=='.') {
-                    c++;
-                    if (c > 1)
-                        return false;
-                }
-                if(m_Name.charAt(i)!= '.' || m_Name.charAt(i)> 9 || m_Name.charAt(i)< 0 )
-                    return false;
-
-            }
-            return true;
-        } catch(NumberFormatException e){
+            Double d = Double.parseDouble(m_Name.replaceAll(",",""));
+//            int c=0;
+//            for (int i = 0; i <m_Name.length() ; i++) {
+//                if(m_Name.charAt(i)=='.') {
+//                    c++;
+//                    if (c > 1)
+//                        return false;
+//                }
+////                if(m_Name.charAt(i)!= '\'') {
+//                    if (m_Name.charAt(i) != '.' || !Character.isDigit(m_Name.charAt(i)))
+//                        return false;
+////                }
+//
+//            }
+        } catch (NumberFormatException e) {
             return false;
         }
+        return true;
     }
 
 
     /**
-     *
      * @return true if the token is legal fraction
      */
-    public boolean isFraction(){
-        if (this.getName().contains("/")){
+    public boolean isFraction() {
+        if (this.getName().contains("/")) {
             int index = this.getName().indexOf("/");
-            String num1 = this.getName().substring(0,index);
-            String num2 = this.getName().substring(index+1);
+            String num1 = this.getName().substring(0, index);
+            String num2 = this.getName().substring(index + 1);
             try {
                 Double.parseDouble(num1);
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return false;
             }
             try {
                 Double.parseDouble(num2);
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return false;
             }
             return true;
@@ -135,7 +157,7 @@ public class Token {
         return false;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return (m_Name == null || m_Name.isEmpty());
     }
 
@@ -145,11 +167,11 @@ public class Token {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Token) && (m_Name.equals(((Token)obj).getName()));
+        return (obj instanceof Token) && (m_Name.equals(((Token) obj).getName()));
     }
 
     @Override
     public int hashCode() {
-        return m_Name.hashCode();
+        return m_Name == null ? 0 : m_Name.hashCode();
     }
 }
