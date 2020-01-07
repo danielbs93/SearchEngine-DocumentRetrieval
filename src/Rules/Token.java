@@ -10,7 +10,7 @@ public class Token {
     private int position;
     private int tf;
     private StringBuilder positions;
-    private boolean isEntity;
+    private int isEntity;
 
 
     public Token() {
@@ -18,7 +18,7 @@ public class Token {
         position = -1;
         tf = 1;
         positions = new StringBuilder();
-        isEntity = false;
+        isEntity = 0;
     }
 
     public Token(String m_Name, int position) {
@@ -27,7 +27,19 @@ public class Token {
         tf = 1;
         positions = new StringBuilder();
         positions.append(position);
-        isEntity = false;
+        isEntity = 0;
+    }
+
+    public Token(String m_Name, int position,boolean entitiy) {
+        this.m_Name = m_Name;
+        this.position = position;
+        tf = 1;
+        positions = new StringBuilder();
+        positions.append(position);
+        if (entitiy)
+            isEntity = 1;
+        else
+            isEntity = 0;
     }
 
     public Token(String m_Name) {
@@ -35,7 +47,7 @@ public class Token {
         tf = 1;
         this.position = 0;
         positions = new StringBuilder();
-        isEntity = false;
+        isEntity = 0;
     }
 
     public Token(Token t) {
@@ -46,12 +58,15 @@ public class Token {
         isEntity = t.isEntity;
     }
 
-    public Token(String name, boolean isEntity) {
+    public Token(String name, boolean entity) {
         tf = 1;
         this.m_Name = name;
         this.position = -1;
         positions = new StringBuilder();
-        this.isEntity = isEntity;
+        if (entity)
+            this.isEntity = 1;
+        else
+            isEntity = 0;
     }
 
     public int getPosition() {
@@ -64,12 +79,19 @@ public class Token {
     }
 
 
-    public boolean isEntity() {
+    public int isEntity() {
+//        if (isEntity == 1)
+//            return true;
+//        else
+//            return false;
         return isEntity;
     }
 
     public void setEntity(boolean entity) {
-        isEntity = entity;
+        if (entity)
+            isEntity = 1;
+        else
+            isEntity = 0;
     }
 
     public String getName() {

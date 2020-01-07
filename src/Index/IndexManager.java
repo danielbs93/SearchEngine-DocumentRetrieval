@@ -1,3 +1,5 @@
+package Index;
+
 import Rules.Token;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -12,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by Daniel Ben-Simon & Eran Toutian
  */
-public class Manager {
+public class IndexManager {
         private ConcurrentHashMap<Token, MutablePair<Integer, Integer>> Dictionary;//term-#doc-termID
     private ConcurrentHashMap<Token, ArrayList<Integer>> EntitiesDictionary;
     private boolean isStemmer;
@@ -29,7 +31,7 @@ public class Manager {
     private int CorpusSize;
     private int DictionarySize;
 
-    public Manager(String corpusPath, String savingPostingFilePath, boolean stemmer, int corpusSize) {
+    public IndexManager(String corpusPath, String savingPostingFilePath, boolean stemmer, int corpusSize) {
         CorpusPath = corpusPath;
         SavingPath = savingPostingFilePath;
         isStemmer = stemmer;
@@ -70,6 +72,7 @@ public class Manager {
         Indexer.setAtomicIntegers(TermID.get(), DocID.get(), FileID.get(), TempPosingFileName.get());
         Indexer.Index();
         while (Indexer.isActive()) ;//busy waiting
+        DocID.set(Indexer.getDocID().get());
         //sort dictionary before writing it to the disk after merging dictionary and entities//
         for (Token entity : EntitiesDictionary.keySet()) {
             if (entity != null && EntitiesDictionary.get(entity) != null
@@ -77,25 +80,44 @@ public class Manager {
                     && EntitiesDictionary.get(entity).get(0) > 1) {
                 //check if the word is already in the dictionary
                 entity.setName(entity.getName().toLowerCase());
-//                Token term = new Token(entity);
-//                if (Dictionary.contains(term)) {
-//                    MutablePair<Integer,Integer> dfAndTermID = Dictionary.get(term);
-//                    if (dfAndTermID.getRight() > )
-//                }
-//                else {
                 if (!Dictionary.containsKey(entity)){
-//                    String name = entity.getName().toUpperCase();
                     entity.setName(entity.getName().toUpperCase());
                     MutablePair<Integer, Integer> pair = new MutablePair<>(EntitiesDictionary.get(entity).get(0), EntitiesDictionary.get(entity).get(1));
-//                    entity.setName(name);
                     Dictionary.put(entity, pair);
                 }
             }
         }
         EntitiesDictionary.clear();
         SortAndWriteDictionary(Dictionary);
+        SortDocLexicon();
         this.DictionarySize = Dictionary.size();
         Dictionary.clear();
+    }
+
+    /**
+     * Sort DocIDLexicon file by docID
+     */
+    private void SortDocLexicon() {
+        File file = new File(SavingPath+"\\DocIDLexicon.txt");
+        Comparator<String> myComp = (o1, o2) -> {
+            String[] data1 = o1.split(";");
+            String[] data2 = o2.split(";");
+            int id1 = Integer.parseInt(data1[0]);
+            int id2 = Integer.parseInt(data2[0]);
+            return Integer.compare(id1,id2);
+        };
+
+        try {
+            List<String> allDocs = Files.readAllLines(file.toPath());
+            allDocs.sort(myComp);
+            file.delete();
+            FileWriter fileWriter = new FileWriter(file,true);
+            for (String s:allDocs) {
+                fileWriter.write(s+"\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -146,7 +168,7 @@ public class Manager {
 //                k = 1.5;
 //            else
 //                k = 0.25;
-            getChunkOfFiles(currentData, count, count+(CorpusSize/Intervals/3));
+            getChunkOfFiles(currentData, count, count + (int) Math.floor((CorpusSize/Intervals/3)));
 //            Collections.sort(currentData, myComparator);
             currentData.sort(myComparator);
             String first = currentData.get(0);
@@ -201,9 +223,11 @@ public class Manager {
         for (int i = start; i < end && i < CorpusSize; i++) {
             try {
                 file = new File(SavingPath + "\\" + i + ".txt");
-                list = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-                currentData.addAll(list);
-                FileUtils.forceDelete(file);
+                if (file.exists()) {
+                    list = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+                    currentData.addAll(list);
+                    FileUtils.forceDelete(file);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -230,6 +254,7 @@ public class Manager {
         }
         try {
             FileWriter fileWriter = new FileWriter(file, true);
+            fileWriter.write(this.CorpusSize + "| \n" );
             int i = 0;
             StringBuilder data = new StringBuilder();
             for (HashMap.Entry<Token, MutablePair<Integer, Integer>> token : SortedDictionary.entrySet()

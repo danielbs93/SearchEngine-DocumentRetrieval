@@ -1,3 +1,4 @@
+package Index;
 
 import Rules.Token;
 
@@ -17,6 +18,7 @@ public class ReadFile {
     private FileReader fileReader;
     private int[] fileIDcounter;
     private int FilePointer;
+    private String[] FilesNO;
 
 
     public ReadFile(File[] files,int fromWhereToRead, int numOfFilesToRead, int intervals) {
@@ -24,10 +26,12 @@ public class ReadFile {
         DocPointer = 0;
         FilePointer = 0;
         fileIDcounter = new int[intervals];
+        FilesNO = new String[numOfFilesToRead];
         try {
             int j = 0;
             for (int i = fromWhereToRead; i < numOfFilesToRead && i <files.length; i++) {
                 curFile = files[i].listFiles()[0];
+                FilesNO[j] = curFile.getName();
                 fileReader = new FileReader(curFile);
                 Bfr = new BufferedReader(fileReader);
                 CreateDocumentsFiles(j);
@@ -89,7 +93,7 @@ public class ReadFile {
     }
 
     public String getFileNO() {
-        return curFile.getName();
+        return FilesNO[this.FilePointer];
     }
 
     public String getDocNO() {
@@ -100,7 +104,7 @@ public class ReadFile {
         int start = document.indexOf("<DOCNO>") + 7;
         int end = document.indexOf("</DOCNO>");
         String docNO = document.substring(start,end);
-        docNO.replace(" ","");
+        docNO.replaceAll(" ","");
         return docNO;
     }
 

@@ -1,3 +1,4 @@
+import Index.IndexManager;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
@@ -5,10 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.sql.Timestamp;
-import java.util.List;
 
 public class SearchEngineGUI<Private> {
 
@@ -26,7 +24,7 @@ public class SearchEngineGUI<Private> {
     private String PostingPath;
     private boolean Stemmer;
     //    private String DefaultPostingPath = "C:\\Users\\erant\\Desktop\\project\\postingFiles";
-    private Manager manager;
+    private IndexManager indexManager;
 
 
     /**
@@ -47,16 +45,16 @@ public class SearchEngineGUI<Private> {
                     File directory=new File(CorpusPath);
                     int fileCount=directory.list().length;
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                    manager = new Manager(CorpusPath, PostingPath, checkBox1.isSelected(),fileCount);
-                    manager.run();
+                    indexManager = new IndexManager(CorpusPath, PostingPath, checkBox1.isSelected(),fileCount);
+                    indexManager.run();
                     try {
                         Thread.sleep(3000);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
                     fileCount = (new File((PostingPath))).list().length - 2;
-                    manager.setCorpusSize(fileCount);
-                    manager.SortAndCreate();
+                    indexManager.setCorpusSize(fileCount);
+                    indexManager.SortAndCreate();
                     Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
                     BufferedReader reader = null;
                     int lines = 0;
@@ -85,7 +83,7 @@ public class SearchEngineGUI<Private> {
 //                        e1.printStackTrace();
 //                    }
                     JOptionPane.showMessageDialog(null, "Num of Docs : "+lines  +"\n"
-                            + "Num of Terms : " + manager.getDictionarySize() + "\n"
+                            + "Num of Terms : " + indexManager.getDictionarySize() + "\n"
                             + "Time for build inverted index : " + (timestamp2.getTime() - timestamp.getTime()) / 1000 + " sec");
                 }
             }
@@ -151,14 +149,14 @@ public class SearchEngineGUI<Private> {
         showDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(manager!= null) {
+                if(indexManager != null) {
                     if (PostingPath.length() == 0)
                         PostingPath = textField2.getText();
                     if (PostingPath.length() == 0) {
                         JOptionPane.showMessageDialog(null, "Please enter path");
                         return;
                     }
-//                    manager.SortAndWriteDictionary();
+//                    indexManager.SortAndWriteDictionary();
 
                 }
                 else

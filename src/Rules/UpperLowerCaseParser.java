@@ -41,7 +41,7 @@ public class UpperLowerCaseParser extends Atext {
                 String pos = current.substring(current.indexOf("#") + 1);
                 try {
                     int position = Integer.parseInt(pos);
-                    tokenList.add(new Token(current.substring(0, current.indexOf("#")), position));
+                    tokenList.add(new Token(current.substring(0, current.indexOf("#")), position,true));
                 } catch(NumberFormatException e){
                     
                 }

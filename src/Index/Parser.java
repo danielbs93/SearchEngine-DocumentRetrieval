@@ -1,3 +1,5 @@
+package Index;
+
 import Rules.*;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +42,16 @@ public class Parser {
         parseByStopWords();
         parseByStemmer();
         parseByUpperLower();
-//        parseByEntities(maxentTagger);
+        parseByEntities(maxentTagger);
+        return parserdList;
+    }
+
+    public ArrayList<Token>[] Parse() {
+        tokenList = toTokens(this.Doc.toString());
+        parseByRules();
+        parseByStopWords();
+        parseByStemmer();
+        parseByUpperLower();
         return parserdList;
     }
 
@@ -91,7 +102,7 @@ public class Parser {
      */
     private void parseByStopWords() {
         try {
-            File file = new File(CorpusPath + "\\stop words.txt");
+            File file = new File(CorpusPath + "\\StopWords.txt");
             FileReader fileReader = new FileReader(file);
             BufferedReader bf = new BufferedReader(fileReader);
             LinkedList<String> StopWords = new LinkedList<>();

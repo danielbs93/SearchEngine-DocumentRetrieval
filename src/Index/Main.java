@@ -1,4 +1,5 @@
-import org.apache.commons.io.FileUtils;
+package Index;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -12,24 +13,36 @@ public class Main {
         long startTime = System.currentTimeMillis();
         String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\corpus";
         String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\postingFiles";
-//        Manager mng = new Manager(CorpusPath,savingPath,true,100);
-//        mng.run();
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        mng.SortAndCreate();
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("Number of indexed docs:  " + mng.getDocID());
-//        System.out.println("Number of unique terms (Dictionary size):  " + mng.getDictionarySize());
-//        System.out.println("Time it took to build the Index:  " + (endTime - startTime)/1000);
-//        System.out.printf("Time it took to Merge&Sort posting files: " + (endTime - startTime)/1000);
+        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,100);
+       mng.run();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mng.SortAndCreate();
+        long endTime = System.currentTimeMillis();
+        System.out.println("Number of indexed docs:  " + mng.getDocID());
+        System.out.println("Number of unique terms (Dictionary size):  " + mng.getDictionarySize());
+        System.out.println("Time it took to build the Index:  " + (endTime - startTime)/1000);
+        System.out.printf("Time it took to Merge&Sort posting files: " + (endTime - startTime)/1000);
 
 //        writeTheSameWordInUpperandLower(savingPath);
 
 //        SortDictionaryByTermID(savingPath);
 
+        findDuplicateTuples(savingPath);
+
+    }
+
+    private static void findDuplicateTuples(String savingPath) {
+        File file = new File(savingPath+"\\DocIDLexicon.txt");
+        try {
+            List<String> alldocs = Files.readAllLines(file.toPath());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void SortDictionaryByTermID(String savingPath) {
