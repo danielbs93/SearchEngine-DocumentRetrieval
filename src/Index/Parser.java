@@ -64,7 +64,7 @@ public class Parser {
         parserdList[1].addAll(UpperLower.Parse());
         tokenList.removeAll(parserdList[1]);
         parserdList[0].addAll(tokenList);
-        for (Token token:parserdList[1]) {
+        for (Token token : parserdList[1]) {
             token.setName(token.getName().toUpperCase());
         }
     }
@@ -87,8 +87,8 @@ public class Parser {
     }
 
     /**
-     *
-     //     */
+     * //
+     */
     private void parseByEntities(MaxentTagger maxentTagger) {
 //        String[] tokenlist = Doc.split(" ");
         EntitiesParser es = new EntitiesParser(parserdList[1], maxentTagger);
@@ -143,12 +143,14 @@ public class Parser {
         for (int i = 0; i < tokenList.size(); i++) {
             //all rules that have to parse only 1 token
             if (tokenList.get(i).getName().contains("%")) {
-                NumericParser = new PercentageParser(tokenList.get(i));
+                SendingToken.add(tokenList.get(i));
+                NumericParser = new PercentageParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
             }
             // 1. w1-w2-w3
             else if (tokenList.get(i).getName().contains("-")) {
-                NumericParser = new RangedParser(tokenList.get(i));
+                SendingToken.add(tokenList.get(i));
+                NumericParser = new RangedParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
             }
             // 1. Month 2.Day/Year
@@ -312,7 +314,8 @@ public class Parser {
                 }
                 //Its just a number to parse
                 else {
-                    NumericParser = new NumParser(tokenList.get(i));
+                    SendingToken.add(tokenList.get(i));
+                    NumericParser = new NumParser(SendingToken);
                     parserdList[0].add(NumericParser.Parse());
                 }
             }
@@ -358,13 +361,18 @@ public class Parser {
                 NumericParser = new RangedParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
             }
+//            //Token is a word
+//            else {
+//                afterThisRules.add(tokenList.get(i));
+//                Doc.append(tokenList.get(i).getName() + " ");
+//            }
+            if (!SendingToken.isEmpty())
+                SendingToken.clear();
             //Token is a word
             else {
                 afterThisRules.add(tokenList.get(i));
                 Doc.append(tokenList.get(i).getName() + " ");
             }
-            if (!SendingToken.isEmpty())
-                SendingToken.clear();
         }
         tokenList = afterThisRules;
     }
@@ -440,10 +448,10 @@ public class Parser {
 
                     if (tokenName.length() != 0 && !tokenName.equals("")) {
                         String[] splited = panctuation.split(tokenName.toString());
-                        for (String name:splited) {
+                        for (String name : splited) {
                             if (name.contains(".")) {
-                                name = StringUtils.stripStart(name,".");
-                                name = StringUtils.stripEnd(name,".");
+                                name = StringUtils.stripStart(name, ".");
+                                name = StringUtils.stripEnd(name, ".");
                             }
                             if (!isPanctuationMark(name) && name.length() > 0)
                                 tDoc.add(new Token(name, position++));

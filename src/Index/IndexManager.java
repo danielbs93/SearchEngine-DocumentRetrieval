@@ -62,7 +62,7 @@ public class IndexManager {
         Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, 0, (CorpusSize / 2), Dictionary, EntitiesDictionary);
         Indexer.setIntervals(Intervals);
         Indexer.Index();
-        while (Indexer.isActive()) ;
+        while (Indexer.isActive()) ;//busy waiting
         TermID.set(Indexer.getTermID().get());
         DocID.set(Indexer.getDocID().get());
         FileID.set(Indexer.getFileID().get());
@@ -114,7 +114,10 @@ public class IndexManager {
             FileWriter fileWriter = new FileWriter(file,true);
             for (String s:allDocs) {
                 fileWriter.write(s+"\n");
+                fileWriter.flush();
             }
+                fileWriter.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

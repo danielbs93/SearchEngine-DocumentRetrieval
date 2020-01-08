@@ -1,5 +1,6 @@
 package Index;
 
+import Rules.Stemmer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -30,18 +31,26 @@ public class Main {
 //        writeTheSameWordInUpperandLower(savingPath);
 
 //        SortDictionaryByTermID(savingPath);
-
-        findDuplicateTuples(savingPath);
-
+//        calculateAVGDocLen(savingPath);
     }
 
-    private static void findDuplicateTuples(String savingPath) {
-        File file = new File(savingPath+"\\DocIDLexicon.txt");
+    private static void calculateAVGDocLen(String saving) {
+        File file = new File(saving+"\\DocIDLexicon.txt");
+        String trouble = "";
         try {
-            List<String> alldocs = Files.readAllLines(file.toPath());
-
+            List<String> list = Files.readAllLines(file.toPath());
+            int sum = 0;
+            for (String s: list) {
+                String[] data = s.split(";");
+                if (data.length > 4)
+                    sum += Integer.parseInt(data[5]);
+                trouble = data[0];
+            }
+            System.out.println(sum/list.size());
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("DocID : " + trouble);
         }
     }
 
