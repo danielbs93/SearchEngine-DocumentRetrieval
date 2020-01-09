@@ -53,13 +53,20 @@ public class RangedParser extends Anumbers {
                     }
                     if (i < arrOfStrings.length - 1)
                         result.setName(result.getName() + "-");
+                } else if (word.getName().contains("$") && arrOfStrings.length == 2 && i + 1 < arrOfStrings.length) {
+                    ArrayList<Token> price = new ArrayList<>();
+                    price.add(word);
+                    price.add(new Token(arrOfStrings[i + 1]));
+                    PriceParser p = new PriceParser(price);
+                    result = p.Parse();
+                    break;
                 }
             }
             tokenList.clear();
 //            tokenList.add(result);
             Result = new Token(result);
             Result.setPosition(position);
-            return  Result;
+            return Result;
         }
         //case: "Between 18 and 24" --> 18-24
         else if (tokenList.size() == 4) {
@@ -67,12 +74,12 @@ public class RangedParser extends Anumbers {
             Token fourth = tokenList.get(3);
             NumParser p = new NumParser(second);
             num = p.Parse();
-            if(!num.isNumeric())
+            if (!num.isNumeric())
                 return num;
             result = new Token(num.getName());
             p = new NumParser(fourth);
             num = p.Parse();
-            if(!num.isNumeric())
+            if (!num.isNumeric())
                 return num;
             String current = result.getName();
             result.setName(current + "-" + num.getName());
@@ -92,7 +99,7 @@ public class RangedParser extends Anumbers {
                     num = p.Parse();
                     String current = num.getName();
                     result.setName(current);
-                }else {
+                } else {
                     result.setName(result.getName() + word.getName());
                 }
                 if (i < tokenList.size() - 1)

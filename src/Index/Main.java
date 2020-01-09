@@ -32,6 +32,9 @@ public class Main {
 
 //        SortDictionaryByTermID(savingPath);
 //        calculateAVGDocLen(savingPath);
+//        String s = "<TEXT> $1.1-million $1.2-billion $1.3-Million $1.4-Billion $2m $3M $4bn $5b $6.2B $74Bn </TEXT>";
+//        Parser p = new Parser(s,CorpusPath,true);
+//        p.Parse();
     }
 
     private static void calculateAVGDocLen(String saving) {

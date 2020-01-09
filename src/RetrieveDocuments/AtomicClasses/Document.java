@@ -16,6 +16,7 @@ public class Document {
     private int uniqueWords;
     private double[] rank;
     private ArrayList<Term> myTerms;
+    private ArrayList<Term> dominantEntities;
 
     public Document(ArrayList<String> data, int id) {
         docNO = data.get(0);
@@ -29,6 +30,7 @@ public class Document {
             rank[i] = -1;
         }
         myTerms = new ArrayList<>();
+        dominantEntities = new ArrayList<>();
     }
 
     public String getDocNO() {
@@ -105,5 +107,14 @@ public class Document {
         if (myTerms.contains(term))
             return true;
         return false;
+    }
+
+    public void addToDominantEntities(Term term) {
+        if (term != null)
+            this.dominantEntities.add(term);
+    }
+
+    public String getFileNO() {
+        return fileNO;
     }
 }

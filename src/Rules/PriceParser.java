@@ -31,13 +31,22 @@ public class PriceParser extends Anumbers {
         // $x-unit
         if (tokenList.size() == 1 && tokenList.get(0).getName().contains("-")) {
             Token token = tokenList.remove(0);
-            int hyphen = token.getName().indexOf("-");
-            tokenList.add(new Token(token.getName().substring(0, hyphen)));
-            tokenList.add(new Token(token.getName().substring(hyphen + 1)));
-        } else if (tokenList.size() == 1 && Character.isLetter(tokenList.get(0).getName().charAt(tokenList.get(0).getName().length() - 1))) {
-            int length = tokenList.get(0).getName().length();
-            tokenList.add(1, new Token(tokenList.get(0).getName().substring(length - 1)));
-            tokenList.get(0).setName(tokenList.get(0).getName().substring(0, length - 1));
+            String[] dollarAndUnit = token.getName().split("-");
+            tokenList.add(new Token(dollarAndUnit[0]));
+            tokenList.add(new Token(dollarAndUnit[1]));
+        }
+        //$xunit
+        else if (tokenList.size() == 1 && Character.isLetter(tokenList.get(0).getName().charAt(tokenList.get(0).getName().length() - 1))) {
+            String name = tokenList.get(0).getName();
+            String dollarNum = name.substring(1),unit = "Dollars";
+            Token number = new Token(dollarNum);
+            Token Unit = new Token(unit);
+            tokenList.remove(0);
+            tokenList.add(number);
+            tokenList.add(Unit);
+//            int length = tokenList.get(0).getName().length();
+//            tokenList.add(1, new Token(tokenList.get(0).getName().substring(length - 1)));
+//            tokenList.get(0).setName(tokenList.get(0).getName().substring(0, length - 1));
         }
         if (tokenList.size() == 1) {
             String price = tokenList.get(0).getName().substring(1);
@@ -61,12 +70,19 @@ public class PriceParser extends Anumbers {
             } else if ((first.getName().contains("bn") || first.getName().contains("m")
                     || first.getName().contains("b") || first.getName().contains("M")
                     || first.getName().contains("B") || first.getName().contains("BN")) && isDollar(second)) {// Xbn/m dollars
+                int indexOfLetter = -1;
+                for (int i = 0; i < first.getName().length(); i++) {
+                    if (Character.isLetter(first.getName().charAt(i))) {
+                        indexOfLetter = i;
+                        break;
+                    }
+                }
                 if (first.getName().contains("bn") || first.getName().contains("B")
                         || first.getName().contains("BN") || first.getName().contains("b")) {
-                    Token t_number = new Token(first.getName().substring(0, first.getName().indexOf('b')));
+                    Token t_number = new Token(first.getName().substring(0, indexOfLetter));
                     Result = ParseBillion(t_number);
                 } else {
-                    Token number = new Token(first.getName().substring(0, first.getName().indexOf('m')));
+                    Token number = new Token(first.getName().substring(0, indexOfLetter));
                     if (number.getName().length() == 0)// just "million D/dollar"
                         number.setName("1");
                     number = makeMillion(number);

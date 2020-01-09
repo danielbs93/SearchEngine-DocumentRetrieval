@@ -21,6 +21,7 @@ public class Searcher {
     private boolean semantic;
     private HashMap<String,ArrayList<String>> m_Dicrionary;
     private HashMap<Integer,ArrayList<String>> m_DocLexicon;
+    private ArrayList<ArrayList<Term>> dominantEntities;
     private Comparator<Integer[]> myComparator;
 
 
@@ -51,6 +52,7 @@ public class Searcher {
             rankedDocs.add(ranked);
 
             //COMPUTE RANKING FOR ALL RANKING FORMULAS
+            //RETURN UP TP 50 RANKED DOCUMENTS
         }
         return rankedDocs;
     }
@@ -194,6 +196,13 @@ public class Searcher {
             current.sort(myComparator);
         }
         return result;
+    }
+
+    public void get5DominantEntities() {
+        IdentifyDominantEntities entities;
+//        for (: rankedDocs) {
+//
+//        }
     }
 
 }

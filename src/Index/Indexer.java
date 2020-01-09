@@ -8,7 +8,6 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -43,7 +42,7 @@ public class Indexer {
         Dictionary = dictionary;
         EntitiesDictionary = entitiesDictionary;
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize);
-        String modelFile = "Resources/english-left3words-distsim.tagger";
+        String modelFile = "\\english-left3words-distsim.tagger";
         maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}), false);
         TermID = new AtomicInteger(0);
         DocID = new AtomicInteger(0);

@@ -5,6 +5,7 @@ import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.regex.*;
@@ -103,6 +104,7 @@ public class Parser {
     private void parseByStopWords() {
         try {
             File file = new File(CorpusPath + "\\StopWords.txt");
+//            File file = new File(getClass().getResource(".../StopWords.txt").getFile());
             FileReader fileReader = new FileReader(file);
             BufferedReader bf = new BufferedReader(fileReader);
             LinkedList<String> StopWords = new LinkedList<>();
@@ -140,18 +142,21 @@ public class Parser {
         IParser NumericParser;
         afterThisRules.clear();
         SendingToken.clear();
+        boolean addToWords = true;
         for (int i = 0; i < tokenList.size(); i++) {
             //all rules that have to parse only 1 token
             if (tokenList.get(i).getName().contains("%")) {
                 SendingToken.add(tokenList.get(i));
                 NumericParser = new PercentageParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
+                addToWords = false;
             }
             // 1. w1-w2-w3
             else if (tokenList.get(i).getName().contains("-")) {
                 SendingToken.add(tokenList.get(i));
                 NumericParser = new RangedParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
+                addToWords = false;
             }
             // 1. Month 2.Day/Year
             else if (DatesParser.isDate(tokenList.get(i).getName()) && isNextIndexAvailable(i) && isInt(tokenList.get(i + 1).getName())) {
@@ -162,6 +167,7 @@ public class Parser {
                     NumericParser = new DatesParser(SendingToken);
                     parserdList[0].add(NumericParser.Parse());
                     i++;
+                    addToWords = false;
                 }
             }
             //1.Between 2.X 3.and 4.Y
@@ -171,6 +177,7 @@ public class Parser {
                 NumericParser = new RangedParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
                 i = i + 3;
+                addToWords = false;
             }
 //            //Quotes
 //            else if (tokenList.get(i).getName().charAt(0) == '"') {
@@ -216,6 +223,7 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new PriceParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
+                        addToWords = false;
                     }
             }
             //1.X
@@ -227,6 +235,7 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new PercentageParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
+                        addToWords = false;
                     }
                     //2. Month
                     else if (isInt(tokenList.get(i).getName()) && DatesParser.isDate(tokenList.get(i + 1).getName())) {
@@ -234,6 +243,7 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new DatesParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
+                        addToWords = false;
                     }
                     //2. WeightUnit
                     else if (WeightsParser.isWeightUnit(tokenList.get(i + 1).getName())) {
@@ -241,6 +251,7 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new WeightsParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
+                        addToWords = false;
                     }
                     //2. DistanceUnit
                     else if (DistancesParser.isDistanceUnit(tokenList.get(i + 1).getName())) {
@@ -248,6 +259,7 @@ public class Parser {
                         SendingToken.add(tokenList.get(i));
                         NumericParser = new DistancesParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
+                        addToWords = false;
                     }
                     //2. Quantity unit
                     else if (isQuantityUnit(tokenList.get(i + 1))) {
@@ -277,6 +289,7 @@ public class Parser {
                                 numberRule = false;
                                 NumericParser = new PriceParser(SendingToken);
                                 parserdList[0].add(NumericParser.Parse());
+                                addToWords = false;
                             }
                         }// even if a doc is ending with a number rule and there is no continue of words after it.
                         if (numberRule) {
@@ -284,6 +297,7 @@ public class Parser {
                             SendingToken.add(tokenList.get(i));
                             NumericParser = new NumParser(SendingToken);
                             parserdList[0].add(NumericParser.Parse());
+                            addToWords = false;
                         }
                     }
                     //2. fraction
@@ -296,12 +310,14 @@ public class Parser {
                                 priceRule = true;
                                 NumericParser = new PriceParser(SendingToken);
                                 parserdList[0].add(NumericParser.Parse());
+                                addToWords = false;
                             }
                         }
                         if (!priceRule) {
                             SendingToken = AddToSendingToken(i, i + 1);
                             NumericParser = new NumParser(SendingToken);
                             parserdList[0].add(NumericParser.Parse());
+                            addToWords = false;
                         }
                     }
                     //2.D/dollars
@@ -309,14 +325,18 @@ public class Parser {
                         SendingToken = AddToSendingToken(i, i + 1);
                         NumericParser = new PriceParser(SendingToken);
                         parserdList[0].add(NumericParser.Parse());
-                    } else
+                        addToWords = false;
+                    } else {
                         parserdList[0].add((new NumParser(tokenList.get(i))).Parse());
+                        addToWords = false;
+                    }
                 }
                 //Its just a number to parse
                 else {
                     SendingToken.add(tokenList.get(i));
                     NumericParser = new NumParser(SendingToken);
                     parserdList[0].add(NumericParser.Parse());
+                    addToWords = false;
                 }
             }
             //1. $x
@@ -335,6 +355,7 @@ public class Parser {
                 }
                 NumericParser = new PriceParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
+                addToWords = false;
             }
             //Rule of "w1 - w2 - ... - wn" (with spaces)
             else if (isNextIndexAvailable(i) && tokenList.get(i + 1).getName().equals("-")) {
@@ -360,6 +381,7 @@ public class Parser {
                 }
                 NumericParser = new RangedParser(SendingToken);
                 parserdList[0].add(NumericParser.Parse());
+                addToWords = false;
             }
 //            //Token is a word
 //            else {
@@ -369,7 +391,7 @@ public class Parser {
             if (!SendingToken.isEmpty())
                 SendingToken.clear();
             //Token is a word
-            else {
+            if (addToWords){
                 afterThisRules.add(tokenList.get(i));
                 Doc.append(tokenList.get(i).getName() + " ");
             }
@@ -452,6 +474,8 @@ public class Parser {
                             if (name.contains(".")) {
                                 name = StringUtils.stripStart(name, ".");
                                 name = StringUtils.stripEnd(name, ".");
+                                name = StringUtils.stripEnd(name,"-");
+                                name = StringUtils.stripStart(name,"-");
                             }
                             if (!isPanctuationMark(name) && name.length() > 0)
                                 tDoc.add(new Token(name, position++));
