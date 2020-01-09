@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="SearchEngineGUI">
-  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="8" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="11" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="-2" y="5" width="811" height="455"/>
+      <xy x="-23" y="5" width="845" height="455"/>
     </constraints>
     <properties>
       <enabled value="true"/>
+      <foreground color="-1"/>
     </properties>
     <border type="none"/>
     <children>
       <grid id="66282" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="6" column="1" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="1" row-span="1" col-span="7" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -54,12 +55,12 @@
       </grid>
       <vspacer id="1a218">
         <constraints>
-          <grid row="7" column="1" row-span="1" col-span="5" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="1" row-span="1" col-span="7" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <hspacer id="cfbe6">
         <constraints>
-          <grid row="4" column="6" row-span="2" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+          <grid row="6" column="9" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="1" height="-1"/>
           </grid>
         </constraints>
@@ -71,17 +72,17 @@
       </hspacer>
       <hspacer id="7fa2e">
         <constraints>
-          <grid row="3" column="0" row-span="3" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="3" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <hspacer id="25a20">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <component id="65f7a" class="javax.swing.JLabel">
         <constraints>
-          <grid row="1" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="7" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <icon value="Resources/tootle.png"/>
@@ -90,17 +91,19 @@
       </component>
       <vspacer id="a5a93">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="5" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="7" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="a109a">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="5" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="1" row-span="1" col-span="7" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="ed3d6" class="javax.swing.JLabel">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="66" height="33"/>
+          </grid>
         </constraints>
         <properties>
           <text value="Corpus Path:"/>
@@ -108,7 +111,7 @@
       </component>
       <component id="59ef9" class="javax.swing.JLabel">
         <constraints>
-          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Posting Path:"/>
@@ -116,7 +119,7 @@
       </component>
       <component id="f8d26" class="javax.swing.JLabel">
         <constraints>
-          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Stemming"/>
@@ -124,7 +127,7 @@
       </component>
       <component id="58dd9" class="javax.swing.JCheckBox" binding="checkBox1" default-binding="true">
         <constraints>
-          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false">
+          <grid row="7" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="421" height="18"/>
           </grid>
         </constraints>
@@ -136,7 +139,7 @@
       </component>
       <component id="81adc" class="javax.swing.JTextField" binding="textField2" default-binding="true">
         <constraints>
-          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="6" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="421" height="30"/>
           </grid>
         </constraints>
@@ -146,17 +149,71 @@
       </component>
       <component id="ecd73" class="javax.swing.JTextField" binding="textField1" default-binding="true">
         <constraints>
-          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="5" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="421" height="33"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="dd6b2" class="javax.swing.JTextField" binding="textField4" default-binding="true">
+        <constraints>
+          <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="421" height="30"/>
           </grid>
         </constraints>
         <properties/>
       </component>
-      <component id="d3286" class="javax.swing.JButton" binding="chooseFile">
+      <component id="d413e" class="javax.swing.JTextField" binding="textField5" default-binding="true">
         <constraints>
-          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
+          <grid row="3" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="421" height="30"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="ec7af" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Query:"/>
+        </properties>
+      </component>
+      <component id="6ae7f" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Query File:"/>
+        </properties>
+      </component>
+      <component id="6e2fb" class="javax.swing.JButton" binding="runQueriesButton" default-binding="true">
+        <constraints>
+          <grid row="9" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Run Queries"/>
+        </properties>
+      </component>
+      <component id="c4906" class="javax.swing.JButton" binding="button2" default-binding="true">
+        <constraints>
+          <grid row="4" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="40" height="20"/>
             <preferred-size width="20" height="5"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <foreground color="-1"/>
+          <icon value="FileIcon.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="d3286" class="javax.swing.JButton" binding="chooseFile">
+        <constraints>
+          <grid row="5" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="40" height="20"/>
+            <preferred-size width="20" height="33"/>
           </grid>
         </constraints>
         <properties>
@@ -171,7 +228,7 @@
       </component>
       <component id="c4439" class="javax.swing.JButton" binding="chooseFileButton1" default-binding="true">
         <constraints>
-          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
+          <grid row="6" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="40" height="20"/>
             <preferred-size width="20" height="5"/>
           </grid>
@@ -179,6 +236,46 @@
         <properties>
           <icon value="FileIcon.png"/>
           <text value=""/>
+        </properties>
+      </component>
+      <component id="d9c21" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Show Entities"/>
+        </properties>
+      </component>
+      <component id="17694" class="javax.swing.JCheckBox" binding="checkBox3" default-binding="true">
+        <constraints>
+          <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="4" height="4"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <enabled value="true"/>
+          <foreground color="-1"/>
+          <text value="CheckBox"/>
+        </properties>
+      </component>
+      <component id="5a14f" class="javax.swing.JCheckBox" binding="checkBox2" default-binding="true">
+        <constraints>
+          <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="421" height="18"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="6cf9f" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Semantic"/>
         </properties>
       </component>
     </children>

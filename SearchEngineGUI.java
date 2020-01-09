@@ -1,4 +1,7 @@
 import Index.IndexManager;
+import RetrieveDocuments.MyReader;
+import RetrieveDocuments.RetrieveManager;
+import javafx.geometry.Pos;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
@@ -7,12 +10,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 public class SearchEngineGUI<Private> {
 
     private JPanel panel1;
-    private JTextField textField2;
-    private JTextField textField1;
+    private JTextField textField2; // posting
+    private JTextField textField1; // corpus
     private JCheckBox checkBox1;
     private JButton chooseFileButton1;
     private JButton resetButton;
@@ -20,18 +26,33 @@ public class SearchEngineGUI<Private> {
     private JButton uploadDictionaryButton;
     private JButton showDictionaryButton;
     private JButton showDictionaryButton1;
+    private JTextField textField4;
+    private JTextField textField5;
+    private JButton runQueriesButton;
+    private JButton button2;
+    private JCheckBox checkBox2;
+    private JCheckBox checkBox3;
+    private JButton button1;
     private String CorpusPath;
     private String PostingPath;
-    private boolean Stemmer;
+    private String query;
+    private String QueryPath;
+    private boolean stemmer;
+    private boolean semantic;
+    private boolean entities;
+
+//    private boolean isDelete = false;
     //    private String DefaultPostingPath = "C:\\Users\\erant\\Desktop\\project\\postingFiles";
     private IndexManager indexManager;
+    private RetrieveManager retrieveManager;
+    private MyReader myReader;
+    private HashMap<String, ArrayList<String>> dictionary;
 
 
     /**
      * Start Index
      */
     public SearchEngineGUI() {
-
 
         uploadDictionaryButton.addActionListener(new ActionListener() {
             @Override
@@ -41,7 +62,7 @@ public class SearchEngineGUI<Private> {
                 else {
                     CorpusPath = textField1.getText();
                     PostingPath = textField2.getText();
-                    Stemmer = checkBox1.isSelected();
+                    stemmer = checkBox1.isSelected();
                     File directory=new File(CorpusPath);
                     int fileCount=directory.list().length;
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -68,20 +89,6 @@ public class SearchEngineGUI<Private> {
                         e1.printStackTrace();
                     }
 
-//                    Path path = Paths.get(PostingPath+"DocIDLexicon.txt");
-//                    long lineCount = 0;
-//                    try {
-//                         lineCount = Files.lines(path).count();
-//                    } catch (IOException e1) {
-//                        e1.printStackTrace();
-//                    }
-//                    File file = new File(PostingPath+"DocIDLexicon.txt");
-//                    int docNum = 0;
-//                    try {
-//                         docNum = (Files.readAllLines(file.toPath())).size();
-//                    } catch (IOException e1) {
-//                        e1.printStackTrace();
-//                    }
                     JOptionPane.showMessageDialog(null, "Num of Docs : "+lines  +"\n"
                             + "Num of Terms : " + indexManager.getDictionarySize() + "\n"
                             + "Time for build inverted index : " + (timestamp2.getTime() - timestamp.getTime()) / 1000 + " sec");
@@ -117,30 +124,57 @@ public class SearchEngineGUI<Private> {
             }
         });
         /**
+         * Browse to Query path
+         */
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc1 = new JFileChooser();
+                fc1.setCurrentDirectory(new java.io.File("C:\\Users\\erant\\Desktop"));
+                fc1.setDialogTitle("Choose Directory");
+                fc1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int returnValue = fc1.showOpenDialog(null);
+                textField4.setText(fc1.getSelectedFile().getAbsolutePath());
+
+            }
+        });
+        /**
          * Delete Posting File Directory
          */
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int dialogResult = JOptionPane.showConfirmDialog (null,"Are you sure yo want to reset");
-                if(dialogResult == JOptionPane.YES_OPTION){
-                    if(textField2.getText().length() != 0)
-                        PostingPath = textField2.getText();
-//                    else
-//                        PostingPath = DefaultPostingPath;
-                    File[] files = (new File(PostingPath)).listFiles();
-                    for (File file: files     ) {
-                        if (file.isDirectory()) {
-                            try {
-                                FileUtils.deleteDirectory(file);
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
+                if (textField2.getText().length() == 0) {
+                    JOptionPane.showMessageDialog(null, "Please insert path to the posting file");
+                } else {
+                    PostingPath = textField2.getText();
+                    File dir = new File(PostingPath);
+                    if (dir.isDirectory()) {
+                        if (dir.list().length > 0) {
+                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure yo want to reset");
+                            if (dialogResult == JOptionPane.YES_OPTION) {
+                                File[] files = (new File(PostingPath)).listFiles();
+                                for (File file : files) {
+                                    if (file.isDirectory()) {
+                                        try {
+                                            FileUtils.deleteDirectory(file);
+                                        } catch (IOException e1) {
+                                            e1.printStackTrace();
+                                        }
+                                    }
+                                    file.delete();
+                                }
                             }
+                            if (dictionary!=null)
+                                dictionary.clear();
+                            JOptionPane.showMessageDialog(null, "Directory:  " + PostingPath + "\n deleted!", "Delete Directory", 2);
                         }
-                        file.delete();
+                        else{
+                            JOptionPane.showMessageDialog(null, "Directory already deleted", "Delete Directory", 2);
+
+                        }
                     }
                 }
-                JOptionPane.showMessageDialog(null,"Directory:  " + PostingPath + "\n deleted!", "Delete Directory",2);
             }
         });
         /**
@@ -150,17 +184,16 @@ public class SearchEngineGUI<Private> {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(indexManager != null) {
-                    if (PostingPath.length() == 0)
-                        PostingPath = textField2.getText();
                     if (PostingPath.length() == 0) {
                         JOptionPane.showMessageDialog(null, "Please enter path");
                         return;
                     }
 //                    indexManager.SortAndWriteDictionary();
-
                 }
-                else
-                    JOptionPane.showMessageDialog(null,"Please enter path");
+                else {
+                    myReader = new MyReader(PostingPath);
+                    dictionary = myReader.loadDictionary();
+                }
             }
         });
         /**
@@ -169,26 +202,6 @@ public class SearchEngineGUI<Private> {
         showDictionaryButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-//                JFrame frame = new JFrame("Dictionary");
-//                frame.setBackground(Color.white);
-//                frame.getContentPane().setBackground(Color.white);
-//                frame.setPreferredSize(new Dimension(850,500));
-//                frame.setLocationRelativeTo(null);
-//                JCheckBox checkBox1 = new JCheckBox();
-//                checkBox1.setBorderPaintedFlat(true);
-//                frame.setLocation(700,150);
-////                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//                frame.setState(Frame.ICONIFIED);
-//                frame.setState(Frame.NORMAL);
-//                frame.pack();
-//                frame.setVisible(true);
-//                JPanel panel = new JPanel();
-//
-//                panel.setBackground(Color.WHITE);
-////                panel.add(jScrollPane);
-//                JTextArea displayOutput = new JTextArea();
-//                displayOutput.setBackground(Color.WHITE);
-//                PostingPath = "D:\\documents\\users\\erantout\\Downloads\\project\\Gui";
                 File file = new File(PostingPath+"\\SortedDictionary.txt");
                 if(file.exists()) {
                     try {
@@ -197,38 +210,44 @@ public class SearchEngineGUI<Private> {
                         e.printStackTrace();
                     }
                 }
-////                    BufferedReader reader = null;
-//                    try {
-////                        reader = new BufferedReader(new FileReader(PostingPath + "\\SortedDictionary.txt"));
-//                        List<String> list = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-//                        StringBuilder stringBuilder = new StringBuilder();
-//                        for (String s:list) {
-//                            stringBuilder.append(s + "\n");
-//                        }
-//                            displayOutput.append(stringBuilder.toString());
-//                    } catch (FileNotFoundException e1) {
-//                        e1.printStackTrace();
-//                    } catch (IOException e1) {
-//                        e1.printStackTrace();
-//                    }
-//                }
-//                else {
-//                    JOptionPane.showMessageDialog(null, "Missing Dictionary");
-////                    frame.setDefaultCloseOperation();
-//                }
-//                JScrollPane jScrollPane = new JScrollPane();
-//                jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-////                jScrollPane.setPreferredSize(new Dimension(700, 150));
-////                frame.getContentPane().add(jScrollPane, BorderLayout.CENTER);
-////                jScrollPane.add(displayOutput);
-//                jScrollPane.setBounds(100,100, 50,100);
-//                frame.add(jScrollPane);
-////                panel.add(displayOutput);
-//                frame.add(displayOutput);
+            }
+        });
 
-//                frame.setSize(800,800);
+/**
+ * Run queries
+ */
+        runQueriesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                entities = checkBox3.isSelected();
+                semantic = checkBox2.isSelected();
+                stemmer = checkBox1.isSelected();
+                boolean isPath = false;
+                if (dictionary == null)
+                    JOptionPane.showMessageDialog(null,"Please upload dictionary");
+                else if (textField4.getText().length() == 0 && textField5.getText().length()==0)
+                    JOptionPane.showMessageDialog(null,"Please insert path or query");
+                else if (textField4.getText().length() != 0 && textField5.getText().length() !=0)
+                    JOptionPane.showMessageDialog(null,"Please choose just one option to search");
+                else if (textField1.getText().length() == 0)
+                    JOptionPane.showMessageDialog(null,"Please enter corpus path");
+                else if (textField2.getText().length() == 0)
+                    JOptionPane.showMessageDialog(null,"Please enter Posting path path");
+                else{
+                    CorpusPath = textField1.getText();
+                    PostingPath = textField2.getText();
+                    if (textField4.getText().length() == 0) // Query from input text
+                        query = textField5.getText();
+                    else {// Queries from file
+                        query = textField4.getText();
+                        isPath = true;
+                    }
+                    retrieveManager = new RetrieveManager(stemmer,semantic,entities,isPath,query,CorpusPath,PostingPath,dictionary);
+                    retrieveManager.ReadQuery();
+                    retrieveManager.Retriev();
+                    retrieveManager.SaveRetrievalInformation();
 
-
+                }
             }
         });
     }
@@ -238,11 +257,11 @@ public class SearchEngineGUI<Private> {
         frame.setContentPane(new SearchEngineGUI().panel1);
         frame.setBackground(Color.white);
         frame.getContentPane().setBackground(Color.white);
-        frame.setPreferredSize(new Dimension(700,500));
+        frame.setPreferredSize(new Dimension(850,500));
         frame.setLocationRelativeTo(null);
         JCheckBox checkBox1 = new JCheckBox();
         checkBox1.setBorderPaintedFlat(true);
-        frame.setLocation(400,200);
+        frame.setLocation(450,200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setState(Frame.ICONIFIED);
         frame.setState(Frame.NORMAL);

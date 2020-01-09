@@ -69,6 +69,14 @@ public class Term {
         return positions;
     }
 
+    /**
+     * this function sets position only for queries terms
+     * @param positions
+     */
+    public void setQueryTermPositions(int positions) {
+        this.positions[0] = positions;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof Term) && termID == ((Term)obj).termID;
