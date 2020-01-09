@@ -1,5 +1,6 @@
 package RetrieveDocuments;
 
+import Index.Parser;
 import RetrieveDocuments.AtomicClasses.Document;
 import RetrieveDocuments.AtomicClasses.Term;
 import Rules.Token;
@@ -9,7 +10,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 
 public class IdentifyDominantEntities {
 
@@ -17,20 +17,28 @@ public class IdentifyDominantEntities {
     private ArrayList<Term> entities;
     private Comparator<Term> tfComparator;
     private String corpusPath;
+    private boolean isStemmer;
 
-    public IdentifyDominantEntities(Document Doc, String corpus) {
+    public IdentifyDominantEntities(Document Doc, boolean stemmer, String corpus) {
         document = Doc;
         entities = new ArrayList<>();
         tfComparator = Comparator.comparingDouble(Term::getTf);
         corpusPath = corpus;
+        isStemmer = stemmer;
     }
 
-    public ArrayList<Term> get5DominantEntities(HashMap<String,ArrayList<String>> dictionary) {
-        ArrayList<Term> allTerms = document.getDocTerms();
+    public ArrayList<Term> get5DominantEntities(HashMap<String, ArrayList<String>> dictionary) {
+        ArrayList<Token> parsedEntites = parseDoc();
+
         ArrayList<Term> allEntities = new ArrayList<>();
-        for (Term term:allTerms) {
-            if (term.getIsEntity() == 1)
+//        ArrayList<Term> allTerms = document.getDocTerms();
+        for (Token token : parsedEntites) {
+            if (dictionary.keySet().contains(token.getName())) {
+                int id = Integer.parseInt(dictionary.get(token.getName()).get(1));
+                Term term = new Term(token.getName(),id);
+                term.setTf(token.getTf());
                 allEntities.add(term);
+            }
         }
         allEntities.sort(tfComparator);
         if (allEntities.size() < 5)
@@ -44,18 +52,57 @@ public class IdentifyDominantEntities {
     }
 
     public ArrayList<Token> parseDoc() {
-        File file = new File(corpusPath+ "\\" + document.getFileNO() + "\\" +document.getFileNO());
-        String doc = "";
+        File file = new File(corpusPath + "\\" + document.getFileNO() + "\\" + document.getFileNO());
+        StringBuilder doc = new StringBuilder();
         try {
-            List<String> allLines = Files.readAllLines(file.toPath());
-            for (String docno:allLines) {
-                if (docno.contains(document.getDocNO())) {
-
+            ArrayList<String> allLines = (ArrayList<String>) Files.readAllLines(file.toPath());
+            boolean done = false;
+            for (int i = 0; i < allLines.size(); i++) {
+                if (allLines.get(i).contains(document.getDocNO())) {
+                    for (int j = i + 1; j < allLines.size(); j++) {
+                        if (allLines.get(j).contains("<TEXT>")) {
+                            for (int k = j + 1; k < allLines.size(); k++) {
+                                if (allLines.get(k).contains("</TEXT>")) {
+                                    done = true;
+                                    break;
+                                }
+                                doc.append(allLines.get(k) + "\n");
+                            }
+                        }
+                        if (done)
+                            break;
+                    }
                 }
+                if (done)
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Parser p = new Parser(doc.toString(), corpusPath, isStemmer);
+        ArrayList<Token> allEntities = p.Parse()[1];
+        return CountAndRemove(allEntities);
+    }
+
+    private ArrayList<Token> CountAndRemove(ArrayList<Token> tokens) {
+        ArrayList<Integer> toDelete = new ArrayList<>();
+        int i = 0;
+        for (Token term : tokens) {
+            for (Token token : tokens) {
+                if (token != null && !term.isEqual(token)) {
+                    if (term.getName().equals(token.getName())) {
+                        term.increaseTF();
+                        term.addPosition(token.getPosition());
+                        toDelete.add(i);
+                    }
+                }
+                i++;
+            }
+        }
+        for (Integer delete : toDelete) {
+            tokens.set(delete.intValue(), null);
+        }
+        return tokens;
     }
 
 
