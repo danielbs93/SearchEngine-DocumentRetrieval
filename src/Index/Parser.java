@@ -43,7 +43,7 @@ public class Parser {
         parseByStopWords();
         parseByStemmer();
         parseByUpperLower();
-        parseByEntities(maxentTagger);
+//        parseByEntities(maxentTagger);
         return parserdList;
     }
 
@@ -179,37 +179,24 @@ public class Parser {
                 i = i + 3;
                 addToWords = false;
             }
-//            //Quotes
-//            else if (tokenList.get(i).getName().charAt(0) == '"') {
-//                int ifItJustQuotationMark = i;//if its start with quotation mark and does not end with one
-//                boolean QuotationMarkOnlyInStart = false;
-//                SendingToken.add(tokenList.get(i));
-//                if (isQuoteRule(i) && isNextIndexAvailable(i)) {
-//                    i++;
-//                    while (i < tokenList.size() && !tokenList.get(i).getName().contains("\"")) {
-//                        SendingToken.add(tokenList.get(i));
-//                        i++;
-//                    }
-//                    if (i == tokenList.size() && !tokenList.get(i - 1).getName().contains("\""))
-//                        QuotationMarkOnlyInStart = true;
-//                    else {
-//                        int length = tokenList.get(i).getName().length() - 2;
-//                        if (tokenList.get(i).getName().length() > 1 && tokenList.get(i).getName().charAt(length) == '.')
-//                            tokenList.get(i).setName(tokenList.get(i).getName().substring(0, length) + "\"");
-//                        if (tokenList.get(i).getName().length() > 1 && tokenList.get(i).getName().charAt(length) == ',')
-//                            tokenList.get(i).setName(tokenList.get(i).getName().substring(0, length) + "\"");
-//                        SendingToken.add(tokenList.get(i));
-//                    }
-//                }
-//                if (QuotationMarkOnlyInStart) {
-//                    i = ifItJustQuotationMark - 1;
-//                    String word = tokenList.get(ifItJustQuotationMark).getName().substring(1);
-//                    tokenList.get(ifItJustQuotationMark).setName(word);//without quotation mark
-//                } else {
-//                    NumericParser = new QuotesParser(SendingToken);
-//                    parserdList[0].add(NumericParser.Parse());
-//                }
-//            }
+            //1. $x
+            else if (tokenList.get(i).getName().contains("$")) {
+                if (tokenList.get(i).getName().charAt(0) != '$')
+                    tokenList.get(i).setName(tokenList.get(i).getName().substring(tokenList.get(i).getName().indexOf("$")));
+                if (isNextIndexAvailable(i) && tokenList.get(i + 1).isNumeric()) {
+                    tokenList.get(i).setName(tokenList.get(i).getName() + tokenList.get(i + 1).getName());
+                    SendingToken.add(tokenList.get(i++));
+                } else
+                    SendingToken.add(tokenList.get(i));
+                //2. quantity unit
+                if (isNextIndexAvailable(i + 1) && isQuantityUnit(tokenList.get(i + 1))) {
+                    SendingToken.add(tokenList.get(i + 1));
+                    i++;
+                }
+                NumericParser = new PriceParser(SendingToken);
+                parserdList[0].add(NumericParser.Parse());
+                addToWords = false;
+            }
             // 1.Xunit 2.D/dollars
             else if (tokenList.get(i).getName().contains("bn") || tokenList.get(i).getName().contains("m")) {
                 String num = tokenList.get(i).getName();
@@ -338,24 +325,6 @@ public class Parser {
                     parserdList[0].add(NumericParser.Parse());
                     addToWords = false;
                 }
-            }
-            //1. $x
-            else if (tokenList.get(i).getName().contains("$")) {
-                if (tokenList.get(i).getName().charAt(0) != '$')
-                    tokenList.get(i).setName(tokenList.get(i).getName().substring(tokenList.get(i).getName().indexOf("$")));
-                if (isNextIndexAvailable(i) && tokenList.get(i + 1).isNumeric()) {
-                    tokenList.get(i).setName(tokenList.get(i).getName() + tokenList.get(i + 1).getName());
-                    SendingToken.add(tokenList.get(i++));
-                } else
-                    SendingToken.add(tokenList.get(i));
-                //2. quantity unit
-                if (isNextIndexAvailable(i + 1) && isQuantityUnit(tokenList.get(i + 1))) {
-                    SendingToken.add(tokenList.get(i + 1));
-                    i++;
-                }
-                NumericParser = new PriceParser(SendingToken);
-                parserdList[0].add(NumericParser.Parse());
-                addToWords = false;
             }
             //Rule of "w1 - w2 - ... - wn" (with spaces)
             else if (isNextIndexAvailable(i) && tokenList.get(i + 1).getName().equals("-")) {

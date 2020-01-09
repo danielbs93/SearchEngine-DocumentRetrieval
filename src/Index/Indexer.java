@@ -66,6 +66,7 @@ public class Indexer {
         isActive = true;
         File[] files = (new File(CorpusPath)).listFiles();
         for (int i = fromWhereToRead; i < NumOfFilesToRead-Intervals; i+=Intervals) {
+//        for (int i = fromWhereToRead; i < NumOfFilesToRead; i++) {
 //            File[] currentDirectory = files[i].listFiles();
             ReadFile fileReader = new ReadFile(files,i,i+Intervals, Intervals);
             threadPoolExecutor.execute(() -> {
@@ -247,9 +248,9 @@ public class Indexer {
             if (EntitiesDictionary.containsKey(allUpper))
                 token = allUpper;
             else {
-            char upper = Character.toUpperCase(term.getName().charAt(0));
-            token = new Token(term);
-            token.setName(upper + term.getName().substring(1));
+                char upper = Character.toUpperCase(term.getName().charAt(0));
+                token = new Token(term);
+                token.setName(upper + term.getName().substring(1));
             }
             if (EntitiesDictionary.containsKey(token) && !term.isEmpty() && !token.isEmpty()) {
                 entityExist = true;
@@ -399,11 +400,11 @@ public class Indexer {
             }
         }
         try {
-                FileWriter fileWriter = new FileWriter(file, true);
+            FileWriter fileWriter = new FileWriter(file, true);
 //            fileWriter.write(docName + ";" + fileID + ";" + maxTF + ";" + uniqueWords + "\n");
-                    fileWriter.write(SB.toString());
-                fileWriter.flush();
-                fileWriter.close();
+            fileWriter.write(SB.toString());
+            fileWriter.flush();
+            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

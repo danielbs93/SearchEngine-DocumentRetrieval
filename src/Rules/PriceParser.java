@@ -80,13 +80,17 @@ public class PriceParser extends Anumbers {
                 if (first.getName().contains("bn") || first.getName().contains("B")
                         || first.getName().contains("BN") || first.getName().contains("b")) {
                     Token t_number = new Token(first.getName().substring(0, indexOfLetter));
-                    Result = ParseBillion(t_number);
+                    if(t_number != null && t_number.getName().length()>0)
+                        Result = ParseBillion(t_number);
                 } else {
                     Token number = new Token(first.getName().substring(0, indexOfLetter));
                     if (number.getName().length() == 0)// just "million D/dollar"
                         number.setName("1");
                     number = makeMillion(number);
-                    Result = ParseMyPrice(number);
+                    if(number != null)
+                        Result = ParseMyPrice(number);
+                    else
+                        Result = new Token(first);
                 }
 //                second.setName("Dollars");
 //                tokenList.add(second);
@@ -246,9 +250,11 @@ public class PriceParser extends Anumbers {
     }
 
     private Token makeMillion(Token t) {
-        double num = Double.parseDouble(t.getName());
-        num *= 1000000;
-        return new Token(df3.format(num));
+        try {
+            double num = Double.parseDouble(t.getName());
+            num *= 1000000;
+            return new Token(df3.format(num));
+        }catch (NumberFormatException e){return null;}
     }
 
 }

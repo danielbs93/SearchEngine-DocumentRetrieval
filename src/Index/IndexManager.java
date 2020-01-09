@@ -52,14 +52,23 @@ public class IndexManager {
         DocID = new AtomicInteger();
         FileID = new AtomicInteger();
         TempPosingFileName = new AtomicInteger();
-        Intervals = (int) (0.006 * corpusSize) + 1;
         CorpusSize = corpusSize;
+        if (CorpusSize == 1)
+            Intervals = 0;
+        else {
+            Intervals = (int) (0.006 * corpusSize) + 1;
+        }
     }
 
     public void run() {
 //        ConcurrentHashMap<Token, MutablePair<Integer, Integer>> Dictionary = new ConcurrentHashMap<>();
 //        ConcurrentHashMap<Token, ArrayList<Integer>> EntitiesDictionary = new ConcurrentHashMap<>();
-        Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, 0, (CorpusSize / 2), Dictionary, EntitiesDictionary);
+        int pointerToRead = -1;
+        if (CorpusSize == 1)
+            pointerToRead = 1;
+        else
+            pointerToRead = CorpusSize/2;
+        Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, 0, CorpusSize/2, Dictionary, EntitiesDictionary);
         Indexer.setIntervals(Intervals);
         Indexer.Index();
         while (Indexer.isActive()) ;//busy waiting
@@ -67,12 +76,14 @@ public class IndexManager {
         DocID.set(Indexer.getDocID().get());
         FileID.set(Indexer.getFileID().get());
         TempPosingFileName.set(Indexer.getTempPosingFileName().get());
-        Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, (CorpusSize / 2), CorpusSize, Dictionary, EntitiesDictionary);
-        Indexer.setIntervals(Intervals);
-        Indexer.setAtomicIntegers(TermID.get(), DocID.get(), FileID.get(), TempPosingFileName.get());
-        Indexer.Index();
-        while (Indexer.isActive()) ;//busy waiting
-        DocID.set(Indexer.getDocID().get());
+        if (CorpusSize > 5) {
+            Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, pointerToRead, CorpusSize, Dictionary, EntitiesDictionary);
+            Indexer.setIntervals(Intervals);
+            Indexer.setAtomicIntegers(TermID.get(), DocID.get(), FileID.get(), TempPosingFileName.get());
+            Indexer.Index();
+            while (Indexer.isActive()) ;//busy waiting
+            DocID.set(Indexer.getDocID().get());
+        }
         //sort dictionary before writing it to the disk after merging dictionary and entities//
         for (Token entity : EntitiesDictionary.keySet()) {
             if (entity != null && EntitiesDictionary.get(entity) != null
@@ -174,7 +185,7 @@ public class IndexManager {
             getChunkOfFiles(currentData, count, count + (int) Math.floor((CorpusSize/Intervals/3)));
 //            Collections.sort(currentData, myComparator);
             currentData.sort(myComparator);
-            String first = currentData.get(0);
+//            String first = currentData.get(0);
             postingFileName = 0;//Integer.valueOf(first.substring(0, first.indexOf(";"))) / 500;
             LinkedList<String> writingList = new LinkedList<>();
             counter = 0;
