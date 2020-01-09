@@ -15,6 +15,7 @@ public class Document {
     private int maxTfTerm;
     private int uniqueWords;
     private double[] rank;
+    private double finalRank;
     private ArrayList<Term> myTerms;
     private ArrayList<Term> dominantEntities;
 
@@ -27,10 +28,11 @@ public class Document {
         docID = id;
         rank = new double[3];
         for (int i = 0; i < 3; i++) {
-            rank[i] = -1;
+            rank[i] = 0;
         }
         myTerms = new ArrayList<>();
         dominantEntities = new ArrayList<>();
+        finalRank = 0;
     }
 
     public String getDocNO() {
@@ -103,18 +105,34 @@ public class Document {
         return myTerms.get(myTerms.indexOf(term));
     }
 
+    public Term getTermByName(Term t) {
+        for (Term term: myTerms) {
+            if (term.equals(t))
+                return term;
+        }
+        return null;
+    }
+
     public boolean isTermExist(Term term) {
         if (myTerms.contains(term))
             return true;
         return false;
     }
 
-    public void addToDominantEntities(Term term) {
-        if (term != null)
-            this.dominantEntities.add(term);
+    public void setDominantEntities(ArrayList<Term> entities) {
+        if (entities != null)
+            this.dominantEntities = entities;
     }
 
     public String getFileNO() {
         return fileNO;
+    }
+
+    public double getFinalRank() {
+        return finalRank;
+    }
+
+    public void setFinalRank(double finalRank) {
+        this.finalRank = finalRank;
     }
 }

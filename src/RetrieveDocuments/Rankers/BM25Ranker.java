@@ -37,7 +37,7 @@ public class BM25Ranker extends Ranker {
     }
 
     /**
-     * calculate BM25 by its formula
+     * calculate BM25-okapi by its formula
      * @param document
      * @return rank of document by BM25's rank assessment
      * !!tf here is not normalized by maxtf

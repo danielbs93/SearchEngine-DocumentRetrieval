@@ -5,7 +5,7 @@ import RetrieveDocuments.AtomicClasses.Term;
 import RetrieveDocuments.Rankers.BM25Ranker;
 import RetrieveDocuments.Rankers.Ranker;
 import RetrieveDocuments.Rankers.SemanticRanker;
-import RetrieveDocuments.Rankers.TFIDF_SimilarityRanker;
+import edu.stanford.nlp.io.EncodingPrintWriter;
 
 import javax.print.Doc;
 import java.util.*;
@@ -21,38 +21,60 @@ public class Searcher {
     private boolean semantic;
     private HashMap<String,ArrayList<String>> m_Dicrionary;
     private HashMap<Integer,ArrayList<String>> m_DocLexicon;
-    private ArrayList<ArrayList<Term>> dominantEntities;
-    private Comparator<Integer[]> myComparator;
+    private int avgDocLength;
+    private Comparator<Integer[]> CompareByTermID;
+    private Comparator<Document> compareByFinalRank;
 
 
-    public Searcher(String savingPath, boolean semntic) {
+    public Searcher(String savingPath, boolean semntic, HashMap<String,ArrayList<String>> dictionary ) {
         this.savingPath = savingPath;
         this.semantic = semntic;
         myReader = new MyReader(this.savingPath);
         allDocs = new ArrayList<>();
         rankedDocs = new LinkedList<>();
-        m_Dicrionary = myReader.loadDictionary();
+        m_Dicrionary = dictionary;
         m_DocLexicon = myReader.loadDocLexicon();
-        myComparator = Comparator.comparingInt(o -> o[0]);
+        CompareByTermID = Comparator.comparingInt(o -> o[0]);
+        compareByFinalRank = Comparator.comparingDouble(o -> o.getFinalRank());
+        avgDocLength = (int)getAvgDocLength();
     }
 
     public Queue<ArrayList<Document>> Rank() {
-        if (queries == null)
+        //coefficient for each rank method
+        double alpha = 0.5, beta = 0.5;
+            if (queries == null)
             return null;
         for (ArrayList<Term> query:queries) {
-            ArrayList<Document> ranked = new ArrayList<>();
-            ranker = new TFIDF_SimilarityRanker(allDocs,query,myReader.getCorpusSize());
-            ranked = ranker.Rank();
-            ranker = new BM25Ranker(allDocs,query,myReader.getCorpusSize(),getAvgDocLength());
-            ranked = ranker.Rank();
-            if (semantic) {
-                ranker = new SemanticRanker(allDocs,query,myReader.getCorpusSize());
-                ranked = ranker.Rank();
+            ArrayList<Document> BM25ranked = new ArrayList<>();
+            ArrayList<Document> SemanticRanked = new ArrayList<>();
+//            ranker = new TFIDF_SimilarityRanker(allDocs,query,myReader.getCorpusSize());
+//            ranked = ranker.Rank();
+            ranker = new BM25Ranker(allDocs,query,myReader.getCorpusSize(),avgDocLength);
+            try {
+                BM25ranked = (ArrayList<Document>) ranker.Rank().subList(0, 50);
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
-            rankedDocs.add(ranked);
-
-            //COMPUTE RANKING FOR ALL RANKING FORMULAS
-            //RETURN UP TP 50 RANKED DOCUMENTS
+            if (semantic) {
+                ranker = new SemanticRanker(allDocs,query,myReader.getCorpusSize(),avgDocLength);
+                try {
+                    SemanticRanked = (ArrayList<Document>) ranker.Rank().subList(0, 50);
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+                for (Document doc: allDocs) {
+                    double bm25 = doc.getRank(Document.RankType.BM25);
+                    double positionRank = doc.getRank(Document.RankType.Semantic);
+                    doc.setFinalRank(alpha*bm25 + beta*positionRank);
+                }
+            }
+            if (!semantic) {
+                rankedDocs.add(BM25ranked);
+            }
+            else {
+                allDocs.sort(compareByFinalRank);
+                rankedDocs.add((ArrayList<Document>) allDocs.subList(0,50));
+            }
         }
         return rankedDocs;
     }
@@ -63,8 +85,9 @@ public class Searcher {
      */
     private double getAvgDocLength() {
         int sum = 0;
-        for (Document doc:allDocs) {
-            sum += doc.getDocLength();
+        for (ArrayList<String> arr: m_DocLexicon.values()) {
+            int docLength = Integer.parseInt(arr.get(5));
+            sum += docLength;
         }
         return sum/allDocs.size();
     }
@@ -193,16 +216,9 @@ public class Searcher {
             }
         }
         for (ArrayList<Integer[]> current :result.values()) {
-            current.sort(myComparator);
+            current.sort(CompareByTermID);
         }
         return result;
-    }
-
-    public void get5DominantEntities() {
-        IdentifyDominantEntities entities;
-//        for (: rankedDocs) {
-//
-//        }
     }
 
 }
