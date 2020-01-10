@@ -32,6 +32,8 @@ public class Indexer {
     private Comparator<String[]> myComparator;
     private int Intervals;
 
+    public Indexer() {}
+
     public Indexer(String corpusPath, String savingPostingFilePath
             , boolean stemmer, int poolSize,int from, int numOfFilesToRead
             , ConcurrentHashMap<Token, MutablePair<Integer, Integer>> dictionary
@@ -318,12 +320,20 @@ public class Indexer {
                     term.addPosition(token.getPosition());
                     toDelete.add(i);
                 }
+                else if (term == null || term.getName().length() == 0)
+                    toDelete.add(i);
             }
             i++;
         }
         for (Integer delete : toDelete) {
             tokens.set(delete.intValue(), null);
         }
+        toDelete.clear();
+        term.sortPositionsByGaps();
+//        for (Token token:tokens) {
+//            if (token != null)
+//                token.sortPositionsByGaps();
+//        }
         if (maxTFandUniqueTerms != null)
             maxTFandUniqueTerms[1]++;
     }
@@ -414,7 +424,7 @@ public class Indexer {
      * Merging terms and upper lower case
      *
      */
-    private void mergeTerms(StringBuilder sb) {
+    public void mergeTerms(StringBuilder sb) {
         ArrayList<String[]> data = new ArrayList<>();
         String[] string = sb.toString().split("\n");
         for (String s:string) {
@@ -458,6 +468,7 @@ public class Indexer {
                         termPositions.append(curPosition + ",");
                         arrPos -= curPosition;
                     }
+//                    termPositions.append(arrPos);
                 }
                 data.get(i)[4] = termPositions.toString();
                 capacity--;

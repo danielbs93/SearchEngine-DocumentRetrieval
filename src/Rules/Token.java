@@ -75,6 +75,7 @@ public class Token {
 
     public void setPosition(int position) {
         this.position = position;
+        this.positions.setLength(0);
         this.positions.append(position);
     }
 
@@ -121,12 +122,34 @@ public class Token {
     public void addPosition(int position) {
         if (this.position < 0)
             this.position = 0;
-        int gap = Math.abs(position - this.position);
-        if (positions == null || positions.length() == 0)
-            positions.append(gap);
-        else
-            positions.append("," + gap);
-        this.position = gap;
+        positions.append("," + position);
+//        int gap = Math.abs(position - this.position);
+//        if (positions == null || positions.length() == 0)
+//            positions.append(gap);
+//        else
+//            positions.append("," + gap);
+//        this.position += gap;
+    }
+
+    public void sortPositionsByGaps() {
+        if (positions.length() != 0 && positions.toString().contains(",")) {
+            String[] pos = positions.toString().split(",");
+            positions.setLength(0);
+            int previous = 0, current_pos = 0;
+            for (int i = 0; i < pos.length; i++) {
+                try {
+                    current_pos = Integer.parseInt(pos[i]);
+                } catch (NumberFormatException e) {
+                    continue;
+                }
+                if (i == 0) {
+                    positions.append(current_pos);
+                } else {
+                    positions.append("," + Math.abs(current_pos - previous));
+                }
+                previous = current_pos;
+            }
+        }
     }
 
 

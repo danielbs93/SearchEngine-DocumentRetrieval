@@ -44,9 +44,9 @@ public class MyReader {
             bufferedReader = new BufferedReader(fileReader);
             String line;
             line = bufferedReader.readLine();
-            CorpusSize = Integer.parseInt(line.substring(0,line.indexOf("|")));
+            CorpusSize = Integer.parseInt(line.substring(0,line.indexOf(" ")));
             while ((line = bufferedReader.readLine()) != null) {
-                String[] tuple = line.split("|");
+                String[] tuple = line.split("\t\t");
                 ArrayList<String> dfAndTermID = new ArrayList<>();
                 dfAndTermID.add(tuple[1]);
                 dfAndTermID.add(tuple[2]);

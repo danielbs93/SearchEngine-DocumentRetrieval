@@ -19,12 +19,11 @@ public class IdentifyDominantEntities {
     private String corpusPath;
     private boolean isStemmer;
 
-    public IdentifyDominantEntities(Document Doc, boolean stemmer, String corpus) {
-        document = Doc;
+    public IdentifyDominantEntities(String corpusPath, boolean isStemmer) {
+        this.corpusPath = corpusPath;
+        this.isStemmer = isStemmer;
         entities = new ArrayList<>();
         tfComparator = Comparator.comparingDouble(Term::getTf);
-        corpusPath = corpus;
-        isStemmer = stemmer;
     }
 
     public ArrayList<Term> get5DominantEntities(HashMap<String, ArrayList<String>> dictionary) {
@@ -105,5 +104,11 @@ public class IdentifyDominantEntities {
         return tokens;
     }
 
+    public Document getDocument() {
+        return document;
+    }
 
+    public void setDocument(Document document) {
+        this.document = document;
+    }
 }

@@ -62,6 +62,13 @@ public class RangedParser extends Anumbers {
                     break;
                 }
             }
+            if (result.getName().length() == 0 && arrOfStrings.length > 0) {
+                StringBuilder name = new StringBuilder();
+                for (String word : arrOfStrings) {
+                    name.append(word + "-");
+                }
+                result.setName(name.substring(0, name.length() - 1));
+            }
             tokenList.clear();
 //            tokenList.add(result);
             Result = new Token(result);

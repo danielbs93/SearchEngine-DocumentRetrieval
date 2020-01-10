@@ -43,10 +43,20 @@ public class RetrieveManager {
         queries = new HashMap<>();
     }
 
+    public void Start() {
+        ReadQuery();
+        Retriev();
+        SaveRetrievalInformation();
+        if (isDominantEntities)
+            FindDominantEntities();
+    }
+
     /**
      * insert the queries to HashMap
      */
     public void ReadQuery(){
+        Comparator<Term> comparatorByPosition = Comparator.comparingInt(o->o.getPositions()[0]);
+        //reading from query file
         if(this.isPath){
             try {
                 File file = new File(this.query);
@@ -62,7 +72,6 @@ public class RetrieveManager {
                         parser = new Parser(queryToParse,corpusPath,this.isStemmer);
                         ArrayList<Token>[] tokens = parser.Parse();
                         ArrayList<Term> terms = ConvertTokensTOTerms(tokens);
-                        Comparator<Term> comparatorByPosition = Comparator.comparingInt(o->o.getPositions()[0]);
                         terms.sort(comparatorByPosition);
                         queries.put(queryNum , new MutablePair<>(terms,null));
                     }
@@ -71,11 +80,11 @@ public class RetrieveManager {
                 e.printStackTrace();
             }
         }
+        //single query
         else {
             parser = new Parser(this.query,this.corpusPath,this.isStemmer);
             ArrayList<Token>[] tokens = parser.Parse();
             ArrayList<Term> terms = ConvertTokensTOTerms(tokens);
-            Comparator<Term> comparatorByPosition = Comparator.comparingInt(o->o.getPositions()[0]);
             terms.sort(comparatorByPosition);
             queries.put(queryIdCounter++ , new MutablePair<>(terms,null));
         }
@@ -90,10 +99,7 @@ public class RetrieveManager {
         for(Token token:tokens[0]) {
             ArrayList<String> fromDictionary = dictionary.getOrDefault(token.getName(),null);
             if(fromDictionary != null){
-                int termId = Integer.parseInt(fromDictionary.get(1));
-                Term term = new Term(token.getName(),termId);
-                term.setQueryTermPositions(token.getPosition());
-                toTerms.add(term);
+                AddToTermQueryList(token,toTerms,fromDictionary);
             }
         }
         for (Token token:tokens[1]) {
@@ -101,17 +107,21 @@ public class RetrieveManager {
             if(fromDictionary == null)
                 fromDictionary = dictionary.getOrDefault(token.getName().toLowerCase(),null);
             if(fromDictionary != null){
-                int termId = Integer.parseInt(fromDictionary.get(1));
-                Term term = new Term(token.getName(),termId);
-                term.setQueryTermPositions(token.getPosition());
-                toTerms.add(term);
+                AddToTermQueryList(token,toTerms,fromDictionary);
             }
         }
         return toTerms;
     }
 
+    private void AddToTermQueryList(Token token, ArrayList<Term> toTerms, ArrayList<String> fromDictionary) {
+        int termId = Integer.parseInt(fromDictionary.get(1));
+        Term term = new Term(token.getName(),termId);
+        term.setQueryTermPositions(token.getPosition());
+        toTerms.add(term);
+    }
+
     public void Retriev(){
-        mySearcher = new Searcher(this.postingPath,this.isSemantic);
+        mySearcher = new Searcher(this.postingPath,this.isSemantic,this.dictionary);
         sortedQueriesId = (List<Integer>) queries.keySet();
         sortedQueriesId.sort(Integer::compareTo);
         ArrayList<ArrayList<Term>> queriesToRank = new ArrayList<>();
@@ -150,6 +160,23 @@ public class RetrieveManager {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * This function responsible for retrieving dominant entities in the given doc
+     * dominant entities retrieved by their tf in the document
+     */
+    public void FindDominantEntities() {
+        dominantEntities = new IdentifyDominantEntities(this.corpusPath,this.isStemmer);
+        for (Integer key: this.sortedQueriesId) {
+            ArrayList<Document> currentRanked = this.queries.get(key).getRight();
+            for (Document currentDoc: currentRanked) {
+                if (currentDoc.getDominantEntities().size() > 0) {
+                    dominantEntities.setDocument(currentDoc);
+                    currentDoc.setDominantEntities(dominantEntities.get5DominantEntities(this.dictionary));
+                }
+            }
+        }
     }
 
 }

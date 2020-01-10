@@ -243,10 +243,8 @@ public class SearchEngineGUI<Private> {
                         isPath = true;
                     }
                     retrieveManager = new RetrieveManager(stemmer,semantic,entities,isPath,query,CorpusPath,PostingPath,dictionary);
-                    retrieveManager.ReadQuery();
-                    retrieveManager.Retriev();
-                    retrieveManager.SaveRetrievalInformation();
-
+                    retrieveManager.Start();
+                    //DISPLAY
                 }
             }
         });

@@ -119,6 +119,10 @@ public class Document {
         return false;
     }
 
+    public ArrayList<Term> getDominantEntities() {
+        return this.dominantEntities;
+    }
+
     public void setDominantEntities(ArrayList<Term> entities) {
         if (entities != null)
             this.dominantEntities = entities;

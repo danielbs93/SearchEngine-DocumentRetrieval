@@ -124,8 +124,10 @@ public class IndexManager {
             file.delete();
             FileWriter fileWriter = new FileWriter(file,true);
             for (String s:allDocs) {
-                fileWriter.write(s+"\n");
-                fileWriter.flush();
+                if (s != null && s.length() > 0 ) {
+                    fileWriter.write(s + "\n");
+                    fileWriter.flush();
+                }
             }
                 fileWriter.close();
 
@@ -273,8 +275,9 @@ public class IndexManager {
             StringBuilder data = new StringBuilder();
             for (HashMap.Entry<Token, MutablePair<Integer, Integer>> token : SortedDictionary.entrySet()
             ) {
-
-                data.append(token.getKey().getName() + "|" + token.getValue().left + "|" + token.getValue().right + "\n");
+                if (token.getKey().getName() != null || token.getKey().getName().length() > 0 || !token.getKey().getName().isEmpty()) {
+                    data.append(token.getKey().getName() + "\t\t" + token.getValue().left + "\t\t" + token.getValue().right + "\n");
+                }
             }
             fileWriter.write(data.toString());
             fileWriter.close();

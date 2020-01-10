@@ -2,6 +2,7 @@ package Index;
 
 import Rules.Token;
 
+import javax.print.Doc;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import java.util.LinkedList;
 public class ReadFile {
     private BufferedReader Bfr;
     private ArrayList<StringBuilder> Documents;
+    private ArrayList<ArrayList<StringBuilder>> filesWithDocuments;
     private int DocPointer;
     private File curFile;
     private String DOCNO;
@@ -27,6 +29,7 @@ public class ReadFile {
         FilePointer = 0;
         fileIDcounter = new int[intervals];
         FilesNO = new String[numOfFilesToRead];
+        filesWithDocuments = new ArrayList<>();
         try {
             int j = 0;
             for (int i = fromWhereToRead; i < numOfFilesToRead && i <files.length; i++) {
@@ -53,6 +56,7 @@ public class ReadFile {
      * @param i
      */
     private void CreateDocumentsFiles(int i) throws IOException {
+        Documents = new ArrayList<>();
         String line;
         while ((line = Bfr.readLine()) != null ) {
             StringBuilder doc = new StringBuilder();
@@ -65,6 +69,7 @@ public class ReadFile {
                 fileIDcounter[i]++;
             }
         }
+        filesWithDocuments.add(Documents);
     }
 
     /**
@@ -73,6 +78,8 @@ public class ReadFile {
      * @return
      */
     public String getNextDoc() {
+//        Documents.clear();
+        Documents = filesWithDocuments.get(FilePointer);
         StringBuilder document = Documents.remove(DocPointer);
         DOCNO = buildDocNO(document.toString());
         return document.toString();

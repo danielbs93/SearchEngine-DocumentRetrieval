@@ -140,10 +140,10 @@ public class Parser {
     private void parseByRules() {
         Doc = new StringBuilder();
         IParser NumericParser;
-        afterThisRules.clear();
-        SendingToken.clear();
-        boolean addToWords = true;
+        afterThisRules = new ArrayList<>();
+        SendingToken = new ArrayList<>();
         for (int i = 0; i < tokenList.size(); i++) {
+            boolean addToWords = true;
             //all rules that have to parse only 1 token
             if (tokenList.get(i).getName().contains("%")) {
                 SendingToken.add(tokenList.get(i));
@@ -365,7 +365,8 @@ public class Parser {
                 Doc.append(tokenList.get(i).getName() + " ");
             }
         }
-        tokenList = afterThisRules;
+        tokenList.clear();
+        tokenList.addAll(afterThisRules);
     }
 
     private ArrayList<Token> AddToSendingToken(int start, int end) {
@@ -429,22 +430,22 @@ public class Parser {
                 if (!isPanctuationMark(word)) {
                     tokenName.append(word.replaceAll(",", ""));
 //                    tokenName.append(word);
-                    while (tokenName.length() > 0 && FirstCharPanctuationMark(tokenName.toString())) {
-                        tokenName.deleteCharAt(0);
-                    }
-                    while (tokenName.length() > 0 && LastCharPanctuationMark(tokenName.toString())) {
-                        int length = tokenName.length() - 1;
-                        tokenName.deleteCharAt(length);
-                    }
+//                    while (tokenName.length() > 0 && FirstCharPanctuationMark(tokenName.toString())) {
+//                        tokenName.deleteCharAt(0);
+//                    }
+//                    while (tokenName.length() > 0 && LastCharPanctuationMark(tokenName.toString())) {
+//                        int length = tokenName.length() - 1;
+//                        tokenName.deleteCharAt(length);
+//                    }
 
                     if (tokenName.length() != 0 && !tokenName.equals("")) {
                         String[] splited = panctuation.split(tokenName.toString());
                         for (String name : splited) {
-                            if (name.contains(".")) {
+                            if (name.contains(".") || name.contains("-")) {
                                 name = StringUtils.stripStart(name, ".");
                                 name = StringUtils.stripEnd(name, ".");
-                                name = StringUtils.stripEnd(name,"-");
                                 name = StringUtils.stripStart(name,"-");
+                                name = StringUtils.stripEnd(name,"-");
                             }
                             if (!isPanctuationMark(name) && name.length() > 0)
                                 tDoc.add(new Token(name, position++));
