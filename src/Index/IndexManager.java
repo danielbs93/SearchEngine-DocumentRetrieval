@@ -53,9 +53,13 @@ public class IndexManager {
         FileID = new AtomicInteger();
         TempPosingFileName = new AtomicInteger();
         CorpusSize = corpusSize;
-        if (CorpusSize == 1)
+        if (CorpusSize < 5)
             Intervals = 0;
         else {
+            //Next details for corpus size of 1815:
+            //0.0275->50 for 1 thread -> 37 temporary postings files
+            //0.006 -> 11 for 1 thread -> 165 temporary postings files
+            //0.0395 -> 72 for 1 thread -> 26 temporary postings files
             Intervals = (int) (0.006 * corpusSize) + 1;
         }
     }
@@ -141,10 +145,15 @@ public class IndexManager {
      * Creates new directory postings which will contain all posting files
      */
     public void SortAndCreate() {
+        if (Intervals == 0)
+            Intervals = 1;
+        int numOfFilesToRead = CorpusSize/Intervals/3;
+        if (numOfFilesToRead == 0)
+            numOfFilesToRead = CorpusSize;
         file = new File(SavingPath);
 //        File[] files = file.listFiles();
         ArrayList<String> currentData = new ArrayList<>();
-        getChunkOfFiles(currentData, 0, CorpusSize/Intervals/3);
+        getChunkOfFiles(currentData, 0, numOfFilesToRead);
 //        currentData.sort(myComparator);
 //        Collections.sort(currentData,myComparator);
         File directory = new File(SavingPath + "\\postings");

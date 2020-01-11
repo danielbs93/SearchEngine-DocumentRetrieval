@@ -453,10 +453,11 @@ public class Parser {
                                 name = StringUtils.stripEnd(name,"-");
                             }
                             if (!isPanctuationMark(name) && name.length() > 0)
-                                tDoc.add(new Token(name, position++));
+                                tDoc.add(new Token(name, position));
                         }
                     }
                 }
+                position++;
             }
         }
         return tDoc;

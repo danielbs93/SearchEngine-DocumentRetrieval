@@ -44,8 +44,8 @@ public class Indexer {
         Dictionary = dictionary;
         EntitiesDictionary = entitiesDictionary;
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize);
-        String modelFile = "\\english-left3words-distsim.tagger";
-        maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}), false);
+//        String modelFile = "\\english-left3words-distsim.tagger";
+//        maxentTagger = new MaxentTagger(modelFile, StringUtils.argsToProperties(new String[]{"-model", modelFile}), false);
         TermID = new AtomicInteger(0);
         DocID = new AtomicInteger(0);
         FileID = new AtomicInteger(0);
@@ -67,10 +67,15 @@ public class Indexer {
     public void Index() {
         isActive = true;
         File[] files = (new File(CorpusPath)).listFiles();
-        for (int i = fromWhereToRead; i < NumOfFilesToRead-Intervals; i+=Intervals) {
+        int increment = 0;
+        if (Intervals == 0)
+            increment = 1;
+        else
+            increment = Intervals;
+        for (int i = fromWhereToRead; i < NumOfFilesToRead-Intervals; i+=increment) {
 //        for (int i = fromWhereToRead; i < NumOfFilesToRead; i++) {
 //            File[] currentDirectory = files[i].listFiles();
-            ReadFile fileReader = new ReadFile(files,i,i+Intervals, Intervals);
+            ReadFile fileReader = new ReadFile(files,i,i+increment, increment);
             threadPoolExecutor.execute(() -> {
                 StringBuilder docLexiconData = new StringBuilder();
                 StringBuilder docData = new StringBuilder();
