@@ -76,6 +76,7 @@ public class SearchEngineGUI<Private> {
                     fileCount = (new File((PostingPath))).list().length - 2;
                     indexManager.setCorpusSize(fileCount);
                     indexManager.SortAndCreate();
+//                    while (indexManager.isSorting());
                     Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
                     BufferedReader reader = null;
                     int lines = 0;
@@ -132,7 +133,7 @@ public class SearchEngineGUI<Private> {
                 JFileChooser fc1 = new JFileChooser();
                 fc1.setCurrentDirectory(new java.io.File("C:\\Users\\erant\\Desktop"));
                 fc1.setDialogTitle("Choose Directory");
-                fc1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                fc1.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 int returnValue = fc1.showOpenDialog(null);
                 textField4.setText(fc1.getSelectedFile().getAbsolutePath());
 
@@ -183,18 +184,26 @@ public class SearchEngineGUI<Private> {
         showDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(indexManager != null) {
+//                if(indexManager != null) {
+                    PostingPath = textField2.getText();
                     if (PostingPath.length() == 0) {
                         JOptionPane.showMessageDialog(null, "Please enter path");
                         return;
                     }
-//                    indexManager.SortAndWriteDictionary();
-                }
                 else {
-                    myReader = new MyReader(PostingPath);
-                    dictionary = myReader.loadDictionary();
+                    try {
+                        myReader = new MyReader(PostingPath);
+                        dictionary = myReader.loadDictionary();
+                        JOptionPane.showMessageDialog(null, "The dictionary uploaded successfully ");
+                    }catch (FileNotFoundException e){
+                        JOptionPane.showMessageDialog(null, "Sorry, the dictionary has not found ");
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+
+                    }
                 }
-            }
+//            }
         });
         /**
          * Show Dictionary
@@ -243,7 +252,9 @@ public class SearchEngineGUI<Private> {
                         isPath = true;
                     }
                     retrieveManager = new RetrieveManager(stemmer,semantic,entities,isPath,query,CorpusPath,PostingPath,dictionary);
-                    retrieveManager.Start();
+                    boolean foundDoocuments = retrieveManager.Start();
+                    if (!foundDoocuments)
+                        JOptionPane.showMessageDialog(null,"Sorry, did not match any documents.");
                     //DISPLAY
                 }
             }

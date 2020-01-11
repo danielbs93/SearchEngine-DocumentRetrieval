@@ -79,7 +79,7 @@ public class Indexer {
                     String Text = ExtractText(Doc);
                     if (Text.length() > 0) {
                         Parser parser = new Parser(Text,CorpusPath, isStemmer);
-                        ArrayList<Token>[] tokenList = parser.Parse();
+                        ArrayList<Token>[] tokenList = parser.Parse(true);
                         Integer[] maxTFandUniqueTerms = new Integer[2];
                         maxTFandUniqueTerms[0] = 0;
                         maxTFandUniqueTerms[1] = 0;

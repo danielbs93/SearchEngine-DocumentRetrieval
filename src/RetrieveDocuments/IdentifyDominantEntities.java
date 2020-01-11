@@ -79,7 +79,7 @@ public class IdentifyDominantEntities {
             e.printStackTrace();
         }
         Parser p = new Parser(doc.toString(), corpusPath, isStemmer);
-        ArrayList<Token> allEntities = p.Parse()[1];
+        ArrayList<Token> allEntities = p.Parse(true)[1];
         return CountAndRemove(allEntities);
     }
 

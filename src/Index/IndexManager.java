@@ -30,6 +30,7 @@ public class IndexManager {
     private int Intervals;
     private int CorpusSize;
     private int DictionarySize;
+    private boolean isSorting;
 
     public IndexManager(String corpusPath, String savingPostingFilePath, boolean stemmer, int corpusSize) {
         CorpusPath = corpusPath;
@@ -68,7 +69,7 @@ public class IndexManager {
             pointerToRead = 1;
         else
             pointerToRead = CorpusSize/2;
-        Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, 0, CorpusSize/2, Dictionary, EntitiesDictionary);
+        Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 24, 0, CorpusSize/2, Dictionary, EntitiesDictionary);
         Indexer.setIntervals(Intervals);
         Indexer.Index();
         while (Indexer.isActive()) ;//busy waiting
@@ -77,7 +78,7 @@ public class IndexManager {
         FileID.set(Indexer.getFileID().get());
         TempPosingFileName.set(Indexer.getTempPosingFileName().get());
         if (CorpusSize > 5) {
-            Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, pointerToRead, CorpusSize, Dictionary, EntitiesDictionary);
+            Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 24, pointerToRead, CorpusSize, Dictionary, EntitiesDictionary);
             Indexer.setIntervals(Intervals);
             Indexer.setAtomicIntegers(TermID.get(), DocID.get(), FileID.get(), TempPosingFileName.get());
             Indexer.Index();
@@ -141,6 +142,7 @@ public class IndexManager {
      * Creates new directory postings which will contain all posting files
      */
     public void SortAndCreate() {
+        isSorting = true;
         file = new File(SavingPath);
 //        File[] files = file.listFiles();
         ArrayList<String> currentData = new ArrayList<>();
@@ -227,6 +229,8 @@ public class IndexManager {
             }
         }
 
+        isSorting = false;
+
     }
 
     /**
@@ -296,5 +300,9 @@ public class IndexManager {
 
     public void setCorpusSize(int fileCount) {
         this.CorpusSize = fileCount;
+    }
+
+    public boolean isSorting() {
+        return isSorting;
     }
 }

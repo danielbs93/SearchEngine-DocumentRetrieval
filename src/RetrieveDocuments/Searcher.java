@@ -50,30 +50,36 @@ public class Searcher {
 //            ranker = new TFIDF_SimilarityRanker(allDocs,query,myReader.getCorpusSize());
 //            ranked = ranker.Rank();
             ranker = new BM25Ranker(allDocs,query,myReader.getCorpusSize(),avgDocLength);
-            try {
-                BM25ranked = (ArrayList<Document>) ranker.Rank().subList(0, 50);
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
-            if (semantic) {
-                ranker = new SemanticRanker(allDocs,query,myReader.getCorpusSize(),avgDocLength);
+            ArrayList<Document> rankedList = ranker.Rank();
+            if(rankedList.size()>0) {
                 try {
-                    SemanticRanked = (ArrayList<Document>) ranker.Rank().subList(0, 50);
+                    if(rankedList.size()>49)
+                        BM25ranked = new ArrayList<>(rankedList.subList(0, 50));
+                    else
+                        BM25ranked = new ArrayList<>(rankedList.subList(0, rankedList.size()));
+
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
-                for (Document doc: allDocs) {
-                    double bm25 = doc.getRank(Document.RankType.BM25);
-                    double positionRank = doc.getRank(Document.RankType.Semantic);
-                    doc.setFinalRank(alpha*bm25 + beta*positionRank);
+                if (semantic) {
+                    ranker = new SemanticRanker(allDocs, query, myReader.getCorpusSize(), avgDocLength);
+                    try {
+                        SemanticRanked = new ArrayList<Document>(ranker.Rank().subList(0, 50));
+                    } catch (IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                    for (Document doc : allDocs) {
+                        double bm25 = doc.getRank(Document.RankType.BM25);
+                        double positionRank = doc.getRank(Document.RankType.Semantic);
+                        doc.setFinalRank(alpha * bm25 + beta * positionRank);
+                    }
                 }
-            }
-            if (!semantic) {
-                rankedDocs.add(BM25ranked);
-            }
-            else {
-                allDocs.sort(compareByFinalRank);
-                rankedDocs.add((ArrayList<Document>) allDocs.subList(0,50));
+                if (!semantic) {
+                    rankedDocs.add(BM25ranked);
+                } else {
+                    allDocs.sort(compareByFinalRank);
+                    rankedDocs.add(new ArrayList<Document>(allDocs.subList(0, 50)));
+                }
             }
         }
         return rankedDocs;
@@ -86,11 +92,13 @@ public class Searcher {
     private double getAvgDocLength() {
         int sum = 0;
         for (ArrayList<String> arr: m_DocLexicon.values()) {
-            int docLength = Integer.parseInt(arr.get(5));
+            int docLength = Integer.parseInt(arr.get(4));
             sum += docLength;
         }
-        return sum/allDocs.size();
+        return sum/m_DocLexicon.keySet().size();
+//        return sum/allDocs.size();
     }
+
 
     /**
      * This function is responsible to retrieve all documents that at least one term from the

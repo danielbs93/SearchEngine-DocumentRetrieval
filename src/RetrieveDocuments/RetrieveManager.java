@@ -43,12 +43,15 @@ public class RetrieveManager {
         queries = new HashMap<>();
     }
 
-    public void Start() {
+    public boolean Start() {
         ReadQuery();
-        Retriev();
-        SaveRetrievalInformation();
-        if (isDominantEntities)
-            FindDominantEntities();
+        if (Retriev()){
+            SaveRetrievalInformation();
+            if (isDominantEntities)
+                FindDominantEntities();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -70,7 +73,7 @@ public class RetrieveManager {
                     if(line.contains("<title>")){
                         String queryToParse = line.substring(7);
                         parser = new Parser(queryToParse,corpusPath,this.isStemmer);
-                        ArrayList<Token>[] tokens = parser.Parse();
+                        ArrayList<Token>[] tokens = parser.Parse(false);
                         ArrayList<Term> terms = ConvertTokensTOTerms(tokens);
                         terms.sort(comparatorByPosition);
                         queries.put(queryNum , new MutablePair<>(terms,null));
@@ -83,7 +86,7 @@ public class RetrieveManager {
         //single query
         else {
             parser = new Parser(this.query,this.corpusPath,this.isStemmer);
-            ArrayList<Token>[] tokens = parser.Parse();
+            ArrayList<Token>[] tokens = parser.Parse(false);
             ArrayList<Term> terms = ConvertTokensTOTerms(tokens);
             terms.sort(comparatorByPosition);
             queries.put(queryIdCounter++ , new MutablePair<>(terms,null));
@@ -120,18 +123,20 @@ public class RetrieveManager {
         toTerms.add(term);
     }
 
-    public void Retriev(){
+    public boolean Retriev(){
         mySearcher = new Searcher(this.postingPath,this.isSemantic,this.dictionary);
-        sortedQueriesId = (List<Integer>) queries.keySet();
+        sortedQueriesId = new ArrayList<> (queries.keySet());
         sortedQueriesId.sort(Integer::compareTo);
         ArrayList<ArrayList<Term>> queriesToRank = new ArrayList<>();
         for (int i = 0; i <sortedQueriesId.size() ; i++)
             queriesToRank.add(queries.get(sortedQueriesId.get(i)).getLeft());
         mySearcher.Search(queriesToRank);
         Queue<ArrayList<Document>> retrievDocuments = mySearcher.Rank();
+        if(retrievDocuments.size()==0)
+            return false;
         for (int i = 0; i <sortedQueriesId.size() ; i++)
             queries.get(sortedQueriesId.get(i)).setRight(retrievDocuments.poll());
-
+        return true;
     }
 
     /**
@@ -143,7 +148,7 @@ public class RetrieveManager {
             int queryId = sortedQueriesId.get(i).intValue();
             ArrayList<Document> documents = this.queries.get(queryId).getRight();
             for (Document document:documents)
-                 stringBuilder.append(queryId + " 7 " + document.getDocNO() + " 7 7 7");
+                 stringBuilder.append(queryId + " 0 " + document.getDocNO() + " 7 7 7\n");
 
         }
         File file = new File(this.postingPath + "\\RetrievalDocuments.txt");

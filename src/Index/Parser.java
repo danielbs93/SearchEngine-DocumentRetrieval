@@ -38,7 +38,7 @@ public class Parser {
 
 
     public ArrayList<Token>[] Parse(MaxentTagger maxentTagger) {
-        tokenList = toTokens(this.Doc.toString());
+        tokenList = toTokens(this.Doc.toString(),true);
         parseByRules();
         parseByStopWords();
         parseByStemmer();
@@ -47,8 +47,8 @@ public class Parser {
         return parserdList;
     }
 
-    public ArrayList<Token>[] Parse() {
-        tokenList = toTokens(this.Doc.toString());
+    public ArrayList<Token>[] Parse(boolean document) {
+        tokenList = toTokens(this.Doc.toString(),document);
         parseByRules();
         parseByStopWords();
         parseByStemmer();
@@ -417,11 +417,16 @@ public class Parser {
      * @param doc
      * @return list of token from the text of the doc while removing spaces, dots and commas from the end of a word
      */
-    private ArrayList<Token> toTokens(String doc) {
+    private ArrayList<Token> toTokens(String doc,boolean document) {
         ArrayList<Token> tDoc = new ArrayList<>();
         int position = 0;
-        int textFinalIndex = doc.length() - 7;
-        String text = doc.substring(6, textFinalIndex);//Cutting of TEXT labels
+        String text = "";
+        if(document) {
+            int textFinalIndex = doc.length() - 7;
+            text = doc.substring(6, textFinalIndex);//Cutting of TEXT labels
+        }
+        else
+            text = doc;
         String[] words = text.split(" ");
         for (String word : words) {
             if (word != null && !word.isEmpty()) {

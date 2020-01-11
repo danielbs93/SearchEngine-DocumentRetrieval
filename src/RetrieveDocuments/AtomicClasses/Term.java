@@ -74,6 +74,7 @@ public class Term {
      * @param positions
      */
     public void setQueryTermPositions(int positions) {
+        this.positions = new int[1];
         this.positions[0] = positions;
     }
 
