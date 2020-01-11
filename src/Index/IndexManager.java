@@ -30,7 +30,6 @@ public class IndexManager {
     private int Intervals;
     private int CorpusSize;
     private int DictionarySize;
-    private boolean isSorting;
 
     public IndexManager(String corpusPath, String savingPostingFilePath, boolean stemmer, int corpusSize) {
         CorpusPath = corpusPath;
@@ -65,11 +64,11 @@ public class IndexManager {
 //        ConcurrentHashMap<Token, MutablePair<Integer, Integer>> Dictionary = new ConcurrentHashMap<>();
 //        ConcurrentHashMap<Token, ArrayList<Integer>> EntitiesDictionary = new ConcurrentHashMap<>();
         int pointerToRead = -1;
-        if (CorpusSize == 1)
-            pointerToRead = 1;
+        if (CorpusSize < 5)
+            pointerToRead = CorpusSize;
         else
             pointerToRead = CorpusSize/2;
-        Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 24, 0, CorpusSize/2, Dictionary, EntitiesDictionary);
+        Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, 0, pointerToRead, Dictionary, EntitiesDictionary);
         Indexer.setIntervals(Intervals);
         Indexer.Index();
         while (Indexer.isActive()) ;//busy waiting
@@ -78,7 +77,7 @@ public class IndexManager {
         FileID.set(Indexer.getFileID().get());
         TempPosingFileName.set(Indexer.getTempPosingFileName().get());
         if (CorpusSize > 5) {
-            Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 24, pointerToRead, CorpusSize, Dictionary, EntitiesDictionary);
+            Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, pointerToRead, CorpusSize, Dictionary, EntitiesDictionary);
             Indexer.setIntervals(Intervals);
             Indexer.setAtomicIntegers(TermID.get(), DocID.get(), FileID.get(), TempPosingFileName.get());
             Indexer.Index();
@@ -142,7 +141,6 @@ public class IndexManager {
      * Creates new directory postings which will contain all posting files
      */
     public void SortAndCreate() {
-        isSorting = true;
         file = new File(SavingPath);
 //        File[] files = file.listFiles();
         ArrayList<String> currentData = new ArrayList<>();
@@ -175,21 +173,8 @@ public class IndexManager {
             int count = (CorpusSize/Intervals/3) + (CorpusSize/Intervals/3)*i;
             toWrite.setLength(0);
             currentData.clear();
-//            try {
-//                Thread.sleep(1500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            currentData.removeAll(currentData);
-//            double k = 0;
-//            if (i == 0)
-//                k = 1.5;
-//            else
-//                k = 0.25;
             getChunkOfFiles(currentData, count, count + (int) Math.floor((CorpusSize/Intervals/3)));
-//            Collections.sort(currentData, myComparator);
             currentData.sort(myComparator);
-//            String first = currentData.get(0);
             postingFileName = 0;//Integer.valueOf(first.substring(0, first.indexOf(";"))) / 500;
             LinkedList<String> writingList = new LinkedList<>();
             counter = 0;
@@ -228,8 +213,6 @@ public class IndexManager {
                 }
             }
         }
-
-        isSorting = false;
 
     }
 
@@ -300,9 +283,5 @@ public class IndexManager {
 
     public void setCorpusSize(int fileCount) {
         this.CorpusSize = fileCount;
-    }
-
-    public boolean isSorting() {
-        return isSorting;
     }
 }

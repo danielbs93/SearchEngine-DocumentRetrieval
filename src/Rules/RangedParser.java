@@ -25,7 +25,6 @@ public class RangedParser extends Anumbers {
     @Override
     public Token Parse() {
         //case: word-word-...-word or instead of word there is a number, no space between 'word' to '-'
-        Token result = new Token();
         Token num;
         int position = tokenList.get(0).getPosition();
         if (tokenList.size() == 1) {
@@ -40,38 +39,37 @@ public class RangedParser extends Anumbers {
                         num = p.Parse();
                         current = num.getName();
                         if (i > 0)
-                            result.setName(result.getName() + current);
+                            Result.setName(Result.getName() + current);
                         else
-                            result.setName(current);
+                            Result.setName(current);
                     } else {
-                        current = result.getName();
+                        current = Result.getName();
                         if (i > 0)
-                            result.setName(current + word.getName());
+                            Result.setName(current + word.getName());
                         else
-                            result.setName(word.getName());
+                            Result.setName(word.getName());
 
                     }
                     if (i < arrOfStrings.length - 1)
-                        result.setName(result.getName() + "-");
+                        Result.setName(Result.getName() + "-");
                 } else if (word.getName().contains("$") && arrOfStrings.length == 2 && i + 1 < arrOfStrings.length) {
                     ArrayList<Token> price = new ArrayList<>();
                     price.add(word);
                     price.add(new Token(arrOfStrings[i + 1]));
                     PriceParser p = new PriceParser(price);
-                    result = p.Parse();
+                    Result = p.Parse();
                     break;
                 }
             }
-            if (result.getName().length() == 0 && arrOfStrings.length > 0) {
+            if (Result.getName().length() == 0 && arrOfStrings.length > 0) {
                 StringBuilder name = new StringBuilder();
                 for (String word : arrOfStrings) {
                     name.append(word + "-");
                 }
-                result.setName(name.substring(0, name.length() - 1));
+                Result.setName(name.substring(0, name.length() - 1));
             }
             tokenList.clear();
-//            tokenList.add(result);
-            Result = new Token(result);
+//            tokenList.add(Result);
             Result.setPosition(position);
             return Result;
         }
@@ -83,16 +81,15 @@ public class RangedParser extends Anumbers {
             num = p.Parse();
             if (!num.isNumeric())
                 return num;
-            result = new Token(num.getName());
+            Result = new Token(num.getName());
             p = new NumParser(fourth);
             num = p.Parse();
             if (!num.isNumeric())
                 return num;
-            String current = result.getName();
-            result.setName(current + "-" + num.getName());
+            String current = Result.getName();
+            Result.setName(current + "-" + num.getName());
             tokenList.clear();
-//            tokenList.add(result);
-            Result = new Token(result);
+//            tokenList.add(Result);
             Result.setPosition(position);
             return Result;
         }
@@ -105,14 +102,13 @@ public class RangedParser extends Anumbers {
                     NumParser p = new NumParser(word);
                     num = p.Parse();
                     String current = num.getName();
-                    result.setName(current);
+                    Result.setName(current);
                 } else {
-                    result.setName(result.getName() + word.getName());
+                    Result.setName(Result.getName() + word.getName());
                 }
                 if (i < tokenList.size() - 1)
-                    result.setName(result.getName() + "-");
+                    Result.setName(Result.getName() + "-");
             }
-            Result = new Token(result);
         }
         Result.setPosition(position);
         return Result;

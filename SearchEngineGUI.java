@@ -68,13 +68,8 @@ public class SearchEngineGUI<Private> {
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     indexManager = new IndexManager(CorpusPath, PostingPath, checkBox1.isSelected(),fileCount);
                     indexManager.run();
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                    fileCount = (new File((PostingPath))).list().length - 2;
-                    indexManager.setCorpusSize(fileCount);
+//                    fileCount = (new File((PostingPath))).list().length - 2;
+//                    indexManager.setCorpusSize(fileCount);
                     indexManager.SortAndCreate();
 //                    while (indexManager.isSorting());
                     Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());

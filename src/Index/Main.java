@@ -12,15 +12,15 @@ public class Main {
     public static void main(String[] args) {
 
         long startTime = System.currentTimeMillis();
-        String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\corpus";
+        String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\co1";
         String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\postingFiles";
-        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,100);
+        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,1);
        mng.run();
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         mng.SortAndCreate();
         long endTime = System.currentTimeMillis();
         System.out.println("Number of indexed docs:  " + mng.getDocID());
@@ -32,9 +32,16 @@ public class Main {
 
 //        SortDictionaryByTermID(savingPath);
 //        calculateAVGDocLen(savingPath);
-//        String s = "<TEXT> $1.1-million $1.2-billion $1.3-Million $1.4-Billion $2m $3M $4bn $5b $6.2B $74Bn </TEXT>";
+//        String s = "<TEXT> --According obligation Obligations ziqiu Ziqiu --Aftermath --Boradcast --bring --Chinese </TEXT>";
 //        Parser p = new Parser(s,CorpusPath,true);
 //        p.Parse();
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("0;0;5;0;1,10,10,10,10"+"\n");
+//        sb.append("0;0;3;0;5,10,10"+"\n");
+//        sb.append("0;0;4;0;3,10,22,7"+"\n");
+//        Indexer indexer = new Indexer();
+//        indexer.mergeTerms(sb);
+//        System.out.println(sb.toString());
     }
 
     private static void calculateAVGDocLen(String saving) {
