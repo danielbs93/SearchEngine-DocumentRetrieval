@@ -102,8 +102,9 @@ public class Indexer {
                                         maxTFandUniqueTerms[0] = term.getTf();
                                 }
                             }
-                            if (UpdateEntitiesInfo(tokenList, maxTFandUniqueTerms, docData))
-                                TermID.incrementAndGet();
+                            UpdateEntitiesInfo(tokenList, maxTFandUniqueTerms, docData);
+//                            if (UpdateEntitiesInfo(tokenList, maxTFandUniqueTerms, docData))
+//                                TermID.incrementAndGet();
                             if (!fileReader.DecreaseDocCounter()) {
                                 FileID.incrementAndGet();
                             }
@@ -185,7 +186,7 @@ public class Indexer {
      * @param fileData
      * @return true if its a new term
      */
-    private boolean UpdateEntitiesInfo(ArrayList<Token>[] alltokens, Integer[] maxTFandUniqueTerms, StringBuilder fileData) {
+    private void UpdateEntitiesInfo(ArrayList<Token>[] alltokens, Integer[] maxTFandUniqueTerms, StringBuilder fileData) {
         ArrayList<Token> tokens = alltokens[1];
         for (Token token : tokens) {
             if (token != null) {
@@ -225,12 +226,13 @@ public class Indexer {
                         arr.add(2, DocID.get());
                         EntitiesDictionary.put(token, arr);
                         maxTFandUniqueTerms[1]++;
-                        return true;
+                        TermID.incrementAndGet();
+//                        return true;
                     }
                 }
             }
         }
-        return false;
+//        return false;
     }
 
 

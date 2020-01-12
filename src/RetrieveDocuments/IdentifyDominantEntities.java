@@ -83,23 +83,20 @@ public class IdentifyDominantEntities {
     }
 
     private ArrayList<Token> CountAndRemove(ArrayList<Token> tokens) {
-        ArrayList<Integer> toDelete = new ArrayList<>();
-        int i = 0;
+        ArrayList<Token> afterRemoving = new ArrayList<>();
         for (Token term : tokens) {
             for (Token token : tokens) {
-                if (token != null && !term.isEqual(token)) {
+                if (token != null && !term.isEqual(token) && !afterRemoving.contains(term)) {
                     if (term.getName().equals(token.getName())) {
                         term.increaseTF();
                         term.addPosition(token.getPosition());
-                        toDelete.add(i);
+                        afterRemoving.add(term);
                     }
                 }
-                i++;
             }
         }
-        for (Integer delete : toDelete) {
-            tokens.set(delete.intValue(), null);
-        }
+        tokens.removeAll(afterRemoving);
+        tokens.addAll(afterRemoving);
         return tokens;
     }
 
