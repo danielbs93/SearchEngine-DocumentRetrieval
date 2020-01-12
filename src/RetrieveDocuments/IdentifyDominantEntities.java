@@ -28,7 +28,6 @@ public class IdentifyDominantEntities {
 
     public ArrayList<Term> get5DominantEntities(HashMap<String, ArrayList<String>> dictionary) {
         ArrayList<Token> parsedEntites = parseDoc();
-
         ArrayList<Term> allEntities = new ArrayList<>();
 //        ArrayList<Term> allTerms = document.getDocTerms();
         for (Token token : parsedEntites) {

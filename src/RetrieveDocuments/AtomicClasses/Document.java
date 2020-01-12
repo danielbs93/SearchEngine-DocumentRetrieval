@@ -19,6 +19,7 @@ public class Document {
     private ArrayList<Term> myTerms;
     private ArrayList<Term> dominantEntities;
 
+    //data form: docNO;fileNO;maxTF;uniqueWords;docLength
     public Document(ArrayList<String> data, int id) {
         docNO = data.get(0);
         fileNO = data.get(1);

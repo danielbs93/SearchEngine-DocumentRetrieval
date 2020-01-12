@@ -90,7 +90,7 @@ public class Indexer {
                         maxTFandUniqueTerms[1] = 0;
                         int DocLength = tokenList[0].size() + tokenList[1].size();
                         String DocNo = fileReader.getDocNO();
-//                        synchronized (DocID) {
+                        synchronized (DocID) {
                             for (Token term : tokenList[0]) {
                                 if (term != null) {
                                     if (!Dictionary.containsKey(term)) {
@@ -109,7 +109,7 @@ public class Indexer {
                             }
                             docLexiconData.append(DocID.get() + ";" + DocNo + ";" + fileReader.getFileNO() + ";" + maxTFandUniqueTerms[0] + ";" + maxTFandUniqueTerms[1] + ";" + DocLength + "\n");
                             DocID.incrementAndGet();
-//                        }
+                        }
                     }
                 }
                 WriteToDocumentIDLexicon(docLexiconData);

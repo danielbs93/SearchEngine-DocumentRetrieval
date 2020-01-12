@@ -357,13 +357,13 @@ public class Parser {
 //                afterThisRules.add(tokenList.get(i));
 //                Doc.append(tokenList.get(i).getName() + " ");
 //            }
-            if (!SendingToken.isEmpty())
-                SendingToken.clear();
             //Token is a word
-            if (addToWords){
+            if (addToWords || SendingToken.isEmpty()){
                 afterThisRules.add(tokenList.get(i));
                 Doc.append(tokenList.get(i).getName() + " ");
             }
+            if (!SendingToken.isEmpty())
+                SendingToken.clear();
         }
         tokenList.clear();
         tokenList.addAll(afterThisRules);

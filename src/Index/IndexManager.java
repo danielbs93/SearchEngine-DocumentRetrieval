@@ -148,50 +148,27 @@ public class IndexManager {
     public void SortAndCreate() {
         if (Intervals == 0)
             Intervals = 1;
-        int numOfFilesToRead = CorpusSize/Intervals/3;
-        if (numOfFilesToRead == 0)
-            numOfFilesToRead = CorpusSize;
         file = new File(SavingPath);
-//        File[] files = file.listFiles();
         ArrayList<String> currentData = new ArrayList<>();
-//        getChunkOfFiles(currentData, 0, numOfFilesToRead);
-//        currentData.sort(myComparator);
-//        Collections.sort(currentData,myComparator);
         File directory = new File(SavingPath + "\\postings");
         directory.mkdir();
         int postingFileName = 0;
         StringBuilder toWrite = new StringBuilder();
-//        int counter = 0;
-//        for (String tuple : currentData) {
-//            if (Integer.valueOf(tuple.substring(0, tuple.indexOf(";"))) / 300 <= postingFileName) {
-//                toWrite.append(tuple + "\n");
-//                counter++;
-//            } else {
-//                file = new File(SavingPath + "\\postings\\" + postingFileName + ".txt");
-//                try {
-//                    FileWriter fileWriter = new FileWriter(file, true);
-//                    fileWriter.write(toWrite.toString());
-//                    fileWriter.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                toWrite.setLength(0);
-//                postingFileName++;
-//            }
-//        }
         LinkedList<String> writingList = new LinkedList<>();
         int countOfFiles = (new File(SavingPath).list().length - 2);
         for (int i = 0; i < 6; i++) {
-            int count = (CorpusSize/Intervals/6);// + (CorpusSize/Intervals/6)*i;
+            int numOfFilesToRead = (CorpusSize/Intervals/6);
+            if (numOfFilesToRead == 0)
+                numOfFilesToRead = CorpusSize;
             toWrite.setLength(0);
             currentData.clear();
             writingList.clear();
             if (i < 5)
-                getChunkOfFiles(currentData, count*i, count *(i+1));
+                getChunkOfFiles(currentData, numOfFilesToRead*i, numOfFilesToRead *(i+1));
             else
-                getChunkOfFiles(currentData,count*i,countOfFiles);
+                getChunkOfFiles(currentData,numOfFilesToRead*i,countOfFiles);
             currentData.sort(myComparator);
-            postingFileName = 0;//Integer.valueOf(first.substring(0, first.indexOf(";"))) / 500;
+            postingFileName = 0;
             int counter = 0;
             for (String tuple : currentData) {
                 if (Integer.valueOf(tuple.substring(0, tuple.indexOf(";"))) / 300 <= postingFileName) {
@@ -216,15 +193,9 @@ public class IndexManager {
                             e.printStackTrace();
                         }
                         toWrite.setLength(0);
-//                    writingList.removeAll(writingList);
                         writingList.clear();
-//                        try {
-//                            Thread.sleep(2000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
                     }
-                    postingFileName++; // = Integer.valueOf(currentData.get(counter).substring(0, currentData.get(counter).indexOf(";")))/500;
+                    postingFileName++;
                 }
             }
         }
