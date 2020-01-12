@@ -1,47 +1,57 @@
 package Index;
 
+import RetrieveDocuments.MyReader;
+import RetrieveDocuments.RetrieveManager;
 import Rules.Stemmer;
+import Rules.Token;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
 
         long startTime = System.currentTimeMillis();
-        String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\co1";
-        String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\postingFiles";
-        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,1);
-       mng.run();
+        String CorpusPath = "C:\\Users\\erant\\Desktop\\corpus";
+        String savingPath = "C:\\Users\\erant\\Desktop\\MNS3";
+        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,1815);
+//        mng.run();
 //        try {
 //            Thread.sleep(3000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        mng.SortAndCreate();
-        long endTime = System.currentTimeMillis();
-        System.out.println("Number of indexed docs:  " + mng.getDocID());
-        System.out.println("Number of unique terms (Dictionary size):  " + mng.getDictionarySize());
-        System.out.println("Time it took to build the Index:  " + (endTime - startTime)/1000);
-        System.out.printf("Time it took to Merge&Sort posting files: " + (endTime - startTime)/1000);
+//        mng.SortAndCreate();
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("Number of indexed docs:  " + mng.getDocID());
+//        System.out.println("Number of unique terms (Dictionary size):  " + mng.getDictionarySize());
+//        System.out.println("Time it took to build the Index:  " + (endTime - startTime)/1000);
+//        System.out.printf("Time it took to Merge&Sort posting files: " + (endTime - startTime)/1000);
+
+        MyReader reader = new MyReader(savingPath);
+        try {
+            HashMap<String, ArrayList<String>> dictionary =  reader.loadDictionary();
+            RetrieveManager retrieveManager = new RetrieveManager(false,false,false,true,"C:\\Users\\erant\\Desktop\\queries.txt",CorpusPath,savingPath,dictionary);
+            boolean found = retrieveManager.Start();
+            if(!found)
+                System.out.println("Did not match any documents.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
 //        writeTheSameWordInUpperandLower(savingPath);
 
 //        SortDictionaryByTermID(savingPath);
 //        calculateAVGDocLen(savingPath);
-//        String s = "<TEXT> --According obligation Obligations ziqiu Ziqiu --Aftermath --Boradcast --bring --Chinese </TEXT>";
+        //$1.1-million $1.2-billion $1.3-Million $1.4-Billion
+//        String s = "<TEXT>  $2m $3M $4bn $5b $6.2B $74Bn </TEXT>";
 //        Parser p = new Parser(s,CorpusPath,true);
-//        p.Parse();
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("0;0;5;0;1,10,10,10,10"+"\n");
-//        sb.append("0;0;3;0;5,10,10"+"\n");
-//        sb.append("0;0;4;0;3,10,22,7"+"\n");
-//        Indexer indexer = new Indexer();
-//        indexer.mergeTerms(sb);
-//        System.out.println(sb.toString());
+//        ArrayList<Token> [] a = p.Parse();
+//        System.out.println("");
     }
 
     private static void calculateAVGDocLen(String saving) {

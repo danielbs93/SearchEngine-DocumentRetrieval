@@ -22,8 +22,8 @@ public class BM25Ranker extends Ranker {
             return Double.compare(rank1, rank2);
         };
         //Defaults values ->usually set to those values
-        k = 1.2;
-        b = 0.75;
+        k = 1.06;
+        b = 0.87;
     }
 
     @Override

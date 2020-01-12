@@ -60,7 +60,7 @@ public class IndexManager {
             //0.0275->50 for 1 thread -> 37 temporary postings files
             //0.006 -> 11 for 1 thread -> 165 temporary postings files
             //0.0395 -> 72 for 1 thread -> 26 temporary postings files
-            Intervals = (int) (0.006 * corpusSize) + 1;
+            Intervals = (int) (0.0015 * corpusSize) + 1;
         }
     }
 
@@ -107,6 +107,7 @@ public class IndexManager {
         SortDocLexicon();
         this.DictionarySize = Dictionary.size();
         Dictionary.clear();
+        SortAndCreate();
     }
 
     /**
@@ -153,40 +154,45 @@ public class IndexManager {
         file = new File(SavingPath);
 //        File[] files = file.listFiles();
         ArrayList<String> currentData = new ArrayList<>();
-        getChunkOfFiles(currentData, 0, numOfFilesToRead);
+//        getChunkOfFiles(currentData, 0, numOfFilesToRead);
 //        currentData.sort(myComparator);
 //        Collections.sort(currentData,myComparator);
         File directory = new File(SavingPath + "\\postings");
         directory.mkdir();
         int postingFileName = 0;
         StringBuilder toWrite = new StringBuilder();
-        int counter = 0;
-        for (String tuple : currentData) {
-            if (Integer.valueOf(tuple.substring(0, tuple.indexOf(";"))) / 300 <= postingFileName) {
-                toWrite.append(tuple + "\n");
-                counter++;
-            } else {
-                file = new File(SavingPath + "\\postings\\" + postingFileName + ".txt");
-                try {
-                    FileWriter fileWriter = new FileWriter(file, true);
-                    fileWriter.write(toWrite.toString());
-                    fileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                toWrite.setLength(0);
-                postingFileName++;
-            }
-        }
-        for (int i = 0; i < 2; i++) {
-            int count = (CorpusSize/Intervals/3) + (CorpusSize/Intervals/3)*i;
+//        int counter = 0;
+//        for (String tuple : currentData) {
+//            if (Integer.valueOf(tuple.substring(0, tuple.indexOf(";"))) / 300 <= postingFileName) {
+//                toWrite.append(tuple + "\n");
+//                counter++;
+//            } else {
+//                file = new File(SavingPath + "\\postings\\" + postingFileName + ".txt");
+//                try {
+//                    FileWriter fileWriter = new FileWriter(file, true);
+//                    fileWriter.write(toWrite.toString());
+//                    fileWriter.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                toWrite.setLength(0);
+//                postingFileName++;
+//            }
+//        }
+        LinkedList<String> writingList = new LinkedList<>();
+        int countOfFiles = (new File(SavingPath).list().length - 2);
+        for (int i = 0; i < 6; i++) {
+            int count = (CorpusSize/Intervals/6);// + (CorpusSize/Intervals/6)*i;
             toWrite.setLength(0);
             currentData.clear();
-            getChunkOfFiles(currentData, count, count + (int) Math.floor((CorpusSize/Intervals/3)));
+            writingList.clear();
+            if (i < 5)
+                getChunkOfFiles(currentData, count*i, count *(i+1));
+            else
+                getChunkOfFiles(currentData,count*i,countOfFiles);
             currentData.sort(myComparator);
             postingFileName = 0;//Integer.valueOf(first.substring(0, first.indexOf(";"))) / 500;
-            LinkedList<String> writingList = new LinkedList<>();
-            counter = 0;
+            int counter = 0;
             for (String tuple : currentData) {
                 if (Integer.valueOf(tuple.substring(0, tuple.indexOf(";"))) / 300 <= postingFileName) {
                     writingList.add(tuple);
@@ -222,7 +228,6 @@ public class IndexManager {
                 }
             }
         }
-
     }
 
     /**
