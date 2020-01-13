@@ -1,57 +1,87 @@
 package Index;
 
+import RetrieveDocuments.AtomicClasses.Document;
+import RetrieveDocuments.AtomicClasses.Term;
+import RetrieveDocuments.IdentifyDominantEntities;
 import RetrieveDocuments.MyReader;
 import RetrieveDocuments.RetrieveManager;
+import RetrieveDocuments.Searcher;
 import Rules.Stemmer;
-import Rules.Token;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.print.Doc;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
 
         long startTime = System.currentTimeMillis();
-        String CorpusPath = "C:\\Users\\erant\\Desktop\\corpus";
-        String savingPath = "C:\\Users\\erant\\Desktop\\MNS3";
-        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,1815);
-//        mng.run();
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\corpus";
+        String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\MS";
+        String queries = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\queries.txt";
+        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,100);
+        mng.run();
 //        mng.SortAndCreate();
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("Number of indexed docs:  " + mng.getDocID());
-//        System.out.println("Number of unique terms (Dictionary size):  " + mng.getDictionarySize());
-//        System.out.println("Time it took to build the Index:  " + (endTime - startTime)/1000);
-//        System.out.printf("Time it took to Merge&Sort posting files: " + (endTime - startTime)/1000);
-
-        MyReader reader = new MyReader(savingPath);
-        try {
-            HashMap<String, ArrayList<String>> dictionary =  reader.loadDictionary();
-            RetrieveManager retrieveManager = new RetrieveManager(false,false,false,true,"C:\\Users\\erant\\Desktop\\queries.txt",CorpusPath,savingPath,dictionary);
-            boolean found = retrieveManager.Start();
-            if(!found)
-                System.out.println("Did not match any documents.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
+        long endTime = System.currentTimeMillis();
+        System.out.println("Number of indexed docs:  " + mng.getDocID());
+        System.out.println("Number of unique terms (Dictionary size):  " + mng.getDictionarySize());
+        System.out.println("Time it took to build the Index:  " + (endTime - startTime)/1000);
+        System.out.println("Time it took to Merge&Sort posting files: " + (endTime - startTime)/1000);
+//        //testing for entities
 //        writeTheSameWordInUpperandLower(savingPath);
-
+//        //testing docLexicon writing
 //        SortDictionaryByTermID(savingPath);
 //        calculateAVGDocLen(savingPath);
-        //$1.1-million $1.2-billion $1.3-Million $1.4-Billion
-//        String s = "<TEXT>  $2m $3M $4bn $5b $6.2B $74Bn </TEXT>";
+
+//        String s = "<TEXT> --According obligation Obligations ziqiu Ziqiu --Aftermath --Boradcast --bring --Chinese </TEXT>";
 //        Parser p = new Parser(s,CorpusPath,true);
-//        ArrayList<Token> [] a = p.Parse();
-//        System.out.println("");
+//        p.Parse();
+
+//        //testing merge terms function
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("0;0;5;0;1,10,10,10,10"+"\n");
+//        sb.append("0;0;3;0;5,10,10"+"\n");
+//        sb.append("0;0;4;0;3,10,22,7"+"\n");
+//        Indexer indexer = new Indexer();
+//        indexer.mergeTerms(sb);
+//        System.out.println(sb.toString());//answer = 0:0:12:0:1,2,2,6,2,2,6,4,6,4,6,1
+
+        //testing 5 dominant entities
+//        String[] dataString = new String[]{"FBIS3-21", "FB396001", "6", "66", "147"};
+//        ArrayList<String> data = new ArrayList<>();
+//        for (int i = 0; i < dataString.length; i++) {
+//            data.add(dataString[i]);
+//        }
+//        Document doc = new Document(data,28);
+//        IdentifyDominantEntities dominantEntities = new IdentifyDominantEntities(CorpusPath,true);
+//        dominantEntities.setDocument(doc);
+//        MyReader myReader = new MyReader(savingPath);
+//        try {
+//            HashMap<String,ArrayList<String>> dictionary = myReader.loadDictionary();
+//            doc.setDominantEntities(dominantEntities.get5DominantEntities(dictionary));
+//            for (Term term:doc.getDominantEntities()) {
+//                System.out.println("Entitity name: " + term.getTermName() + " TF: " + term.getTf());
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+//        MyReader myReader = new MyReader(savingPath);
+//        try {
+//            HashMap<String,ArrayList<String>> dictionary = myReader.loadDictionary();
+//            RetrieveManager retrieveManager = new RetrieveManager(true,true,false,true
+//                                                                ,queries,CorpusPath,savingPath,dictionary);
+//            retrieveManager.Start();
+//            retrieveManager.SaveRetrievalInformation();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
     }
 
     private static void calculateAVGDocLen(String saving) {

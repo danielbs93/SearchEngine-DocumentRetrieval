@@ -171,7 +171,7 @@ public class IndexManager {
             postingFileName = 0;
             int counter = 0;
             for (String tuple : currentData) {
-                if (Integer.valueOf(tuple.substring(0, tuple.indexOf(";"))) / 300 <= postingFileName) {
+                if (Integer.valueOf(tuple.substring(0, tuple.indexOf(";"))) / 250 <= postingFileName) {
                     writingList.add(tuple);
                     counter++;
                 } else {

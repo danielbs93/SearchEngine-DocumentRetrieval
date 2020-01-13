@@ -1,7 +1,7 @@
 package Index;
 
 import Rules.*;
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+//import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -37,7 +37,7 @@ public class Parser {
     }
 
 
-    public ArrayList<Token>[] Parse(MaxentTagger maxentTagger) {
+    public ArrayList<Token>[] Parse(){ //MaxentTagger maxentTagger) {
         tokenList = toTokens(this.Doc.toString(),true);
         parseByRules();
         parseByStopWords();
@@ -90,13 +90,13 @@ public class Parser {
     /**
      * //
      */
-    private void parseByEntities(MaxentTagger maxentTagger) {
-//        String[] tokenlist = Doc.split(" ");
-        EntitiesParser es = new EntitiesParser(parserdList[1], maxentTagger);
-        parserdList[1] = es.Parse();
-        tokenList.removeAll(parserdList[1]);
-        Doc = es.getDocAsString();
-    }
+//    private void parseByEntities(MaxentTagger maxentTagger) {
+////        String[] tokenlist = Doc.split(" ");
+//        EntitiesParser es = new EntitiesParser(parserdList[1], maxentTagger);
+//        parserdList[1] = es.Parse();
+//        tokenList.removeAll(parserdList[1]);
+//        Doc = es.getDocAsString();
+//    }
 
     /**
      *

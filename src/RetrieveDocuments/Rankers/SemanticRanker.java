@@ -11,8 +11,8 @@ public class SemanticRanker extends Ranker {
 
     private double avgDocLength;
 
-    public SemanticRanker(ArrayList<Document> allDocs, ArrayList<Term> m_Query, long corpusSize, double averageDocLen) {
-        super(allDocs, m_Query, corpusSize);
+    public SemanticRanker(ArrayList<Document> allDocs, ArrayList<Term> m_Query, long N, double averageDocLen) {
+        super(allDocs, m_Query, N);
         avgDocLength = averageDocLen;
         DocsComparator = Comparator.comparingDouble(o -> o.getRank(Document.RankType.Semantic));
     }

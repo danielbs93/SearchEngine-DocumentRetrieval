@@ -15,7 +15,7 @@ public class IdentifyDominantEntities {
 
     private Document document;
     private ArrayList<Term> entities;
-    private Comparator<Term> tfComparator;
+    private Comparator<Term> dominantComparator;
     private String corpusPath;
     private boolean isStemmer;
 
@@ -23,7 +23,7 @@ public class IdentifyDominantEntities {
         this.corpusPath = corpusPath;
         this.isStemmer = isStemmer;
         entities = new ArrayList<>();
-        tfComparator = Comparator.comparingDouble(Term::getTf);
+        dominantComparator = Comparator.comparingDouble(o1 -> ((o1.getTf())/(o1.getDf())));
     }
 
     public ArrayList<Term> get5DominantEntities(HashMap<String, ArrayList<String>> dictionary) {
@@ -33,15 +33,18 @@ public class IdentifyDominantEntities {
         for (Token token : parsedEntites) {
             if (dictionary.keySet().contains(token.getName())) {
                 int id = Integer.parseInt(dictionary.get(token.getName()).get(1));
+                int df = Integer.parseInt(dictionary.get(token.getName()).get(0));
                 Term term = new Term(token.getName(),id);
                 term.setTf(token.getTf());
+                term.setDf(df);
                 allEntities.add(term);
             }
         }
-        allEntities.sort(tfComparator);
+        allEntities.sort(dominantComparator);
         if (allEntities.size() < 5)
             entities = allEntities;
         else {
+            //returning only 5 ranked entities
             for (int i = 0; i < 5; i++) {
                 entities.add(allEntities.get(i));
             }

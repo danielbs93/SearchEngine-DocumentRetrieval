@@ -12,8 +12,8 @@ public class BM25Ranker extends Ranker {
     private double b;
     private double avgDocLen;
 
-    public BM25Ranker(ArrayList<Document> allDocs, ArrayList<Term> m_Query, long corpusSize, double averageDocLength) {
-        super(allDocs, m_Query, corpusSize);
+    public BM25Ranker(ArrayList<Document> allDocs, ArrayList<Term> m_Query, long N, double averageDocLength) {
+        super(allDocs, m_Query, N);
         avgDocLen = averageDocLength;
         //Compare by BM25 rank
         DocsComparator = (o1, o2) -> {

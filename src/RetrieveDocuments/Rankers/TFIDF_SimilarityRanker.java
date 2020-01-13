@@ -9,8 +9,8 @@ import java.util.ArrayList;
 public class TFIDF_SimilarityRanker extends Ranker {
 
 
-    public TFIDF_SimilarityRanker(ArrayList<Document> allDocs, ArrayList<Term> m_Query, long corpusSize) {
-        super(allDocs, m_Query, corpusSize);
+    public TFIDF_SimilarityRanker(ArrayList<Document> allDocs, ArrayList<Term> m_Query, long N) {
+        super(allDocs, m_Query, N);
 
         //compare by Cosine Similarity - TFIDF rank
         DocsComparator = (o1, o2) -> {

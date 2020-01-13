@@ -49,7 +49,7 @@ public class Searcher {
             ArrayList<Document> SemanticRanked = new ArrayList<>();
 //            ranker = new TFIDF_SimilarityRanker(allDocs,query,myReader.getCorpusSize());
 //            ranked = ranker.Rank();
-            ranker = new BM25Ranker(allDocs,query,myReader.getCorpusSize(),avgDocLength);
+            ranker = new BM25Ranker(allDocs,query,m_DocLexicon.size(),avgDocLength);
             ArrayList<Document> rankedList = ranker.Rank();
             if(rankedList.size()>0) {
                 try {
@@ -62,7 +62,7 @@ public class Searcher {
                     e.printStackTrace();
                 }
                 if (semantic) {
-                    ranker = new SemanticRanker(allDocs, query, myReader.getCorpusSize(), avgDocLength);
+                    ranker = new SemanticRanker(allDocs, query, m_DocLexicon.size(), avgDocLength);
                     try {
                         SemanticRanked = new ArrayList<Document>(ranker.Rank().subList(0, 50));
                     } catch (IndexOutOfBoundsException e) {
@@ -209,7 +209,7 @@ public class Searcher {
             Integer[] idAndDF = new Integer[2];
             ArrayList<String> dfAndTermID = m_Dicrionary.getOrDefault(t_Query.getTermName(),null);
             if (dfAndTermID != null) {
-                int postingName = Integer.parseInt(dfAndTermID.get(1))/300;
+                int postingName = Integer.parseInt(dfAndTermID.get(1))/250;
                 idAndDF[0] = Integer.parseInt(dfAndTermID.get(1));//get TermID
                 idAndDF[1] = Integer.parseInt(dfAndTermID.get(0));//get DF
                 if (result.keySet().contains(postingName)){

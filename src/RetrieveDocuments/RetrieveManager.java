@@ -45,7 +45,7 @@ public class RetrieveManager {
 
     public boolean Start() {
         ReadQuery();
-        if (Retriev()){
+        if (Retrieve()){
             SaveRetrievalInformation();
             if (isDominantEntities)
                 FindDominantEntities();
@@ -119,11 +119,12 @@ public class RetrieveManager {
     private void AddToTermQueryList(Token token, ArrayList<Term> toTerms, ArrayList<String> fromDictionary) {
         int termId = Integer.parseInt(fromDictionary.get(1));
         Term term = new Term(token.getName(),termId);
+        term.setDf(Integer.parseInt(fromDictionary.get(0)));
         term.setQueryTermPositions(token.getPosition());
         toTerms.add(term);
     }
 
-    public boolean Retriev(){
+    public boolean Retrieve(){
         mySearcher = new Searcher(this.postingPath,this.isSemantic,this.dictionary);
         sortedQueriesId = new ArrayList<> (queries.keySet());
         sortedQueriesId.sort(Integer::compareTo);
