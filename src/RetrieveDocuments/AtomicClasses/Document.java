@@ -1,5 +1,6 @@
 package RetrieveDocuments.AtomicClasses;
 import RetrieveDocuments.AtomicClasses.Term;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -37,10 +38,13 @@ public class Document {
     }
 
     public String getDocNO() {
-        return docNO;
+        String name = StringUtils.stripStart(docNO," ");
+        name = StringUtils.stripStart(name,"\t");
+        return name;
     }
 
     public void setDocNO(String docNO) {
+
         this.docNO = docNO;
     }
 
@@ -87,6 +91,7 @@ public class Document {
     }
 
     public int getDocID() {
+
         return docID;
     }
 

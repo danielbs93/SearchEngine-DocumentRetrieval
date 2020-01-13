@@ -4,6 +4,7 @@ import RetrieveDocuments.AtomicClasses.Document;
 import RetrieveDocuments.AtomicClasses.Term;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class BM25Ranker extends Ranker {
 
@@ -16,14 +17,15 @@ public class BM25Ranker extends Ranker {
         super(allDocs, m_Query, N);
         avgDocLen = averageDocLength;
         //Compare by BM25 rank
-        DocsComparator = (o1, o2) -> {
-            double rank1 = o1.getRank(Document.RankType.BM25);
-            double rank2 = o2.getRank(Document.RankType.BM25);
-            return Double.compare(rank1, rank2);
-        };
+        DocsComparator = Comparator.comparingDouble(o ->o.getRank(Document.RankType.BM25));
+//                (o2, o1) -> {
+//            double rank1 = o1.getRank(Document.RankType.BM25);
+//            double rank2 = o2.getRank(Document.RankType.BM25);
+//            return Double.compare(rank1, rank2);
+//        };
         //Defaults values ->usually set to those values
-        k = 1.06;
-        b = 0.87;
+        k = 1;
+        b = 0.75;
     }
 
     @Override

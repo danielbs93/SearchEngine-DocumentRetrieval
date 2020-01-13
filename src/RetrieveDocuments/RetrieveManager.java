@@ -132,7 +132,7 @@ public class RetrieveManager {
         for (int i = 0; i <sortedQueriesId.size() ; i++)
             queriesToRank.add(queries.get(sortedQueriesId.get(i)).getLeft());
         mySearcher.Search(queriesToRank);
-        Queue<ArrayList<Document>> retrievDocuments = mySearcher.Rank();
+        Queue<ArrayList<Document>> retrievDocuments = mySearcher.getRankedDocs();
         if(retrievDocuments.size()==0)
             return false;
         for (int i = 0; i <sortedQueriesId.size() ; i++)
