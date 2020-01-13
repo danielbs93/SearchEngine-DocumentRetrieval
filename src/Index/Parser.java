@@ -358,7 +358,7 @@ public class Parser {
 //                Doc.append(tokenList.get(i).getName() + " ");
 //            }
             //Token is a word
-            if (addToWords || SendingToken.isEmpty()){
+            if (addToWords){
                 afterThisRules.add(tokenList.get(i));
                 Doc.append(tokenList.get(i).getName() + " ");
             }
