@@ -110,7 +110,7 @@ public class ReadFile {
     private String buildDocNO(String document) {
         int start = document.indexOf("<DOCNO>") + 7;
         int end = document.indexOf("</DOCNO>");
-        String docNO = document.substring(start,end-1);
+        String docNO = document.substring(start,end);
 //        docNO.replaceAll(" ","");
         return docNO;
     }

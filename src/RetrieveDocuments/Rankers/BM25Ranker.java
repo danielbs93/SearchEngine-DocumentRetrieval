@@ -12,6 +12,7 @@ public class BM25Ranker extends Ranker {
     private double k;
     private double b;
     private double avgDocLen;
+    private double finalRankBM25;
 
     public BM25Ranker(ArrayList<Document> allDocs, ArrayList<Term> m_Query, long N, double averageDocLength) {
         super(allDocs, m_Query, N);
@@ -24,14 +25,15 @@ public class BM25Ranker extends Ranker {
 //            return Double.compare(rank1, rank2);
 //        };
         //Defaults values ->usually set to those values
-        k = 1;
-        b = 0.75;
+        k = 2;
+        b = 0.0005;
     }
 
     @Override
     public ArrayList<Document> Rank() {
         for (Document doc : allDocs) {
             doc.setRank(Document.RankType.BM25, BM25(doc));
+            doc.setFinalRank(finalRankBM25);
             rankedDocs.add(doc);
         }
         rankedDocs.sort(DocsComparator);
@@ -53,10 +55,24 @@ public class BM25Ranker extends Ranker {
                 double idf = idf(found.getDf());
                 double tf = found.getTf();
                 sumBM25 += idf*((tf*(k+1))/(tf+constantPartDenominator));
+                finalRankBM25 += 0.5*idf*((tf*(k+1))/(tf+constantPartDenominator)) + 0.25*TermIn10PercentFromDoc(found, document.getDocLength()) + 0.25*found.getIsEntity();
             }
         }
         return sumBM25;
     }
+
+    private int TermIn10PercentFromDoc(Term found, int docLength) {
+        int counterTop10 = 0;
+        double top10 = docLength*0.1;
+        int position = 0;
+        for (int current_position: found.getPositions()) {
+            position += current_position;
+            if (position < top10)
+                counterTop10++;
+        }
+        return counterTop10;
+    }
+
 
 
 }

@@ -28,7 +28,7 @@ public abstract class Ranker implements IRanker {
     }
 
     protected double getLog2(double x) {
-        return Math.log(x) / log2;
+        return Math.log(x);
     }
 
 

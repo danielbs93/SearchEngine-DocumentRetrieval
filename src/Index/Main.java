@@ -22,23 +22,23 @@ public class Main {
 
         long startTime = System.currentTimeMillis();
         String CorpusPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\corpus";
-        String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\MS";
+        String savingPath = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\PostingStemmer";
         String queries = "C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\queries.txt";
-        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,100);
-        mng.run();
-//        mng.SortAndCreate();
-        long endTime = System.currentTimeMillis();
-        System.out.println("Number of indexed docs:  " + mng.getDocID());
-        System.out.println("Number of unique terms (Dictionary size):  " + mng.getDictionarySize());
-        System.out.println("Time it took to build the Index:  " + (endTime - startTime)/1000);
-        System.out.println("Time it took to Merge&Sort posting files: " + (endTime - startTime)/1000);
+//        IndexManager mng = new IndexManager(CorpusPath,savingPath,true,100);
+//        mng.run();
+////        mng.SortAndCreate();
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("Number of indexed docs:  " + mng.getDocID());
+//        System.out.println("Number of unique terms (Dictionary size):  " + mng.getDictionarySize());
+//        System.out.println("Time it took to build the Index:  " + (endTime - startTime)/1000);
+//        System.out.println("Time it took to Merge&Sort posting files: " + (endTime - startTime)/1000);
 //        //testing for entities
 //        writeTheSameWordInUpperandLower(savingPath);
 //        //testing docLexicon writing
 //        SortDictionaryByTermID(savingPath);
 //        calculateAVGDocLen(savingPath);
 
-//        String s = "<TEXT> --According obligation Obligations ziqiu Ziqiu --Aftermath --Boradcast --bring --Chinese </TEXT>";
+//        String s = "<TEXT> $1.5bn $1-billion $1-million $1.27m $1.7b $1.8-million $10-$30 $10-Billion </TEXT>";
 //        Parser p = new Parser(s,CorpusPath,true);
 //        p.Parse();
 
@@ -81,6 +81,19 @@ public class Main {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+
+        MyReader reader = new MyReader(savingPath);
+        try {
+            HashMap<String, ArrayList<String>> dictionary =  reader.loadDictionary();
+            RetrieveManager retrieveManager = new RetrieveManager(true,false
+                    ,true,true,queries
+                    ,CorpusPath,savingPath,dictionary);
+            boolean found = retrieveManager.Start();
+            if(!found)
+                System.out.println("Did not match any documents.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

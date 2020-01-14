@@ -27,7 +27,7 @@ public class SemanticRanker extends Ranker {
                         Term term1 = doc.getTermByName(m_Query.get(i));
                         Term term2 = doc.getTermByName(m_Query.get(i));
                         int numOfInstances = CountPositions(term1,term2);
-                        double formula = ((2/m_Query.size())*numOfInstances)/avgDocLength;
+                        double formula = ((2/m_Query.size())*numOfInstances);//avgDocLength;
                         sumByFormula += formula;
                     }catch (NullPointerException e) {
                         System.out.println("Null returned from Semantic Ranker");

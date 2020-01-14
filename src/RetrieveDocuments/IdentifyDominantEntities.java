@@ -56,32 +56,63 @@ public class IdentifyDominantEntities {
         File file = new File(corpusPath + "\\" + document.getFileNO() + "\\" + document.getFileNO());
         StringBuilder doc = new StringBuilder();
         try {
-            ArrayList<String> allLines = (ArrayList<String>) Files.readAllLines(file.toPath());
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine() ;
             boolean done = false;
-            for (int i = 0; i < allLines.size(); i++) {
-                if (allLines.get(i).contains(document.getDocNO())) {
-                    for (int j = i + 1; j < allLines.size(); j++) {
-                        if (allLines.get(j).contains("<TEXT>")) {
-                            for (int k = j + 1; k < allLines.size(); k++) {
-                                if (allLines.get(k).contains("</TEXT>")) {
-                                    done = true;
-                                    break;
-                                }
-                                doc.append(allLines.get(k) + "\n");
-                            }
+            while (line!=null && !done){
+                if (line.contains(document.getDocNO())){
+                    line = line.substring(7,line.length() - 8);
+                    line = line.replaceAll(" ","");
+                    if (line.equals(document.getDocNO())) {
+                        while (!(line = bufferedReader.readLine()).contains("<TEXT>")) {
                         }
-                        if (done)
-                            break;
+                        line = bufferedReader.readLine();
+                        doc.append(line + " ");
+                        while (!(line = bufferedReader.readLine()).contains("</TEXT>")) {
+                            doc.append(line + " ");
+                        }
+                        done = true;
                     }
                 }
-                if (done)
-                    break;
+                else
+                    line = bufferedReader.readLine();
             }
+            fileReader.close();
+            bufferedReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        try {
+//            List<String> allLines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+//            boolean done = false;
+//            for (int i = 0; i < allLines.size(); i++) {
+//                if (allLines.get(i).contains(document.getDocNO())) {
+//                    for (int j = i + 1; j < allLines.size(); j++) {
+//                        if (allLines.get(j).contains("<TEXT>")) {
+//                            for (int k = j + 1; k < allLines.size(); k++) {
+//                                if (allLines.get(k).contains("</TEXT>")) {
+//                                    done = true;
+//                                    break;
+//                                }
+//                                doc.append(allLines.get(k) + "\n");
+//                            }
+//                        }
+//                        if (done)
+//                            break;
+//                    }
+//                }
+//                if (done)
+//                    break;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
         Parser p = new Parser(doc.toString(), corpusPath, isStemmer);
-        ArrayList<Token> allEntities = p.Parse(true)[1];
+        ArrayList<Token> allEntities = p.Parse(false)[1];
         return CountAndRemove(allEntities);
     }
 

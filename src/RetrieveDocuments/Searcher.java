@@ -41,7 +41,7 @@ public class Searcher {
 
     public ArrayList<Document> Rank() {
         //coefficient for each rank method
-        double alpha = 0.5, beta = 0.5;
+        double alpha = 0.8, beta = 0.2;
 //        if (queries == null)
 //            return null;
         ArrayList<Document> rankedList = new ArrayList<>();
@@ -73,7 +73,9 @@ public class Searcher {
                     for (Document doc : allDocs) {
                         double bm25 = doc.getRank(Document.RankType.BM25);
                         double positionRank = doc.getRank(Document.RankType.Semantic);
-                        doc.setFinalRank(alpha * bm25 + beta * positionRank);
+                        if (semantic) {
+                            doc.setFinalRank(alpha * bm25 + beta * positionRank);
+                        }
                     }
                 }
                 rankedList.clear();
@@ -154,7 +156,7 @@ public class Searcher {
                 String termName = getTermName(query, termID);
                 Document doc;
                 if ((doc = getDoc(docID)) != null) {
-
+                    doc.addTerm(new Term(tupleData, df, termName));
                 } else {
                     ArrayList<String> data = m_DocLexicon.get(docID);
                     if (data == null)
