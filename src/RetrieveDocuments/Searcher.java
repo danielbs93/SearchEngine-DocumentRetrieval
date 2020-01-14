@@ -41,7 +41,7 @@ public class Searcher {
 
     public ArrayList<Document> Rank() {
         //coefficient for each rank method
-        double alpha = 0.8, beta = 0.2;
+        double alpha = 0.25, beta = 0.75;
 //        if (queries == null)
 //            return null;
         ArrayList<Document> rankedList = new ArrayList<>();
@@ -81,7 +81,7 @@ public class Searcher {
                 rankedList.clear();
                 if (!semantic) {
                     rankedList.addAll(BM25ranked);
-                    rankedList.sort(compareByFinalRank);
+//                    rankedList.sort(compareByFinalRank);
                 } else {
                     allDocs.sort(compareByFinalRank);
                     rankedList.addAll(allDocs.subList(allDocs.size()-50,allDocs.size()));

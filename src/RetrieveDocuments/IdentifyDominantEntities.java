@@ -49,6 +49,7 @@ public class IdentifyDominantEntities {
                 entities.add(allEntities.get(i));
             }
         }
+        document.setDominantEntities(entities);
         return entities;
     }
 

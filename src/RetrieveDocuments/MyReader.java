@@ -56,43 +56,8 @@ public class MyReader {
                 dfAndTermID.add(tuple[2]);
                 Dictionary.put(tuple[0],dfAndTermID);
             }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         return Dictionary;
     }
-//    public HashMap<String, ArrayList<String>> loadDictionary() throws FileNotFoundException, IOException {
-//        HashMap<String,ArrayList<String>> Dictionary = new HashMap<>();
-////        try {
-//            file = new File(path+"\\SortedDictionary.txt");
-//            List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-////            fileReader = new FileReader(file);
-////            bufferedReader = new BufferedReader(fileReader);
-//            String line;
-////            line = bufferedReader.readLine();
-//        String [] split = lines.get(0).split(" ");
-//            CorpusSize = Integer.parseInt(split[0]);
-////            while ((line = bufferedReader.readLine()) != null) {
-////                String[] tuple = line.split("");
-//        for (int i = 1; i < lines.size(); i++) {
-//
-//                line = lines.get(i);
-//                String [] tuple = dictionarySpliter.split(line);
-//                ArrayList<String> dfAndTermID = new ArrayList<>();
-//                dfAndTermID.add(tuple[1]);
-//                dfAndTermID.add(tuple[2]);
-//                Dictionary.put(tuple[0],dfAndTermID);
-//            }
-////        } catch (FileNotFoundException e) {
-////            e.printStackTrace();
-////        } catch (IOException e) {
-////            e.printStackTrace();
-////        }
-//        lines.clear();
-//        return Dictionary;
-//    }
 
     /**
      * docLexiconFormat: docID;docNO;fileNO;maxTF;uniqueWords;docLen

@@ -129,6 +129,14 @@ public class Document {
         return this.dominantEntities;
     }
 
+    public String getEntitiesToString(){
+        String entities = "";
+        for (int i = 0; i < dominantEntities.size() && i < 5 ; i++) {
+            entities += dominantEntities.get(i).getTermName() + " ";
+        }
+        return entities;
+    }
+
     public void setDominantEntities(ArrayList<Term> entities) {
         if (entities != null)
             this.dominantEntities = entities;

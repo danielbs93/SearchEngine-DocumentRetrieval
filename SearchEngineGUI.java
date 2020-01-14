@@ -255,6 +255,20 @@ public class SearchEngineGUI<Private> {
                     boolean foundDoocuments = retrieveManager.Start();
                     if (!foundDoocuments)
                         JOptionPane.showMessageDialog(null,"Sorry, did not match any documents.");
+                    else {
+                        int dialogResult = JOptionPane.showConfirmDialog(null, "Show retrieve documents?");
+                        if (dialogResult == JOptionPane.YES_OPTION) {
+                            File file = new File(PostingPath+"\\RetrievalDocuments.txt");
+                            if(file.exists()) {
+                                try {
+                                    Desktop.getDesktop().open(file);
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                        }
+
+                    }
                     //DISPLAY
                 }
             }

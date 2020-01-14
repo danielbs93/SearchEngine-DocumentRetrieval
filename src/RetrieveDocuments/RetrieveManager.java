@@ -47,9 +47,9 @@ public class RetrieveManager {
     public boolean Start() {
         ReadQuery();
         if (Retrieve()){
-            SaveRetrievalInformation();
             if (isDominantEntities)
                 FindDominantEntities();
+            SaveRetrievalInformation();
             return true;
         }
         return false;
@@ -93,94 +93,6 @@ public class RetrieveManager {
             queries.put(queryIdCounter++ , new MutablePair<>(terms,null));
         }
     }
-//    public void ReadQuery(){
-//        Comparator<Term> comparatorByPosition = Comparator.comparingInt(o->o.getPositions()[0]);
-//        //reading from query file
-//        if(this.isPath){
-//            try {
-//                File file = new File(this.query);
-//                ArrayList<String> list = (ArrayList<String>) Files.readAllLines(file.toPath());
-//                int queryNum = 0;
-//                ArrayList<Token>[] title_tokens = null;
-//                ArrayList<Token>[] desc_tokens = null;
-//                ArrayList<Token>[] toTerms = null;
-//                for (int i = 0; i < list.size(); i++) {
-//                    String line = list.get(i);
-//                    if(line.contains("<num>")){
-//                        String [] splitLine = line.split(" ");
-//                        queryNum = Integer.parseInt(splitLine[2]);
-//                    }
-//                    if(line.contains("<title>")){
-//                        String queryToParse = line.substring(7);
-//                        parser = new Parser(queryToParse,corpusPath,this.isStemmer);
-//                        title_tokens = parser.Parse(false);
-//                    }
-//                    if (line.contains("<desc> Description:")) {
-//                        String queryToParse = "";
-//                        i++;
-//                        for (; i < list.size(); i++) {
-//                            String curLine = list.get(i);
-//                            if (curLine.contains("<narr> Narrative:"))
-//                                break;
-//                            else {
-//                                queryToParse += curLine +"\n";
-//                            }
-//                        }
-//                        queryToParse = queryToParse.replaceAll("Identify","");
-//                        queryToParse = queryToParse.replaceAll("identify","");
-//                        queryToParse = queryToParse.replaceAll("documents","");
-//                        queryToParse = queryToParse.replaceAll("Documents","");
-//                        queryToParse = queryToParse.replaceAll("Document","");
-//                        queryToParse = queryToParse.replaceAll("document","");
-//                        queryToParse = queryToParse.replaceAll("Find","");
-//                        queryToParse = queryToParse.replaceAll("find","");
-//                        queryToParse = queryToParse.replaceAll("discuss","");
-//                        queryToParse = queryToParse.replaceAll("information","");
-//                        queryToParse = queryToParse.replaceAll("\n","");
-//                        String[] split_query = queryToParse.split(" ");
-//                        //removing duplicates
-//                        for (int j = 0; j < split_query.length; j++) {
-//                            String word = split_query[j];
-//                            for (int k = j+1; k < split_query.length; k++) {
-//                                String duplicate = split_query[k];
-//                                if (word.equals(duplicate))
-//                                    split_query[j] = "";
-//                            }
-//                        }
-//                        StringBuilder parse_query = new StringBuilder();
-//                        for (String str: split_query) {
-//                            if (!str.equals("") && !str.isEmpty())
-//                            parse_query.append(str + " ");
-//                        }
-//                        parser = new Parser(parse_query.toString(),corpusPath,isStemmer);
-//                        desc_tokens = parser.Parse(false);
-//                        desc_tokens[0].removeAll(title_tokens[0]);
-//                        desc_tokens[1].removeAll(title_tokens[1]);
-//                        toTerms = new ArrayList[2];
-//                        toTerms[0] = new ArrayList<>();
-//                        toTerms[1] = new ArrayList<>();
-//                        toTerms[0].addAll(title_tokens[0]);
-//                        toTerms[0].addAll(desc_tokens[0]);
-//                        toTerms[1].addAll(title_tokens[1]);
-//                        toTerms[1].addAll(desc_tokens[1]);
-//                        ArrayList<Term> terms = ConvertTokensTOTerms(toTerms);
-//                        terms.sort(comparatorByPosition);
-//                        queries.put(queryNum , new MutablePair<>(terms,null));
-//                    }
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        //single query
-//        else {
-//            parser = new Parser(this.query,this.corpusPath,this.isStemmer);
-//            ArrayList<Token>[] tokens = parser.Parse(false);
-//            ArrayList<Term> terms = ConvertTokensTOTerms(tokens);
-//            terms.sort(comparatorByPosition);
-//            queries.put(queryIdCounter++ , new MutablePair<>(terms,null));
-//        }
-//    }
 
     /**
      * @param tokens to convert
@@ -238,11 +150,14 @@ public class RetrieveManager {
             int queryId = sortedQueriesId.get(i).intValue();
             ArrayList<Document> documents = this.queries.get(queryId).getRight();
             for (Document document:documents)
+                if(!isDominantEntities)
                  stringBuilder.append(queryId + " 0 " + document.getDocNO() + " 7 7 7\n");
+                else
+                    stringBuilder.append(queryId + " 0 " + document.getDocNO() + " 7 7 7 || Entities:  " + document.getEntitiesToString() + "\n");
 
         }
-//        File file = new File(this.postingPath + "\\RetrievalDocuments.txt");
-        File file = new File("C:\\Users\\USER\\Desktop\\הנדסת מערכות מידע\\שנה ג\\סמסטר ה\\אחזור\\SearchEngineProject\\Test\\TrecEval\\results.txt");
+        File file = new File(this.postingPath + "\\RetrievalDocuments.txt");
+//        File file = new File("C:\\Users\\erant\\Desktop\\08 Trec_eval\\results.txt");
             try {
                 file.createNewFile();
             } catch (IOException e) {
