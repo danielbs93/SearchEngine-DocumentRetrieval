@@ -60,7 +60,6 @@ public class RetrieveManager {
      */
     public void ReadQuery(){
         Comparator<Term> comparatorByPosition = Comparator.comparingInt(o->o.getPositions()[0]);
-        //reading from query file
         if(this.isPath){
             try {
                 File file = new File(this.query);
@@ -157,7 +156,6 @@ public class RetrieveManager {
 
         }
         File file = new File(this.postingPath + "\\RetrievalDocuments.txt");
-//        File file = new File("C:\\Users\\erant\\Desktop\\08 Trec_eval\\results.txt");
             try {
                 file.createNewFile();
             } catch (IOException e) {

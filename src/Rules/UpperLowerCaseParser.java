@@ -32,10 +32,6 @@ public class UpperLowerCaseParser extends Atext {
     public ArrayList<Token> Parse() {
         for (String current:s_Array) {
             if (!current.isEmpty() && FirstCharIsUpper(current)) {
-//                if (current.contains(","))
-//                    current = current.replaceAll(",", "");
-//                if (current.contains(".") && !IsUpper(current.charAt(current.length() - 2)))
-//                    current = current.substring(0,current.length() - 1);
                 if (current.contains("'s"))
                     current = current.replaceAll("'s", "");
                 String pos = current.substring(current.indexOf("#") + 1);
@@ -47,7 +43,6 @@ public class UpperLowerCaseParser extends Atext {
                 }
             }
         }
-//        removeDuplicates();
         return tokenList;
     }
 

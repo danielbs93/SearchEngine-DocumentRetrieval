@@ -25,7 +25,7 @@ public class BM25Ranker extends Ranker {
 //            return Double.compare(rank1, rank2);
 //        };
         //Defaults values ->usually set to those values
-        k = 1.423;
+        k = 1.13;
         b = 0.523;
         // k - 1.23 b - 0.00023 = 134
         // k - 1.23 b - 0.75 = 140

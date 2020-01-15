@@ -29,7 +29,6 @@ public class IdentifyDominantEntities {
     public ArrayList<Term> get5DominantEntities(HashMap<String, ArrayList<String>> dictionary) {
         ArrayList<Token> parsedEntites = parseDoc();
         ArrayList<Term> allEntities = new ArrayList<>();
-//        ArrayList<Term> allTerms = document.getDocTerms();
         for (Token token : parsedEntites) {
             if (dictionary.keySet().contains(token.getName())) {
                 int id = Integer.parseInt(dictionary.get(token.getName()).get(1));
@@ -86,32 +85,6 @@ public class IdentifyDominantEntities {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        try {
-//            List<String> allLines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-//            boolean done = false;
-//            for (int i = 0; i < allLines.size(); i++) {
-//                if (allLines.get(i).contains(document.getDocNO())) {
-//                    for (int j = i + 1; j < allLines.size(); j++) {
-//                        if (allLines.get(j).contains("<TEXT>")) {
-//                            for (int k = j + 1; k < allLines.size(); k++) {
-//                                if (allLines.get(k).contains("</TEXT>")) {
-//                                    done = true;
-//                                    break;
-//                                }
-//                                doc.append(allLines.get(k) + "\n");
-//                            }
-//                        }
-//                        if (done)
-//                            break;
-//                    }
-//                }
-//                if (done)
-//                    break;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         Parser p = new Parser(doc.toString(), corpusPath, isStemmer);
         ArrayList<Token> allEntities = p.Parse(false)[1];
         return CountAndRemove(allEntities);

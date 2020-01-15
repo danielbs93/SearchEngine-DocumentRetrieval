@@ -81,10 +81,6 @@ public class Token {
 
 
     public int isEntity() {
-//        if (isEntity == 1)
-//            return true;
-//        else
-//            return false;
         return isEntity;
     }
 
@@ -123,12 +119,6 @@ public class Token {
         if (this.position < 0)
             this.position = 0;
         positions.append("," + position);
-//        int gap = Math.abs(position - this.position);
-//        if (positions == null || positions.length() == 0)
-//            positions.append(gap);
-//        else
-//            positions.append("," + gap);
-//        this.position += gap;
     }
 
     public void sortPositionsByGaps() {
@@ -159,19 +149,6 @@ public class Token {
     public boolean isNumeric() {
         try {
             Double d = Double.parseDouble(m_Name.replaceAll(",",""));
-//            int c=0;
-//            for (int i = 0; i <m_Name.length() ; i++) {
-//                if(m_Name.charAt(i)=='.') {
-//                    c++;
-//                    if (c > 1)
-//                        return false;
-//                }
-////                if(m_Name.charAt(i)!= '\'') {
-//                    if (m_Name.charAt(i) != '.' || !Character.isDigit(m_Name.charAt(i)))
-//                        return false;
-////                }
-//
-//            }
         } catch (NumberFormatException e) {
             return false;
         }

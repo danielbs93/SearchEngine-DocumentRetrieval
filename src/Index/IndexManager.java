@@ -56,20 +56,14 @@ public class IndexManager {
         if (CorpusSize < 5)
             Intervals = 0;
         else {
-            //Next details for corpus size of 1815:
-            //0.0275->50 for 1 thread -> 37 temporary postings files
-            //0.006 -> 11 for 1 thread -> 165 temporary postings files
-            //0.0395 -> 72 for 1 thread -> 26 temporary postings files
             Intervals = (int) (0.0015 * corpusSize) + 1;
         }
     }
 
     public void run() {
-//        ConcurrentHashMap<Token, MutablePair<Integer, Integer>> Dictionary = new ConcurrentHashMap<>();
-//        ConcurrentHashMap<Token, ArrayList<Integer>> EntitiesDictionary = new ConcurrentHashMap<>();
         int pointerToRead = -1;
         if (CorpusSize < 5)
-            pointerToRead = CorpusSize;
+            pointerToRead = CorpusSize - 1; // -1 because the stop words need to be in the corpus path
         else
             pointerToRead = CorpusSize/2;
         Indexer = new Indexer(CorpusPath, SavingPath, isStemmer, 12, 0, pointerToRead, Dictionary, EntitiesDictionary);

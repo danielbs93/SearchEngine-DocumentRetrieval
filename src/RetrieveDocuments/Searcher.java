@@ -42,14 +42,9 @@ public class Searcher {
     public ArrayList<Document> Rank() {
         //coefficient for each rank method
         double alpha = 0.25, beta = 0.75;
-//        if (queries == null)
-//            return null;
         ArrayList<Document> rankedList = new ArrayList<>();
-//        for (ArrayList<Term> query : queries) {
             ArrayList<Document> BM25ranked = new ArrayList<>();
             ArrayList<Document> SemanticRanked = new ArrayList<>();
-//            ranker = new TFIDF_SimilarityRanker(allDocs,query,myReader.getCorpusSize());
-//            ranked = ranker.Rank();
             ranker = new BM25Ranker(allDocs, query, m_DocLexicon.size(), avgDocLength);
             rankedList = ranker.Rank();
             if (rankedList.size() > 0) {
@@ -81,15 +76,11 @@ public class Searcher {
                 rankedList.clear();
                 if (!semantic) {
                     rankedList.addAll(BM25ranked);
-//                    rankedList.sort(compareByFinalRank);
                 } else {
                     allDocs.sort(compareByFinalRank);
                     rankedList.addAll(allDocs.subList(allDocs.size()-50,allDocs.size()));
-//                    rankedDocs.add(new ArrayList<Document>(allDocs.subList(0, 50)));
                 }
             }
-//        }
-//        return rankedDocs;
         return rankedList;
 
     }
@@ -104,7 +95,6 @@ public class Searcher {
             sum += docLength;
         }
         return sum / m_DocLexicon.keySet().size();
-//        return sum/allDocs.size();
     }
 
 

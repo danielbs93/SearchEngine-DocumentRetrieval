@@ -42,13 +42,11 @@ public class MyReader {
     public HashMap<String, ArrayList<String>> loadDictionary() throws IOException, FileNotFoundException {
         HashMap<String,ArrayList<String>> Dictionary = new HashMap<>();
         file = new File(path+"\\SortedDictionary.txt");
-//        try {
             fileReader = new FileReader(file);
             bufferedReader = new BufferedReader(fileReader);
             String line;
             line = bufferedReader.readLine();
             String size = line.substring(0,line.indexOf(" "));
-//            CorpusSize = Integer.parseInt(size);
             while ((line = bufferedReader.readLine()) != null) {
                 String[] tuple = line.split("\t\t");
                 ArrayList<String> dfAndTermID = new ArrayList<>();

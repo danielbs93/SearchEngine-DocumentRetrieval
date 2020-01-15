@@ -43,7 +43,6 @@ public class Parser {
         parseByStopWords();
         parseByStemmer();
         parseByUpperLower();
-//        parseByEntities(maxentTagger);
         return parserdList;
     }
 
@@ -87,16 +86,6 @@ public class Parser {
         Doc = newDoc;
     }
 
-    /**
-     * //
-     */
-//    private void parseByEntities(MaxentTagger maxentTagger) {
-////        String[] tokenlist = Doc.split(" ");
-//        EntitiesParser es = new EntitiesParser(parserdList[1], maxentTagger);
-//        parserdList[1] = es.Parse();
-//        tokenList.removeAll(parserdList[1]);
-//        Doc = es.getDocAsString();
-//    }
 
     /**
      *
@@ -104,7 +93,6 @@ public class Parser {
     private void parseByStopWords() {
         try {
             File file = new File(CorpusPath + "\\StopWords.txt");
-//            File file = new File(getClass().getResource(".../StopWords.txt").getFile());
             FileReader fileReader = new FileReader(file);
             BufferedReader bf = new BufferedReader(fileReader);
             LinkedList<String> StopWords = new LinkedList<>();
@@ -352,11 +340,6 @@ public class Parser {
                 parserdList[0].add(NumericParser.Parse());
                 addToWords = false;
             }
-//            //Token is a word
-//            else {
-//                afterThisRules.add(tokenList.get(i));
-//                Doc.append(tokenList.get(i).getName() + " ");
-//            }
             //Token is a word
             if (addToWords){
                 afterThisRules.add(tokenList.get(i));
@@ -376,18 +359,6 @@ public class Parser {
         return result;
     }
 
-//    /**
-//     * @param i
-//     * @return true if it is a quote rule of the form "w1 w2 w3... wn"
-//     */
-//    private boolean isQuoteRule(int i) {
-//        if (tokenList.get(i).getName().contains("\"")) {
-//            String word = tokenList.get(i).getName();
-//            if (word.lastIndexOf("\"") != word.length() - 1)
-//                return true;
-//        }
-//        return false;
-//    }
 
     /**
      * @param i
@@ -434,14 +405,6 @@ public class Parser {
                 StringBuilder tokenName = new StringBuilder();
                 if (!isPanctuationMark(word)) {
                     tokenName.append(word.replaceAll(",", ""));
-//                    tokenName.append(word);
-//                    while (tokenName.length() > 0 && FirstCharPanctuationMark(tokenName.toString())) {
-//                        tokenName.deleteCharAt(0);
-//                    }
-//                    while (tokenName.length() > 0 && LastCharPanctuationMark(tokenName.toString())) {
-//                        int length = tokenName.length() - 1;
-//                        tokenName.deleteCharAt(length);
-//                    }
 
                     if (tokenName.length() != 0 && !tokenName.equals("")) {
                         String[] splited = panctuation.split(tokenName.toString());

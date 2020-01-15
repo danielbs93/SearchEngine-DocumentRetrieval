@@ -107,7 +107,9 @@ public class SearchEngineGUI<Private> {
                 fc1.setDialogTitle("Choose Directory");
                 fc1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int returnValue = fc1.showOpenDialog(null);
-                textField1.setText(fc1.getSelectedFile().getAbsolutePath());
+                try {
+                    textField1.setText(fc1.getSelectedFile().getAbsolutePath());
+                } catch (NullPointerException e1) {}
             }
         });
         /**
@@ -121,7 +123,9 @@ public class SearchEngineGUI<Private> {
                 fc1.setDialogTitle("Choose Directory");
                 fc1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int returnValue = fc1.showOpenDialog(null);
-                textField2.setText(fc1.getSelectedFile().getAbsolutePath());
+                try {
+                    textField2.setText(fc1.getSelectedFile().getAbsolutePath());
+                } catch (NullPointerException e1) {}
             }
         });
         /**
@@ -135,7 +139,9 @@ public class SearchEngineGUI<Private> {
                 fc1.setDialogTitle("Choose Directory");
                 fc1.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 int returnValue = fc1.showOpenDialog(null);
-                textField4.setText(fc1.getSelectedFile().getAbsolutePath());
+                try {
+                    textField4.setText(fc1.getSelectedFile().getAbsolutePath());
+                } catch (NullPointerException e1) {}
 
             }
         });
